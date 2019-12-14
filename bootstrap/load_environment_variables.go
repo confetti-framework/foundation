@@ -2,7 +2,8 @@ package bootstrap
 
 import (
 	"github.com/joho/godotenv"
-	"lanvard/foundation"
+	"github.com/lanvard/foundation"
+	"lanvard/config"
 )
 
 type LoadEnvironmentVariables struct {
@@ -10,7 +11,7 @@ type LoadEnvironmentVariables struct {
 }
 
 func (l LoadEnvironmentVariables) Bootstrap(app foundation.Application) foundation.Application {
-	file := app.BasePath.EnvironmentFile()
+	file := config.App.BasePath.EnvironmentFile()
 	err := godotenv.Load(file)
 	if err != nil {
 		println(err)

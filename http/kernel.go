@@ -1,8 +1,8 @@
 package http
 
 import (
-	"lanvard/foundation"
-	"lanvard/http"
+	"github.com/lanvard/foundation"
+	"github.com/lanvard/http"
 	"lanvard/routing/router"
 	"lanvard/src/app/http/decorator"
 	"lanvard/src/app/http/middleware"

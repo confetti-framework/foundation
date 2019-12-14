@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"lanvard/foundation"
+	"github.com/lanvard/foundation"
 	"lanvard/src/app/http/middleware"
 )
 
