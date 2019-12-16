@@ -3,9 +3,9 @@ package http
 import (
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/http"
-	"lanvard/routing/router"
-	"lanvard/src/app/http/decorator"
-	"lanvard/src/app/http/middleware"
+	"lanvard/app/http/decorator"
+	"lanvard/app/http/middleware"
+	"github.com/lanvard/routing/router"
 )
 
 type Kernel struct {
