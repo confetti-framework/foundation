@@ -115,26 +115,23 @@ func (c *Container) Make(abstract interface{}) interface{} {
 
 // Resolve the given type from the container.
 func (c *Container) resolve(abstract interface{}) interface{} {
-	var abstractName string
+	var result interface{}
 
-	if support.Type(abstract) == reflect.String {
-		abstractName = abstract.(string)
-	} else {
-		abstractName = support.Name(abstract)
-	}
+	abstractName := support.Name(abstract)
 
 	if support.Type(abstract) == reflect.String && c.IsAlias(abstract.(string)) {
-		return c.aliases[abstract.(string)]
+		// If abstract is an alias, look for that alias
+		result = c.aliases[abstract.(string)]
+	} else if object, present := c.bindings[abstractName]; present {
+		// If abstract is bound, return that object.
+		result = object
+	} else if support.Type(abstract) == reflect.Struct {
+		// If struct cannot be found, we simply have to return the struct itself.
+		result = abstract
 	}
 
-	// If abstract is bound, return that object.
-	if object, present := c.bindings[abstractName]; present {
-		return object
-	}
-
-	// If struct cannot be found, we simply have to return the struct itself.
-	if support.Type(abstract) == reflect.Struct {
-		return abstract
+	if result != nil {
+		return result
 	}
 
 	panic("Can't resole container with: " + abstractName)
