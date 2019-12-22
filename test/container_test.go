@@ -47,13 +47,13 @@ func Test_make_from_singleton_with_callback(t *testing.T) {
 	app.Container.Singleton(
 		testStruct{},
 		func() interface{} {
-			return testStruct{}
+			return testStruct{TestCount: 1}
 		},
 	)
 
 	newStruct := app.Make(testStruct{}).(testStruct)
 
-	assert.Equal(t, testStruct{}, newStruct)
+	assert.Equal(t, testStruct{TestCount: 1}, newStruct)
 }
 
 func Test_resolve_automatically(t *testing.T) {
@@ -127,4 +127,25 @@ func Test_binding_and_make_from_interface(t *testing.T) {
 	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
 
 	assert.Equal(t, testStruct{}, resolvedStruct)
+}
+
+func Test_binding_without_abstract(t *testing.T) {
+	container := foundation.NewContainer()
+
+	container.JustBind(testStruct{TestCount: 1})
+
+	resolvedStruct := container.Make(testStruct{}).(testStruct)
+
+	assert.Equal(t, testStruct{TestCount: 1}, resolvedStruct)
+}
+
+func Test_extending_bindings(t *testing.T) {
+
+	container := foundation.NewContainer()
+
+	container.Instance(nil, testStruct{TestCount: 1})
+
+	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
+
+	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
 }
