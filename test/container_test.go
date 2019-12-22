@@ -13,49 +13,6 @@ type testStruct struct {
 	TestCount int
 }
 
-func Test_one_binding_with_contract(t *testing.T) {
-	app := foundation.NewContainer()
-
-	app.Singleton(
-		(*contract.Kernel)(nil),
-		http.Kernel{},
-	)
-
-	assert.Len(t, app.GetBindings(), 1)
-}
-
-func Test_multiple_binding_with_contract(t *testing.T) {
-	app := foundation.NewContainer()
-
-	app.Singleton(
-		(*contract.Kernel)(nil),
-		http.Kernel{},
-	)
-
-	app.Singleton(
-		(*testInterface)(nil),
-		http.Kernel{},
-	)
-
-	assert.Len(t, app.GetBindings(), 2)
-}
-
-func Test_binding_two_with_the_same_interfaces(t *testing.T) {
-	app := foundation.NewContainer()
-
-	app.Singleton(
-		(*contract.Kernel)(nil),
-		http.Kernel{},
-	)
-
-	app.Singleton(
-		(*contract.Kernel)(nil),
-		http.Kernel{},
-	)
-
-	assert.Len(t, app.GetBindings(), 1)
-}
-
 func Test_one_binding_with_an_alias(t *testing.T) {
 	container := foundation.NewContainer()
 
@@ -114,6 +71,60 @@ func Test_binding_existing_object(t *testing.T) {
 	container.Instance("http.Kernel", kernel)
 
 	resolvedStruct := container.Make("http.Kernel")
+
+	assert.Equal(t, testStruct{}, resolvedStruct)
+}
+
+func Test_one_binding_with_contract(t *testing.T) {
+	app := foundation.NewContainer()
+
+	app.Bind(
+		(*contract.Kernel)(nil),
+		http.Kernel{},
+	)
+
+	assert.Len(t, app.GetBindings(), 1)
+}
+
+func Test_multiple_binding_with_contract(t *testing.T) {
+	app := foundation.NewContainer()
+
+	app.Bind(
+		(*contract.Kernel)(nil),
+		http.Kernel{},
+	)
+
+	app.Bind(
+		(*testInterface)(nil),
+		http.Kernel{},
+	)
+
+	assert.Len(t, app.GetBindings(), 2)
+}
+
+func Test_binding_two_with_the_same_interfaces(t *testing.T) {
+	app := foundation.NewContainer()
+
+	app.Bind(
+		(*contract.Kernel)(nil),
+		http.Kernel{},
+	)
+
+	app.Bind(
+		(*contract.Kernel)(nil),
+		http.Kernel{},
+	)
+
+	assert.Len(t, app.GetBindings(), 1)
+}
+
+func Test_binding_and_make_from_interface(t *testing.T) {
+	container := foundation.NewContainer()
+
+	kernel := testStruct{}
+	container.Instance((*testInterface)(nil), kernel)
+
+	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
 
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
