@@ -86,7 +86,7 @@ func (c *Container) Singleton(abstract interface{}, concrete interface{}) {
 }
 
 // Register an existing instance as shared in the container.
-func (c *Container) Instance(abstract interface{}, instance interface{}) interface{} {
+func (c *Container) Instance(abstract interface{}, concrete interface{}) interface{} {
 	abstractName := support.Name(abstract)
 
 	_, ok := c.aliases[abstractName]
@@ -98,9 +98,16 @@ func (c *Container) Instance(abstract interface{}, instance interface{}) interfa
 		c.instances = make(instances)
 	}
 
-	c.instances[abstractName] = instance
+	c.instances[abstractName] = concrete
 
-	return instance
+	return concrete
+}
+
+// Register an existing instance as shared in the container without an abstract
+func (c *Container) JustBind(concrete interface{}) interface{} {
+	c.Instance(concrete, concrete)
+
+	return concrete
 }
 
 // Get the container's bindings.
