@@ -86,10 +86,8 @@ func (c *Container) Singleton(abstract interface{}, concrete interface{}) {
 }
 
 // Register an existing instance as shared in the container.
-func (c *Container) Instance(abstract interface{}, instance interface{}) {
+func (c *Container) Instance(abstract interface{}, instance interface{}) interface{} {
 	abstractName := support.Name(abstract)
-
-	c.removeAbstractAlias(abstractName)
 
 	_, ok := c.aliases[abstractName]
 	if ok {
@@ -101,6 +99,8 @@ func (c *Container) Instance(abstract interface{}, instance interface{}) {
 	}
 
 	c.instances[abstractName] = instance
+
+	return instance
 }
 
 // Get the container's bindings.
@@ -119,29 +119,54 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 
 	abstractName := support.Name(abstract)
 
-	if support.Type(abstract) == reflect.String && c.IsAlias(abstract.(string)) {
-		// If abstract is an alias, look for that alias
-		concrete = c.aliases[abstract.(string)]
-	} else if object, present := c.bindings[abstractName]; present {
-		// If abstract is bound, use that object.
+	if support.Type(abstract) == reflect.Ptr && abstract == nil {
+		panic("Can't resolve interface. To resolve an interface, use the following syntax: (*interface)(nil), " +
+			"use a string or use the struct itself.")
+	}
+
+	if object, present := c.instances[abstractName]; present {
+		// The instance will always be returned on subsequent calls
 		concrete = object
+
+	} else if support.Type(abstract) == reflect.String && c.IsAlias(abstract.(string)) {
+		concrete = c.getConcreteAlias(concrete, abstract)
+
+	} else if object, present := c.bindings[abstractName]; present {
+		concrete = c.getConcreteBinding(concrete, object, abstractName)
+
 	} else if support.Type(abstract) == reflect.Struct {
 		// If struct cannot be found, we simply have to use the struct itself.
 		concrete = abstract
 	}
 
 	if concrete == nil {
-		panic("Can't resole container with: " + abstractName)
+		panic("Can't resolve container with: " + abstractName)
 	}
 
 	return concrete
 }
 
-// Remove an alias from the contextual binding alias cache.
-func (c Container) removeAbstractAlias(abstract string) {
-	if _, ok := c.aliases[abstract]; !ok {
-		return
-	}
+func (c *Container) getConcreteBinding(concrete interface{}, object interface{}, abstractName string) interface{} {
+	// If abstract is bound, use that object.
+	concrete = object
 
-	panic("Todo, implement removeAbstractAlias")
+	// If concrete is a callback, run it and save the result
+	if support.Type(concrete) == reflect.Func {
+		concrete = concrete.(func() interface{})()
+	}
+	c.bindings[abstractName] = concrete
+
+	return concrete
+}
+
+func (c *Container) getConcreteAlias(concrete interface{}, abstract interface{}) interface{} {
+	concrete = c.aliases[abstract.(string)]
+
+	// If concrete is a callback, run it and save the result
+	if support.Type(concrete) == reflect.Func {
+		concrete = concrete.(func() interface{})()
+	}
+	c.aliases[abstract.(string)] = concrete
+
+	return concrete
 }
