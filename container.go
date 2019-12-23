@@ -177,3 +177,12 @@ func (c *Container) getConcreteAlias(concrete interface{}, abstract interface{})
 
 	return concrete
 }
+
+// "Extend" an abstract type in the container.
+func (c *Container) Extend(abstract interface{}, function func(service interface{}) interface{}) {
+	concrete := c.resolve(abstract)
+
+	newConcrete := function(concrete)
+
+	c.Instance(abstract, newConcrete)
+}
