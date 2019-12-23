@@ -3,13 +3,15 @@ package test
 import (
 	contract "github.com/lanvard/contract/http"
 	"github.com/lanvard/foundation"
-	http "github.com/lanvard/foundation/http"
+	"github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
+	"lanvard/bootstrap"
 	"testing"
 )
 
 type testInterface interface{}
 type testStruct struct {
+	App foundation.Application
 	TestCount int
 }
 
@@ -141,11 +143,18 @@ func Test_binding_without_abstract(t *testing.T) {
 
 func Test_extending_bindings(t *testing.T) {
 
-	container := foundation.NewContainer()
+	app := bootstrap.NewApp()
 
-	container.Instance(nil, testStruct{TestCount: 1})
+	app.Container.Instance(testStruct{}, testStruct{TestCount: 1})
 
-	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
+	app.Container.Extend(testStruct{}, func(service interface{}) interface{} {
+		testService := service.(testStruct)
+		newVariable := testService.TestCount + 2
 
-	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
+		return testStruct{App: app, TestCount: newVariable}
+	})
+
+	resolvedStruct := app.Make(testStruct{}).(testStruct)
+
+	assert.Equal(t, testStruct{App: app, TestCount: 3}, resolvedStruct)
 }
