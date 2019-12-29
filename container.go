@@ -111,7 +111,7 @@ func (c *Container) JustBind(concrete interface{}) interface{} {
 }
 
 // Get the container's bindings.
-func (c Container) GetBindings() bindings {
+func (c *Container) GetBindings() bindings {
 	return c.bindings
 }
 
