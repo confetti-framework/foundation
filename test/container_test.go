@@ -11,7 +11,7 @@ import (
 
 type testInterface interface{}
 type testStruct struct {
-	App foundation.Application
+	App *foundation.Application
 	TestCount int
 }
 
