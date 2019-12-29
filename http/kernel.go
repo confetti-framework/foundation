@@ -9,7 +9,7 @@ import (
 )
 
 type Kernel struct {
-	App        foundation.Application
+	App        *foundation.Application
 	Router     router.Router
 	Middleware []middleware.PipeInterface
 }
@@ -30,7 +30,7 @@ func (k Kernel) sendRequestThroughRouter(request http.Request) http.Response {
 		Then(k.dispatchToRouter())
 }
 
-func (k Kernel) Bootstrap() foundation.Application {
+func (k Kernel) Bootstrap() *foundation.Application {
 	k.App = decorator.Bootstrap(k.App)
 	k.App.HasBeenBootstrapped = true
 
