@@ -4,3 +4,6 @@
 
 [[constraint]]
   name = "github.com/lanvard/support"
+
+[[constraint]]
+  name = "upspin.io"
