@@ -2,6 +2,7 @@ package foundation
 
 import (
 	"lanvard/config"
+	"upspin.io/errors"
 )
 
 type Application struct {
@@ -12,6 +13,7 @@ type Application struct {
 	HasBeenBootstrapped bool
 }
 
+// Resolve the given type from the container.
 func (a Application) Make(abstract interface{}) interface{} {
 	return a.Container.Make(abstract)
 }
@@ -27,4 +29,22 @@ func (a *Application) BindPathsInContainer() {
 	a.Container.Instance("path.database", config.App.BasePath.DatabasePath())
 	a.Container.Instance("path.resources", config.App.BasePath.ResourcePath())
 	a.Container.Instance("path.bootstrap", config.App.BasePath.BootstrapPath())
+}
+
+func (a *Application) Environment() (string, error) {
+	if config.App.Env == "" {
+		return "", errors.E("environment not found")
+	}
+
+	return config.App.Env, nil
+}
+
+func (a *Application) IsEnvironment(environments ...string) bool {
+	for _, environment := range environments {
+		if environment == config.App.Env {
+			return true
+		}
+	}
+
+	return false
 }

@@ -10,6 +10,14 @@
   version = "v1.1.1"
 
 [[projects]]
+  digest = "1:883e2fdbdd0e577187bd8106fec775b1176059af267a7f40eba5308955c67d52"
+  name = "github.com/gorilla/mux"
+  packages = ["."]
+  pruneopts = ""
+  revision = "00bdffe0f3c77e27d2cf6f5c70232a2d3e4d9c15"
+  version = "v1.7.3"
+
+[[projects]]
   digest = "1:7df5a9695a743c3e1626b28bb8741602c8c15527e1efaeaec48ab2ff9a23f74c"
   name = "github.com/joho/godotenv"
   packages = ["."]
@@ -21,7 +29,10 @@
   branch = "master"
   digest = "1:75c7cddb975e64113d6bb98ac2b79a75fadf218c3e4be1b1971523f04db3792a"
   name = "github.com/lanvard/contract"
-  packages = ["decorator"]
+  packages = [
+    "decorator",
+    "http",
+  ]
   pruneopts = ""
   revision = "2b8b88805eec1ca82a365a685fbcd7cddd8f7592"
 
@@ -32,6 +43,17 @@
   packages = ["."]
   pruneopts = ""
   revision = "0d2ec45d65ea09b6c16eb3e227ff359601fc3f7d"
+
+[[projects]]
+  branch = "master"
+  digest = "1:2536f997701ac36511e3e78ce0bd3ea856d1e31baec72404553cb3122c62bf2e"
+  name = "github.com/lanvard/routing"
+  packages = [
+    ".",
+    "router",
+  ]
+  pruneopts = ""
+  revision = "f1e4785ba1f142889dfc85e6dc28245fd65c30a3"
 
 [[projects]]
   branch = "develop"
@@ -68,15 +90,29 @@
   revision = "1f64d6156d11335c3f22d9330b0ad14fc1e789ce"
   version = "v2.2.7"
 
+[[projects]]
+  branch = "master"
+  digest = "1:d203f29d0334a99f5ca8b939831a59b4951aa48a0baf18c1d3219bf91a840968"
+  name = "upspin.io"
+  packages = [
+    "errors",
+    "log",
+    "upspin",
+  ]
+  pruneopts = ""
+  revision = "e5f200a5136b1a1d932e07064f499e4179a800e2"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/joho/godotenv",
     "github.com/lanvard/contract/decorator",
+    "github.com/lanvard/contract/http",
     "github.com/lanvard/http",
+    "github.com/lanvard/routing/router",
     "github.com/lanvard/support",
     "github.com/stretchr/testify/assert",
+    "upspin.io/errors",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
