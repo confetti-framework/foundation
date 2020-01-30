@@ -7,7 +7,7 @@ import (
 
 type Application struct {
 	// The service container
-	Container Container
+	Container *Container
 
 	// Indicates if the application has been bootstrapped before.
 	HasBeenBootstrapped bool

@@ -1,6 +1,7 @@
 package foundation
 
 import (
+	"fmt"
 	"github.com/lanvard/support"
 	"reflect"
 )
@@ -22,15 +23,15 @@ type Container struct {
 	instances instances
 }
 
-func NewContainer() Container {
+func NewContainer() *Container {
 	containerStruct := Container{}
 	containerStruct.bindings = make(bindings)
 	containerStruct.instances = make(instances)
 
-	return containerStruct
+	return &containerStruct
 }
 
-func (c Container) Copy() Container {
+func (c Container) Copy() *Container {
 	container := NewContainer()
 
 	for key, value := range c.bindings {
@@ -125,6 +126,16 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 	var concrete interface{}
 
 	abstractName := support.Name(abstract)
+	fmt.Println(c)
+	fmt.Println(abstractName)
+
+	if object, present := c.instances[abstractName]; present {
+		fmt.Println("yes")
+		fmt.Println(object)
+	} else {
+		fmt.Println("no")
+		fmt.Println(c.instances)
+	}
 
 	if support.Type(abstract) == reflect.Ptr && abstract == nil {
 		panic("Can't resolve interface. To resolve an interface, use the following syntax: (*interface)(nil), " +
@@ -166,7 +177,7 @@ func (c *Container) getConcreteBinding(concrete interface{}, object interface{},
 	return concrete
 }
 
-func (c *Container) getConcreteAlias(concrete interface{}, abstract interface{}) interface{} {
+func (c *Container) getConcreteAlias(concrete, abstract interface{}) interface{} {
 	concrete = c.aliases[abstract.(string)]
 
 	// If concrete is a callback, run it and save the result
