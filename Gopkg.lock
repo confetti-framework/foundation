@@ -113,6 +113,7 @@
     "github.com/lanvard/support",
     "github.com/stretchr/testify/assert",
     "upspin.io/errors",
+    "upspin.io/upspin",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
