@@ -2,10 +2,11 @@ package decorator
 
 import (
 	"github.com/lanvard/foundation"
+	"github.com/lanvard/foundation/contract"
 )
 
 type BootstrapDecorator struct {
-	Bootstraps []foundation.Application
+	Bootstraps []contract.Bootstrap
 }
 
 func (d BootstrapDecorator) BootstrapWith(app *foundation.Application) *foundation.Application {

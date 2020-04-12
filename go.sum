@@ -18,6 +18,7 @@ github.com/lanvard/contract v0.0.0-20191210154916-2b8b88805eec/go.mod h1:ZWlcEOc
 github.com/lanvard/contract v0.0.0-20191229221014-fb8a5b266ab0 h1:o8OmpfSFi5/Chj7CmIqIESiwdjEo8WOyX3T2mSOIXiY=
 github.com/lanvard/foundation v0.0.0-20191214164515-4cdc5a624a0e/go.mod h1:Dml3fHJ8TBDZ7wGEbGVCGyUwhsvR5Q6GbURRwA5bWxA=
 github.com/lanvard/foundation v0.2.0/go.mod h1:Dml3fHJ8TBDZ7wGEbGVCGyUwhsvR5Q6GbURRwA5bWxA=
+github.com/lanvard/foundation v0.2.1/go.mod h1:8POYnXbLQogipg4HVTXxg1WC7im/GxMIU3hrcmhPDAE=
 github.com/lanvard/http v0.0.0-20191210155440-0d2ec45d65ea h1:k8Cu815UNEOHqTOq4naIINSj2+3tgzMXF++FqcU1X7I=
 github.com/lanvard/http v0.0.0-20191210155440-0d2ec45d65ea/go.mod h1:7B24ed6Q26QpU10qTweQkzze5cZNpxg1VJ1AncLNPhs=
 github.com/lanvard/routing v0.0.0-20191229221009-f1e4785ba1f1 h1:RTWHgvpDvj/XH6l19U/LpANl7gaIank+zUlTVL42yTE=
