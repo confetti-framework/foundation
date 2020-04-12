@@ -1,7 +1,7 @@
 package test
 
 import (
-	contract "github.com/lanvard/contract/http"
+	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
@@ -32,11 +32,11 @@ func Test_make_from_singleton(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
-		(*contract.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.Kernel{},
 	)
 
-	kernel := container.Make((*contract.Kernel)(nil)).(http.Kernel)
+	kernel := container.Make((*inter.HttpKernel)(nil)).(http.Kernel)
 
 	assert.Equal(t, http.Kernel{}, kernel)
 }
@@ -46,7 +46,7 @@ func Test_make_from_singleton_with_callback(t *testing.T) {
 		Container: foundation.NewContainer(),
 	}
 
-	app.Container.Singleton(
+	app.Container().Singleton(
 		testStruct{},
 		func() interface{} {
 			return testStruct{TestCount: 1}
@@ -81,7 +81,7 @@ func Test_one_binding_with_contract(t *testing.T) {
 	app := foundation.NewContainer()
 
 	app.Bind(
-		(*contract.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.Kernel{},
 	)
 
@@ -92,7 +92,7 @@ func Test_multiple_binding_with_contract(t *testing.T) {
 	app := foundation.NewContainer()
 
 	app.Bind(
-		(*contract.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.Kernel{},
 	)
 
@@ -108,12 +108,12 @@ func Test_binding_two_with_the_same_interfaces(t *testing.T) {
 	app := foundation.NewContainer()
 
 	app.Bind(
-		(*contract.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.Kernel{},
 	)
 
 	app.Bind(
-		(*contract.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.Kernel{},
 	)
 

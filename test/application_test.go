@@ -1,7 +1,7 @@
 package test
 
 import (
-	interfaceHttp "github.com/lanvard/contract/http"
+	"github.com/lanvard/contract/inter"
 	httpFoundation "github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
 	"lanvard/app/http"
@@ -14,7 +14,7 @@ func Test_binding(t *testing.T) {
 	app := bootstrap.NewApp()
 
 	app.Container.Singleton(
-		(*interfaceHttp.Kernel)(nil),
+		(*inter.HttpKernel)(nil),
 		http.NewKernel(app),
 	)
 

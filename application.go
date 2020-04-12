@@ -1,39 +1,50 @@
 package foundation
 
 import (
+	"fmt"
+	"github.com/lanvard/contract/inter"
 	"lanvard/config"
-	"upspin.io/errors"
 )
 
 type Application struct {
 	// The service container
-	Container Container
+	container *Container
 
 	// Indicates if the application has been bootstrapped before.
 	HasBeenBootstrapped bool
 }
 
+// Get the service container
+func (a *Application) Container() *Container {
+	return a.container
+}
+
+// Set the service container
+func (a *Application) SetContainer(container *Container) {
+	a.container = container
+}
+
 // Resolve the given type from the container.
 func (a Application) Make(abstract interface{}) interface{} {
-	return a.Container.Make(abstract)
+	return a.container.Make(abstract)
 }
 
 // Bind all of the application paths in the container.
-func (a *Application) BindPathsInContainer() {
-	a.Container.Instance("path.app", config.App.BasePath.AppPath())
-	a.Container.Instance("path.base", config.App.BasePath.BasePath())
-	a.Container.Instance("path.lang", config.App.BasePath.LangPath())
-	a.Container.Instance("path.config", config.App.BasePath.ConfigPath())
-	a.Container.Instance("path.public", config.App.BasePath.PublicPath())
-	a.Container.Instance("path.storage", config.App.BasePath.StoragePath())
-	a.Container.Instance("path.database", config.App.BasePath.DatabasePath())
-	a.Container.Instance("path.resources", config.App.BasePath.ResourcePath())
-	a.Container.Instance("path.bootstrap", config.App.BasePath.BootstrapPath())
+func (a *Application) BindPathsInContainer(path inter.BasePath) {
+	a.container.Instance("path.app", path.AppPath())
+	a.container.Instance("path.base", path.BasePath())
+	a.container.Instance("path.lang", path.LangPath())
+	a.container.Instance("path.config", path.ConfigPath())
+	a.container.Instance("path.public", path.PublicPath())
+	a.container.Instance("path.storage", path.StoragePath())
+	a.container.Instance("path.database", path.DatabasePath())
+	a.container.Instance("path.resources", path.ResourcePath())
+	a.container.Instance("path.bootstrap", path.BootstrapPath())
 }
 
 func (a *Application) Environment() (string, error) {
 	if config.App.Env == "" {
-		return "", errors.E("environment not found")
+		return "", fmt.Errorf("environment not found")
 	}
 
 	return config.App.Env, nil

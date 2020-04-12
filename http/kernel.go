@@ -22,7 +22,7 @@ func (k Kernel) Handle(request http.Request) http.Response {
 
 // Send the given request through the middleware / router.
 func (k Kernel) sendRequestThroughRouter(request http.Request) http.Response {
-	k.App.Container.Instance("request", request)
+	k.App.Container().Instance("request", request)
 
 	return middleware.NewPipeline(k.App).
 		Send(request).
