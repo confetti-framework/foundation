@@ -1,17 +1,14 @@
 package foundation
 
 import (
-	"fmt"
+	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/support"
 	"reflect"
 )
 
-type bindings map[string]interface{}
-type instances map[string]interface{}
-
 type Container struct {
 	// The container's bindings.
-	bindings bindings
+	bindings inter.Bindings
 
 	// The registered type aliases.
 	aliases map[string]interface{}
@@ -20,18 +17,18 @@ type Container struct {
 	abstractAliases map[string]map[string]interface{}
 
 	// The container's shared instances.
-	instances instances
+	instances inter.Instances
 }
 
 func NewContainer() *Container {
 	containerStruct := Container{}
-	containerStruct.bindings = make(bindings)
-	containerStruct.instances = make(instances)
+	containerStruct.bindings = make(inter.Bindings)
+	containerStruct.instances = make(inter.Instances)
 
 	return &containerStruct
 }
 
-func (c Container) Copy() *Container {
+func (c Container) Copy() inter.Container {
 	container := NewContainer()
 
 	for key, value := range c.bindings {
@@ -50,7 +47,7 @@ func (c Container) Copy() *Container {
 		container.instances[key] = value
 	}
 
-	return container
+	return inter.Container(container)
 }
 
 // Determine if the given abstract type has been bound.
@@ -96,7 +93,7 @@ func (c *Container) Instance(abstract interface{}, concrete interface{}) interfa
 	}
 
 	if c.instances == nil {
-		c.instances = make(instances)
+		c.instances = make(inter.Instances)
 	}
 
 	c.instances[abstractName] = concrete
@@ -112,7 +109,7 @@ func (c *Container) JustBind(concrete interface{}) interface{} {
 }
 
 // Get the container's bindings.
-func (c *Container) GetBindings() bindings {
+func (c *Container) Bindings() inter.Bindings {
 	return c.bindings
 }
 
@@ -126,16 +123,6 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 	var concrete interface{}
 
 	abstractName := support.Name(abstract)
-	fmt.Println(c)
-	fmt.Println(abstractName)
-
-	if object, present := c.instances[abstractName]; present {
-		fmt.Println("yes")
-		fmt.Println(object)
-	} else {
-		fmt.Println("no")
-		fmt.Println(c.instances)
-	}
 
 	if support.Type(abstract) == reflect.Ptr && abstract == nil {
 		panic("Can't resolve interface. To resolve an interface, use the following syntax: (*interface)(nil), " +

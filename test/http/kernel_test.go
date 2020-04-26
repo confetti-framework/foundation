@@ -13,7 +13,7 @@ package test
 //
 // func Test_handleRouting(t *testing.T) {
 // 	app := bootstrap.NewApp()
-// 	app.Container.Singleton((*net.ResponseWriter)(nil), httptest.NewRecorder())
+// 	app.container.Singleton((*net.ResponseWriter)(nil), httptest.NewRecorder())
 //
 // 	kernel := http.NewKernel(app)
 //

@@ -3,29 +3,21 @@ package test
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
-	"lanvard/bootstrap"
 	"testing"
 )
-
-type testInterface interface{}
-type testStruct struct {
-	App *foundation.Application
-	TestCount int
-}
 
 func Test_one_binding_with_an_alias(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
-		"http.Kernel",
-		http.Kernel{},
+		"testStruct",
+		testStruct{},
 	)
 
-	kernel := container.Make("http.Kernel").(http.Kernel)
+	kernel := container.Make("testStruct").(testStruct)
 
-	assert.Equal(t, http.Kernel{}, kernel)
+	assert.Equal(t, testStruct{}, kernel)
 }
 
 func Test_make_from_singleton(t *testing.T) {
@@ -33,20 +25,18 @@ func Test_make_from_singleton(t *testing.T) {
 
 	container.Singleton(
 		(*inter.HttpKernel)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
-	kernel := container.Make((*inter.HttpKernel)(nil)).(http.Kernel)
+	kernel := container.Make((*inter.HttpKernel)(nil)).(testStruct)
 
-	assert.Equal(t, http.Kernel{}, kernel)
+	assert.Equal(t, testStruct{}, kernel)
 }
 
 func Test_make_from_singleton_with_callback(t *testing.T) {
-	app := foundation.Application{
-		Container: foundation.NewContainer(),
-	}
+	app := foundation.NewApp()
 
-	app.Container().Singleton(
+	app.Singleton(
 		testStruct{},
 		func() interface{} {
 			return testStruct{TestCount: 1}
@@ -70,22 +60,22 @@ func Test_binding_existing_object(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
-	container.Instance("http.Kernel", kernel)
+	container.Instance("testStruct", kernel)
 
-	resolvedStruct := container.Make("http.Kernel")
+	resolvedStruct := container.Make("testStruct")
 
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
 func Test_one_binding_with_contract(t *testing.T) {
-	app := foundation.NewContainer()
+	container := foundation.NewContainer()
 
-	app.Bind(
+	container.Bind(
 		(*inter.HttpKernel)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
-	assert.Len(t, app.GetBindings(), 1)
+	assert.Len(t, container.Bindings(), 1)
 }
 
 func Test_multiple_binding_with_contract(t *testing.T) {
@@ -93,31 +83,31 @@ func Test_multiple_binding_with_contract(t *testing.T) {
 
 	app.Bind(
 		(*inter.HttpKernel)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
 	app.Bind(
 		(*testInterface)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
-	assert.Len(t, app.GetBindings(), 2)
+	assert.Len(t, app.Bindings(), 2)
 }
 
 func Test_binding_two_with_the_same_interfaces(t *testing.T) {
-	app := foundation.NewContainer()
+	container := foundation.NewContainer()
 
-	app.Bind(
+	container.Bind(
 		(*inter.HttpKernel)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
-	app.Bind(
+	container.Bind(
 		(*inter.HttpKernel)(nil),
-		http.Kernel{},
+		testStruct{},
 	)
 
-	assert.Len(t, app.GetBindings(), 1)
+	assert.Len(t, container.Bindings(), 1)
 }
 
 func Test_binding_and_make_from_interface(t *testing.T) {
@@ -143,18 +133,18 @@ func Test_binding_without_abstract(t *testing.T) {
 
 func Test_extending_bindings(t *testing.T) {
 
-	app := bootstrap.NewApp()
+	container := foundation.NewContainer()
 
-	app.Container.Instance(testStruct{}, testStruct{TestCount: 1})
+	container.Instance(testStruct{}, testStruct{TestCount: 1})
 
-	app.Container.Extend(testStruct{}, func(service interface{}) interface{} {
+	container.Extend(testStruct{}, func(service interface{}) interface{} {
 		testService := service.(testStruct)
 		newVariable := testService.TestCount + 2
 
-		return testStruct{App: app, TestCount: newVariable}
+		return testStruct{TestCount: newVariable}
 	})
 
-	resolvedStruct := app.Make(testStruct{}).(testStruct)
+	resolvedStruct := container.Make(testStruct{}).(testStruct)
 
-	assert.Equal(t, testStruct{App: app, TestCount: 3}, resolvedStruct)
+	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
 }

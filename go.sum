@@ -1,5 +1,6 @@
 bazil.org/fuse v0.0.0-20160811212531-371fbbdaa898/go.mod h1:Xbm+BRKSBEpa4q4hTSxohYNQpsxXPbPry4JJWOB3LB8=
 github.com/NYTimes/gziphandler v0.0.0-20170916004738-97ae7fbaf816/go.mod h1:3wb06e3pkSAbeQ52E9H9iFoQsEEwGN64994WTCIhntQ=
+github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -19,6 +20,7 @@ github.com/lanvard/contract v0.0.0-20191229221014-fb8a5b266ab0 h1:o8OmpfSFi5/Chj
 github.com/lanvard/foundation v0.0.0-20191214164515-4cdc5a624a0e/go.mod h1:Dml3fHJ8TBDZ7wGEbGVCGyUwhsvR5Q6GbURRwA5bWxA=
 github.com/lanvard/foundation v0.2.0/go.mod h1:Dml3fHJ8TBDZ7wGEbGVCGyUwhsvR5Q6GbURRwA5bWxA=
 github.com/lanvard/foundation v0.2.1/go.mod h1:8POYnXbLQogipg4HVTXxg1WC7im/GxMIU3hrcmhPDAE=
+github.com/lanvard/foundation v0.2.2/go.mod h1:mYbtvzdGzw0ZNP2gI3lZHGxUVZXhcp1x77Fet9+DbjE=
 github.com/lanvard/http v0.0.0-20191210155440-0d2ec45d65ea h1:k8Cu815UNEOHqTOq4naIINSj2+3tgzMXF++FqcU1X7I=
 github.com/lanvard/http v0.0.0-20191210155440-0d2ec45d65ea/go.mod h1:7B24ed6Q26QpU10qTweQkzze5cZNpxg1VJ1AncLNPhs=
 github.com/lanvard/routing v0.0.0-20191229221009-f1e4785ba1f1 h1:RTWHgvpDvj/XH6l19U/LpANl7gaIank+zUlTVL42yTE=
@@ -51,6 +53,7 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 h1:YR8cESwS4TdDjEe65xsg0ogRM/Nc3DYOhEAlW+xobZo=
 gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 gopkg.in/yaml.v2 v2.2.7 h1:VUgggvou5XRW9mHwD/yXxIYSMtY0zoKQf/v226p2nyo=
 gopkg.in/yaml.v2 v2.2.7/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

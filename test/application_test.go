@@ -2,56 +2,60 @@ package test
 
 import (
 	"github.com/lanvard/contract/inter"
-	httpFoundation "github.com/lanvard/foundation/http"
+	"github.com/lanvard/foundation"
 	"github.com/stretchr/testify/assert"
-	"lanvard/app/http"
-	"lanvard/bootstrap"
-	"lanvard/config"
 	"testing"
 )
 
-func Test_binding(t *testing.T) {
-	app := bootstrap.NewApp()
+type testInterface interface{}
+type testStruct struct {
+	App *inter.App
+	TestCount int
+}
 
-	app.Container.Singleton(
-		(*inter.HttpKernel)(nil),
-		http.NewKernel(app),
+func Test_binding(t *testing.T) {
+	var container inter.Container = foundation.NewContainer()
+
+	app := &foundation.Application{}
+	app.SetContainer(&container)
+
+	app.Singleton(
+		(*testInterface)(nil),
+		testStruct{},
 	)
 
-	app.Container.Singleton(
+	app.Singleton(
 		"testSingleton",
 		"testSingletonValue",
 	)
 
-	assert.GreaterOrEqual(t, len(app.Container.GetBindings()), 3)
+	assert.Equal(t, len((*app.Container()).Bindings()), 2)
 }
 
 func Test_application_make(t *testing.T) {
-	app := bootstrap.NewApp()
+	app := foundation.NewApp()
 
-	app.Container.Singleton(
-		(*interfaceHttp.Kernel)(nil),
-		httpFoundation.Kernel{},
+	(*app.Container()).Singleton(
+		(*testInterface)(nil),
+		testStruct{},
 	)
 
-	kernel := app.Container.Make((*interfaceHttp.Kernel)(nil))
+	struct1 := app.Make((*testInterface)(nil))
 
-	assert.Equal(t, httpFoundation.Kernel{}, kernel)
+	assert.Equal(t, testStruct{}, struct1)
 }
 
 func Test_application_environment(t *testing.T) {
-	config.App.Env = "local"
-
-	app := bootstrap.NewApp()
+	app := foundation.NewApp()
+	(*app.Container()).Instance("env", "local")
 
 	environment, _ := app.Environment()
 	assert.Equal(t, "local", environment)
 }
 
 func Test_application_environment_error(t *testing.T) {
-	config.App.Env = ""
-
-	app := bootstrap.NewApp()
+	app := foundation.NewApp()
+	(*app.Container()).Instance("env", "")
 
 	_, err := app.Environment()
 
@@ -60,12 +64,11 @@ func Test_application_environment_error(t *testing.T) {
 }
 
 func Test_application_is_environment(t *testing.T) {
-	config.App.Env = "local"
-
-	app := bootstrap.NewApp()
+	app := foundation.NewApp()
+	(*app.Container()).Instance("env", "local")
 
 	assert.True(t, true, app.IsEnvironment("local"))
 	assert.True(t, true, app.IsEnvironment("production", "local"))
 	assert.False(t, false, app.IsEnvironment("production"))
-	assert.False(t, false, app.IsEnvironment("production", "staging"))
+	assert.False(t, false, app.IsEnvironment("production", "acceptance"))
 }

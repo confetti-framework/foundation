@@ -3,56 +3,71 @@ package foundation
 import (
 	"fmt"
 	"github.com/lanvard/contract/inter"
-	"lanvard/config"
 )
 
 type Application struct {
 	// The service container
-	container *Container
+	container *inter.Container
+}
 
-	// Indicates if the application has been bootstrapped before.
-	HasBeenBootstrapped bool
+func NewApp() *Application {
+	app := Application{}
+
+	container := NewContainer()
+	app.SetContainer(container)
+
+	return &app
 }
 
 // Get the service container
-func (a *Application) Container() *Container {
+func (a *Application) Container() *inter.Container {
 	return a.container
 }
 
 // Set the service container
-func (a *Application) SetContainer(container *Container) {
-	a.container = container
+func (a *Application) SetContainer(container inter.Container) {
+	a.container = &container
+}
+
+// Register a shared binding in the container.
+func (a *Application) Singleton(abstract interface{}, concrete interface{}) {
+	(*a.Container()).Singleton(abstract, concrete)
 }
 
 // Resolve the given type from the container.
-func (a Application) Make(abstract interface{}) interface{} {
-	return a.container.Make(abstract)
+func (a *Application) Make(abstract interface{}) interface{} {
+	return (*a.container).Make(abstract)
+}
+
+func (a *Application) Instance(abstract interface{}, concrete interface{}) interface{} {
+	return (*a.container).Instance(abstract, concrete)
 }
 
 // Bind all of the application paths in the container.
 func (a *Application) BindPathsInContainer(path inter.BasePath) {
-	a.container.Instance("path.app", path.AppPath())
-	a.container.Instance("path.base", path.BasePath())
-	a.container.Instance("path.lang", path.LangPath())
-	a.container.Instance("path.config", path.ConfigPath())
-	a.container.Instance("path.public", path.PublicPath())
-	a.container.Instance("path.storage", path.StoragePath())
-	a.container.Instance("path.database", path.DatabasePath())
-	a.container.Instance("path.resources", path.ResourcePath())
-	a.container.Instance("path.bootstrap", path.BootstrapPath())
+	container := *a.container
+	container.Instance("path.app", path.AppPath())
+	container.Instance("path.base", path.BasePath())
+	container.Instance("path.lang", path.LangPath())
+	container.Instance("path.config", path.ConfigPath())
+	container.Instance("path.public", path.PublicPath())
+	container.Instance("path.storage", path.StoragePath())
+	container.Instance("path.database", path.DatabasePath())
+	container.Instance("path.resources", path.ResourcePath())
+	container.Instance("path.bootstrap", path.BootstrapPath())
 }
 
 func (a *Application) Environment() (string, error) {
-	if config.App.Env == "" {
+	if a.Make("env") == "" {
 		return "", fmt.Errorf("environment not found")
 	}
 
-	return config.App.Env, nil
+	return a.Make("env").(string), nil
 }
 
 func (a *Application) IsEnvironment(environments ...string) bool {
 	for _, environment := range environments {
-		if environment == config.App.Env {
+		if environment == a.Make("env") {
 			return true
 		}
 	}
