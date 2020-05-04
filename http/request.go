@@ -2,20 +2,22 @@ package http
 
 import (
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/routing"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"strings"
 )
 
 type Request struct {
-	App    inter.App
-	Source http.Request
+	app       inter.App
+	source    http.Request
+	urlValues map[string]string
 }
 
 type Options struct {
-	App    inter.App
 	Source http.Request
 	Method string
 	Url    string
@@ -23,33 +25,38 @@ type Options struct {
 	Host   string
 }
 
-func NewRequest(options Options) inter.Request {
+func NewRequest(sourceRequest http.Request) inter.Request {
+	return &Request{source: sourceRequest}
+}
 
-	if options.Method != "" {
+func NewTestRequest(options Options) inter.Request {
+
+	if "" != options.Method {
 		options.Source.Method = options.Method
 	}
 
-	if options.Host != "" {
+	if "" != options.Host {
 		options.Source.Host = options.Host
 	}
 
-	if options.Url != "" {
+	if "" != options.Url {
 		options.Source.URL = &url.URL{Path: options.Url}
 	}
 
-	if options.Header != nil {
+	if nil != options.Header {
 		options.Source.Header = options.Header
 	}
 
-	request := Request{}
-	request.Source = options.Source
-	request.App = options.App
+	// @todo make body fillable for tests
+	var body io.Reader
+	sourceRequest := httptest.NewRequest(options.Source.Method, options.Source.URL.Path, body)
+	options.Source = *sourceRequest
 
-	return request
+	return &Request{source: options.Source}
 }
 
 func (r Request) Content() string {
-	body, err := ioutil.ReadAll(r.Source.Body)
+	body, err := ioutil.ReadAll(r.source.Body)
 	if err == io.EOF {
 		return ""
 	}
@@ -57,22 +64,40 @@ func (r Request) Content() string {
 	return string(body)
 }
 
-func (r Request) SetContent(content string) inter.Request {
-	r.Source.Body = ioutil.NopCloser(strings.NewReader(content))
+func (r *Request) SetContent(content string) inter.Request {
+	r.source.Body = ioutil.NopCloser(strings.NewReader(content))
 
 	return r
 }
 
-func (r Request) GetMethod() string {
-	return r.Source.Method
+func (r Request) Method() string {
+	return r.source.Method
 }
 
-func (r Request) SetApp(app inter.App) inter.Request {
-	r.App = app
+func (r Request) App() inter.App {
+	return r.app
+}
+
+func (r *Request) SetApp(app inter.App) inter.Request {
+	r.app = app
 
 	return r
 }
 
-func (r Request) GetSource() http.Request {
-	return r.Source
+func (r Request) Source() http.Request {
+	return r.source
 }
+
+func (r Request) UrlValues() inter.UrlValues {
+	return routing.NewUrlByValues(r.urlValues)
+}
+
+func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
+	r.urlValues = vars
+	return r
+}
+
+func (r Request) QueryValues() inter.UrlValues {
+	return routing.NewUrlByMultiValues(r.Source().URL.Query())
+}
+
