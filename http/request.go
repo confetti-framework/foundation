@@ -1,6 +1,7 @@
 package http
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/routing"
 	"io"
@@ -18,18 +19,16 @@ type Request struct {
 }
 
 type Options struct {
+	App    inter.App
 	Source http.Request
 	Method string
 	Url    string
 	Header http.Header
 	Host   string
+	Route  *mux.Route
 }
 
-func NewRequest(sourceRequest http.Request) inter.Request {
-	return &Request{source: sourceRequest}
-}
-
-func NewTestRequest(options Options) inter.Request {
+func NewRequest(options Options) inter.Request {
 
 	if "" != options.Method {
 		options.Source.Method = options.Method
@@ -49,10 +48,28 @@ func NewTestRequest(options Options) inter.Request {
 
 	// @todo make body fillable for tests
 	var body io.Reader
+
 	sourceRequest := httptest.NewRequest(options.Source.Method, options.Source.URL.Path, body)
 	options.Source = *sourceRequest
 
-	return &Request{source: options.Source}
+	request := Request{source: options.Source}
+
+	if nil != options.App {
+		request.app = options.App
+	}
+
+	// add route values to request
+	if nil != options.Route {
+		var match mux.RouteMatch
+		ok := options.Route.Match(&options.Source, &match)
+		if !ok {
+			panic("test route don't match with url")
+		}
+
+		request.SetUrlValues(match.Vars)
+	}
+
+	return &request
 }
 
 func (r Request) Content() string {
@@ -100,4 +117,3 @@ func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
 func (r Request) QueryValues() inter.UrlValues {
 	return routing.NewUrlByMultiValues(r.Source().URL.Query())
 }
-

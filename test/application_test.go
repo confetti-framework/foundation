@@ -17,7 +17,7 @@ func Test_binding(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 
 	app := &foundation.Application{}
-	app.SetContainer(&container)
+	app.SetContainer(container)
 
 	app.Singleton(
 		(*testInterface)(nil),
