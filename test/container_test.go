@@ -124,7 +124,7 @@ func Test_binding_and_make_from_interface(t *testing.T) {
 func Test_binding_without_abstract(t *testing.T) {
 	container := foundation.NewContainer()
 
-	container.JustBind(testStruct{TestCount: 1})
+	container.BindStruct(testStruct{TestCount: 1})
 
 	resolvedStruct := container.Make(testStruct{}).(testStruct)
 

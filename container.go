@@ -102,7 +102,7 @@ func (c *Container) Instance(abstract interface{}, concrete interface{}) interfa
 }
 
 // Register an existing instance as shared in the container without an abstract
-func (c *Container) JustBind(concrete interface{}) interface{} {
+func (c *Container) BindStruct(concrete interface{}) interface{} {
 	c.Instance(concrete, concrete)
 
 	return concrete

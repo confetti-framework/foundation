@@ -31,7 +31,7 @@ func (a *Application) SetContainer(container inter.Container) {
 
 // Register a shared binding in the container.
 func (a *Application) Singleton(abstract interface{}, concrete interface{}) {
-	(*a.Container()).Singleton(abstract, concrete)
+	(*a.container).Singleton(abstract, concrete)
 }
 
 // Resolve the given type from the container.
@@ -41,6 +41,10 @@ func (a *Application) Make(abstract interface{}) interface{} {
 
 func (a *Application) Instance(abstract interface{}, concrete interface{}) interface{} {
 	return (*a.container).Instance(abstract, concrete)
+}
+
+func (a *Application) BindStruct(abstract interface{}) interface{} {
+	return (*a.container).BindStruct(abstract)
 }
 
 // Bind all of the application paths in the container.
