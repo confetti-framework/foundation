@@ -25,6 +25,7 @@ type Options struct {
 	Url    string
 	Header http.Header
 	Host   string
+	Body   string
 	Route  *mux.Route
 }
 
@@ -46,8 +47,11 @@ func NewRequest(options Options) inter.Request {
 		options.Source.Header = options.Header
 	}
 
-	// @todo make body fillable for tests
 	var body io.Reader
+
+	if "" != options.Body {
+		body = strings.NewReader(options.Body)
+	}
 
 	sourceRequest := httptest.NewRequest(options.Source.Method, options.Source.URL.Path, body)
 	options.Source = *sourceRequest

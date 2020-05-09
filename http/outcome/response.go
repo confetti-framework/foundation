@@ -17,6 +17,10 @@ func Json(content interface{}) inter.Response {
 	return Response{content: content}
 }
 
+func Http(content interface{}) inter.Response {
+	return Response{content: content}
+}
+
 func (r Response) Content() string {
 
 	stringer, ok := r.content.(string)
