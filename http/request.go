@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/routing"
+	"github.com/lanvard/foundation"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -19,14 +19,14 @@ type Request struct {
 }
 
 type Options struct {
-	App    inter.App
-	Source http.Request
-	Method string
-	Url    string
-	Header http.Header
-	Host   string
-	Body   string
-	Route  *mux.Route
+	App     inter.App
+	Source  http.Request
+	Method  string
+	Url     string
+	Headers http.Header
+	Host    string
+	Body    string
+	Route   *mux.Route
 }
 
 func NewRequest(options Options) inter.Request {
@@ -43,8 +43,8 @@ func NewRequest(options Options) inter.Request {
 		options.Source.URL = &url.URL{Path: options.Url}
 	}
 
-	if nil != options.Header {
-		options.Source.Header = options.Header
+	if nil != options.Headers {
+		options.Source.Header = options.Headers
 	}
 
 	var body io.Reader
@@ -60,6 +60,8 @@ func NewRequest(options Options) inter.Request {
 
 	if nil != options.App {
 		request.app = options.App
+	} else {
+		request.app = foundation.NewApp()
 	}
 
 	// add route values to request
@@ -91,10 +93,6 @@ func (r *Request) SetContent(content string) inter.Request {
 	return r
 }
 
-func (r Request) Method() string {
-	return r.source.Method
-}
-
 func (r Request) App() inter.App {
 	return r.app
 }
@@ -109,8 +107,12 @@ func (r Request) Source() http.Request {
 	return r.source
 }
 
+func (r Request) Method() string {
+	return r.source.Method
+}
+
 func (r Request) UrlValues() inter.UrlValues {
-	return routing.NewUrlByValues(r.urlValues)
+	return NewUrlByValues(r.urlValues)
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
@@ -119,5 +121,13 @@ func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
 }
 
 func (r Request) QueryValues() inter.UrlValues {
-	return routing.NewUrlByMultiValues(r.Source().URL.Query())
+	return NewUrlByMultiValues(r.Source().URL.Query())
+}
+
+func (r Request) Header(key string) string {
+	return r.source.Header.Get(key)
+}
+
+func (r Request) Headers() http.Header {
+	return r.source.Header
 }
