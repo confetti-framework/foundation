@@ -81,6 +81,10 @@ func (u UrlValues) NumberE(key string) (int, error) {
 		return 0, u.getException(key)
 	}
 
+	if "" == result {
+		return 0, nil
+	}
+
 	return strconv.Atoi(result)
 }
 

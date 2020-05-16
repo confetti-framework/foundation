@@ -21,7 +21,7 @@ func Json(content interface{}) inter.Response {
 	return &Response{status: http.StatusOK, content: content}
 }
 
-func Http(content interface{}) inter.Response {
+func Html(content interface{}) inter.Response {
 	return &Response{status: http.StatusOK, content: content}
 }
 
