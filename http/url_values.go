@@ -1,149 +1,72 @@
 package http
 
 import (
-	"github.com/lanvard/contract/entity"
-	"net/url"
-	"strconv"
-	"strings"
+	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/support"
 )
 
-type UrlValues struct {
-	source url.Values
-}
+// Values maps a string key to a list of values.
+// It is typically used for query parameters and form values.
+// Unlike in the http.Header map, the keys in a Values map
+// are case-sensitive.
+type Values map[string][]inter.Value
 
-func NewUrlByValues(values map[string]string) UrlValues {
-	source := url.Values{}
+func NewUrlByValues(rawValues map[string]string) Values {
+	result := Values{}
 
-	for key, value := range values {
-		source.Add(key, value)
+	for key, value := range rawValues {
+		result.Add(key, support.NewValue(value))
 	}
 
-	return UrlValues{source: source}
+	return result
 }
 
-func NewUrlByMultiValues(values map[string][]string) UrlValues {
-	return UrlValues{source: values}
-}
+func NewUrlByMultiValues(rawMapWithValues map[string][]string) Values {
+	result := Values{}
 
-func (u UrlValues) Source() url.Values {
-	return u.source
-}
-
-func (u UrlValues) String(key string) string {
-	value, err := u.StringE(key)
-	if nil != err {
-		panic(err)
-	}
-
-	return value
-}
-
-func (u UrlValues) StringE(key string) (string, error) {
-	value, found := u.get(key)
-
-	if ! found {
-		return "", u.getException(key)
-	}
-
-	return value, nil
-}
-
-func (u UrlValues) Strings(key string) []string {
-	values, err := u.StringsE(key)
-	if nil != err {
-		panic(err)
-	}
-
-	return values
-}
-
-func (u UrlValues) StringsE(key string) ([]string, error) {
-	values, found := u.getSlice(key)
-	if ! found {
-		return nil, u.getException(key)
-	}
-
-	return values, nil
-}
-
-func (u UrlValues) Number(key string) int {
-	values, err := u.NumberE(key)
-	if nil != err {
-		panic(err)
-	}
-
-	return values
-}
-
-func (u UrlValues) NumberE(key string) (int, error) {
-	result, found := u.get(key)
-	if ! found {
-		return 0, u.getException(key)
-	}
-
-	if "" == result {
-		return 0, nil
-	}
-
-	return strconv.Atoi(result)
-}
-
-func (u UrlValues) Numbers(key string) []int {
-	values, err := u.NumbersE(key)
-	if nil != err {
-		panic(err)
-	}
-
-	return values
-}
-
-func (u UrlValues) NumbersE(key string) ([]int, error) {
-	rawValues, found := u.getSlice(key)
-	if ! found {
-		return nil, u.getException(key)
-	}
-
-	var result []int
-
-	for _, rawValue := range rawValues {
-		value, err := strconv.Atoi(rawValue)
-		if nil != err {
-			return nil, err
+	for key, rawValues := range rawMapWithValues {
+		for _, value := range rawValues {
+			result.Add(key, support.NewValue(value))
 		}
-
-		result = append(result, value)
 	}
 
-	return result, nil
+	return result
 }
 
 // Get gets the first value associated with the given key.
 // If there are no values associated with the key, Get returns
 // the empty string. To access multiple values, use the map
 // directly.
-func (u UrlValues) get(key string) (value string, found bool) {
-	if u.source == nil {
-		return "", false
-	}
-
-	vs := u.Source()[key]
+func (v Values) Get(key string) inter.Value {
+	vs := v[key]
 	if len(vs) == 0 {
-		return "", false
+		return nil
 	}
-
-	return vs[0], true
+	return vs[0]
 }
 
-func (u UrlValues) getSlice(key string) (values []string, found bool) {
-	rawValues, found := u.get(key)
-	if ! found {
-		return nil, false
+func (v Values) GetMulti(key string) []inter.Value {
+	values, ok := v[key]
+	if ! ok {
+		return nil
 	}
 
-	return strings.Split(rawValues, ","), true
+	return values
 }
 
-func (u UrlValues) getException(key string) entity.Exception {
-	return entity.Exception{Code: "value_not_found_in_url", Human: "key %key not found in uri",
-		Values: map[string]string{"key": key}}
+// Set sets the key to value. It replaces any existing
+// values.
+func (v Values) Set(key string, value inter.Value) {
+	v[key] = []inter.Value{value}
+}
+
+// Add adds the value to key. It appends to any existing
+// values associated with key.
+func (v Values) Add(key string, value inter.Value) {
+	v[key] = append(v[key], value)
+}
+
+// Del deletes the values associated with key.
+func (v Values) Del(key string) {
+	delete(v, key)
 }

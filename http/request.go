@@ -3,7 +3,6 @@ package http
 import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -60,8 +59,6 @@ func NewRequest(options Options) inter.Request {
 
 	if nil != options.App {
 		request.app = options.App
-	} else {
-		request.app = foundation.NewApp()
 	}
 
 	// add route values to request
@@ -111,8 +108,8 @@ func (r Request) Method() string {
 	return r.source.Method
 }
 
-func (r Request) UrlValues() inter.UrlValues {
-	return NewUrlByValues(r.urlValues)
+func (r Request) UrlValue(key string) inter.Value {
+	return NewUrlByValues(r.urlValues).Get(key)
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
@@ -120,8 +117,12 @@ func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
 	return r
 }
 
-func (r Request) QueryValues() inter.UrlValues {
-	return NewUrlByMultiValues(r.Source().URL.Query())
+func (r Request) QueryValue(key string) inter.Value {
+	return NewUrlByMultiValues(r.Source().URL.Query()).Get(key)
+}
+
+func (r Request) QueryValues(key string) []inter.Value {
+	return NewUrlByMultiValues(r.Source().URL.Query()).GetMulti(key)
 }
 
 func (r Request) Header(key string) string {

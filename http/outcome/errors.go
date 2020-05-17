@@ -1,9 +1,11 @@
 package outcome
 
-func Error(errors error) Response {
-	return Response{}
+import "github.com/lanvard/contract/inter"
+
+func Error(errors error) inter.Response {
+	return &Response{}
 }
 
-func Errors(errors []error) Response {
-	return Response{}
+func Errors(errors []error) inter.Response {
+	return &Response{}
 }
