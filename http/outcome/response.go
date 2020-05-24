@@ -35,7 +35,7 @@ func (r Response) Content() string {
 	mapper, ok := r.content.(inter.ToMap)
 	if ok {
 		jsonString, err := json.Marshal(mapper.ToMap())
-		if nil != err {
+		if err != nil {
 			panic(err.Error())
 		}
 

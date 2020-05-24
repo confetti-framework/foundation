@@ -30,25 +30,25 @@ type Options struct {
 
 func NewRequest(options Options) inter.Request {
 
-	if "" != options.Method {
+	if options.Method != "" {
 		options.Source.Method = options.Method
 	}
 
-	if "" != options.Host {
+	if options.Host != "" {
 		options.Source.Host = options.Host
 	}
 
-	if "" != options.Url {
+	if options.Url != "" {
 		options.Source.URL = &url.URL{Path: options.Url}
 	}
 
-	if nil != options.Headers {
+	if options.Headers != nil {
 		options.Source.Header = options.Headers
 	}
 
 	var body io.Reader
 
-	if "" != options.Body {
+	if options.Body != "" {
 		body = strings.NewReader(options.Body)
 	}
 
@@ -57,12 +57,12 @@ func NewRequest(options Options) inter.Request {
 
 	request := Request{source: options.Source}
 
-	if nil != options.App {
+	if options.App != nil {
 		request.app = options.App
 	}
 
 	// add route values to request
-	if nil != options.Route {
+	if options.Route != nil {
 		var match mux.RouteMatch
 		ok := options.Route.Match(&options.Source, &match)
 		if !ok {

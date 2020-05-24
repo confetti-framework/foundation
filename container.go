@@ -144,10 +144,6 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 		concrete = abstract
 	}
 
-	if concrete == nil {
-		panic("Can't resolve container with: " + abstractName)
-	}
-
 	return concrete
 }
 

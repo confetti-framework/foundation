@@ -11,8 +11,8 @@ import (
 func Test_number_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/users/1432",
-		Route: new(mux.Route).Path("/users/{user_id}"),
+		Url:    "/user/1432",
+		Route: new(mux.Route).Path("/user/{user_id}"),
 	})
 
 	urlValue := request.UrlValue("user_id")
@@ -26,8 +26,8 @@ func Test_number_from_uri(t *testing.T) {
 func Test_numbers_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/users/1432,5423",
-		Route: new(mux.Route).Path("/users/{user_ids}"),
+		Url:    "/user/1432,5423",
+		Route: new(mux.Route).Path("/user/{user_ids}"),
 	})
 
 	urlValues := request.UrlValue("user_ids")
