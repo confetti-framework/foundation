@@ -3,12 +3,11 @@ package http
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/middleware"
-	"github.com/lanvard/routing/router"
 )
 
 type Kernel struct {
 	App        *inter.App
-	Router     router.Router
+	Router     Router
 	Middleware []inter.Pipe
 }
 
@@ -32,6 +31,6 @@ func (k Kernel) sendRequestThroughRouter(request inter.Request) inter.Response {
 
 func (k Kernel) dispatchToRouter() inter.MiddlewareDestination {
 	return func(request inter.Request) inter.Response {
-		return router.NewRouter(k.App).DispatchToRoute(request)
+		return NewRouter(k.App).DispatchToRoute(request)
 	}
 }
