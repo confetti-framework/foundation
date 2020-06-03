@@ -132,3 +132,7 @@ func (r Request) Header(key string) string {
 func (r Request) Headers() http.Header {
 	return r.source.Header
 }
+
+func (r Request) Route() inter.Route {
+	return r.app.Make("route").(inter.Route)
+}
