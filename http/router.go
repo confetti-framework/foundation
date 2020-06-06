@@ -2,19 +2,18 @@ package http
 
 import (
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation/http/middleware"
 )
 
 type Router struct {
-	app            *inter.App
 	routes         inter.RouteCollection
 	currentRequest inter.Request
 }
 
-func NewRouter(appPointer *inter.App) Router {
-	app := *appPointer
+func NewRouter(app inter.App) Router {
 	routes := app.Make("routes").(inter.RouteCollection)
 
-	return Router{app: &app, routes: routes}
+	return Router{routes: routes}
 }
 
 func (r Router) DispatchToRoute(request inter.Request) inter.Response {
@@ -23,6 +22,9 @@ func (r Router) DispatchToRoute(request inter.Request) inter.Response {
 	route := r.routes.Match(request)
 
 	// todo implement event Events\RouteMatched
-	// todo implement RouteMiddleware
-	return route.Controller()(request)
+
+	return middleware.NewPipeline(request.App()).
+		Send(request).
+		Through(route.Middleware()).
+		Then(route.Controller())
 }

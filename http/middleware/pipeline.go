@@ -14,16 +14,16 @@ type Pipe interface {
 
 // noinspection GoNameStartsWithPackageName
 type Pipeline struct {
-	App *inter.App
+	App inter.App
 
 	// The object being passed through the contract.
 	Passable inter.Request
 
 	// the array of pipes.
-	Pipes []inter.Pipe
+	Pipes []inter.HttpMiddleware
 }
 
-func NewPipeline(app *inter.App) Pipeline {
+func NewPipeline(app inter.App) Pipeline {
 	return Pipeline{App: app}
 }
 
@@ -39,7 +39,7 @@ func (p Pipeline) Send(passable inter.Request) Pipeline {
 }
 
 // Set the array of pipes.
-func (p Pipeline) Through(pipes []inter.Pipe) Pipeline {
+func (p Pipeline) Through(pipes []inter.HttpMiddleware) Pipeline {
 	p.Pipes = pipes
 
 	return p
@@ -71,12 +71,18 @@ func (p Pipeline) Then(destination inter.MiddlewareDestination) inter.Response {
 		}
 	}
 
+	// If no callbacks can be generated because no pipes
+	// are present, proceed directly to the destination
+	if callbacks == nil {
+		callbacks = append(callbacks, destination)
+	}
+
 	nextCallback = len(callbacks) - 1
 
 	return callbacks[nextCallback](p.Passable)
 }
 
-func reverse(pipes []inter.Pipe) []inter.Pipe {
+func reverse(pipes []inter.HttpMiddleware) []inter.HttpMiddleware {
 	for left, right := 0, len(pipes)-1; left < right; left, right = left+1, right-1 {
 		pipes[left], pipes[right] = pipes[right], pipes[left]
 	}

@@ -11,8 +11,8 @@ import (
 func Test_number_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/user/1432",
-		Route: new(mux.Route).Path("/user/{user_id}"),
+		Uri:    "/user/1432",
+		Route:  new(mux.Route).Path("/user/{user_id}"),
 	})
 
 	urlValue := request.UrlValue("user_id")
@@ -26,8 +26,8 @@ func Test_number_from_uri(t *testing.T) {
 func Test_numbers_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/user/1432,5423",
-		Route: new(mux.Route).Path("/user/{user_ids}"),
+		Uri:    "/user/1432,5423",
+		Route:  new(mux.Route).Path("/user/{user_ids}"),
 	})
 
 	urlValues := request.UrlValue("user_ids")
@@ -41,8 +41,8 @@ func Test_numbers_from_uri(t *testing.T) {
 func Test_number_from_query(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/users?user_id=1432",
-		Route: new(mux.Route).Path("/users"),
+		Uri:    "/users?user_id=1432",
+		Route:  new(mux.Route).Path("/users"),
 	})
 
 	queryValue := request.QueryValue("user_id")
@@ -56,8 +56,8 @@ func Test_number_from_query(t *testing.T) {
 func Test_numbers_from_query(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Url:    "/users?user_ids=1432,5423",
-		Route: new(mux.Route).Path("/users"),
+		Uri:    "/users?user_ids=1432,5423",
+		Route:  new(mux.Route).Path("/users"),
 	})
 
 	queryValues := request.QueryValue("user_ids")

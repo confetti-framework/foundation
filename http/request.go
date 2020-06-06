@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"strings"
 )
 
@@ -21,30 +20,14 @@ type Options struct {
 	App     inter.App
 	Source  http.Request
 	Method  string
-	Url     string
-	Headers http.Header
 	Host    string
+	Uri     string
+	Headers http.Header
 	Body    string
 	Route   *mux.Route
 }
 
 func NewRequest(options Options) inter.Request {
-
-	if options.Method != "" {
-		options.Source.Method = options.Method
-	}
-
-	if options.Host != "" {
-		options.Source.Host = options.Host
-	}
-
-	if options.Url != "" {
-		options.Source.URL = &url.URL{Path: options.Url}
-	}
-
-	if options.Headers != nil {
-		options.Source.Header = options.Headers
-	}
 
 	var body io.Reader
 
@@ -52,21 +35,30 @@ func NewRequest(options Options) inter.Request {
 		body = strings.NewReader(options.Body)
 	}
 
-	sourceRequest := httptest.NewRequest(options.Source.Method, options.Source.URL.Path, body)
-	options.Source = *sourceRequest
+	source := options.Source
 
-	request := Request{source: options.Source}
+	source = *httptest.NewRequest(options.Method, options.Uri, body)
+
+	if options.Host != "" {
+		source.Host = options.Host
+	}
+
+	if options.Headers != nil {
+		source.Header = options.Headers
+	}
+
+	request := Request{source: source}
 
 	if options.App != nil {
 		request.app = options.App
 	}
 
-	// add route values to request
+	// If a route has been identified (usually by a test), add route values to request.
 	if options.Route != nil {
 		var match mux.RouteMatch
-		ok := options.Route.Match(&options.Source, &match)
+		ok := options.Route.Match(&source, &match)
 		if !ok {
-			panic("test route don't match with url")
+			panic("Route don't match with url")
 		}
 
 		request.SetUrlValues(match.Vars)
