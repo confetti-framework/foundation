@@ -37,6 +37,10 @@ func NewRequest(options Options) inter.Request {
 
 	source := options.Source
 
+	if options.Uri == "" {
+		options.Uri = "/"
+	}
+
 	source = *httptest.NewRequest(options.Method, options.Uri, body)
 
 	if options.Host != "" {
@@ -90,6 +94,10 @@ func (r *Request) SetApp(app inter.App) inter.Request {
 	r.app = app
 
 	return r
+}
+
+func (r *Request) Make(abstract interface{}) interface{} {
+	return r.App().Make(abstract)
 }
 
 func (r Request) Source() http.Request {

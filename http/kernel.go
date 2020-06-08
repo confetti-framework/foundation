@@ -27,7 +27,7 @@ func (k Kernel) sendRequestThroughRouter(request inter.Request) inter.Response {
 		Then(k.dispatchToRouter())
 }
 
-func (k Kernel) dispatchToRouter() inter.MiddlewareDestination {
+func (k Kernel) dispatchToRouter() inter.Next {
 	return func(request inter.Request) inter.Response {
 		return NewRouter(request.App()).DispatchToRoute(request)
 	}

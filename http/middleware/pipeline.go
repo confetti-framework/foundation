@@ -9,7 +9,7 @@ import (
 )
 
 type Pipe interface {
-	Handle(data inter.Request, next inter.MiddlewareDestination) inter.Response
+	Handle(data inter.Request, next inter.Next) inter.Response
 }
 
 // noinspection GoNameStartsWithPackageName
@@ -46,7 +46,7 @@ func (p Pipeline) Through(pipes []inter.HttpMiddleware) Pipeline {
 }
 
 // Run the contract with a final destination callback.
-func (p Pipeline) Then(destination inter.MiddlewareDestination) inter.Response {
+func (p Pipeline) Then(destination inter.Next) inter.Response {
 
 	var callbacks []func(data inter.Request) inter.Response
 	var nextCallback = 0
