@@ -1,19 +1,23 @@
 package http
 
 import (
+	"errors"
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation/http/method"
+	"github.com/lanvard/support"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 )
 
 type Request struct {
 	app       inter.App
 	source    http.Request
-	urlValues map[string]string
+	urlValues support.Map
 }
 
 type Options struct {
@@ -23,6 +27,7 @@ type Options struct {
 	Host    string
 	Uri     string
 	Headers http.Header
+	Form    url.Values
 	Body    string
 	Route   *mux.Route
 }
@@ -42,6 +47,12 @@ func NewRequest(options Options) inter.Request {
 	}
 
 	source = *httptest.NewRequest(options.Method, options.Uri, body)
+
+	if options.Form != nil {
+		source.Header.Set("Content-Type", "multipart/form-data; boundary=xxx")
+
+		source.Form = options.Form
+	}
 
 	if options.Host != "" {
 		source.Host = options.Host
@@ -105,24 +116,61 @@ func (r Request) Source() http.Request {
 }
 
 func (r Request) Method() string {
+	if r.source.Method == "" {
+		return method.Get
+	}
+
 	return r.source.Method
 }
 
-func (r Request) UrlValue(key string) inter.Value {
-	return NewUrlByValues(r.urlValues).Get(key)
+func (r Request) IsMethod(method string) bool {
+	return r.Method() == strings.ToUpper(method)
+}
+
+func (r Request) Path() string {
+	return r.source.URL.Path
+}
+
+func (r Request) Url() string {
+	return r.source.URL.Scheme + r.source.Host + r.source.URL.Path
+}
+
+func (r Request) FullUrl() string {
+	return r.source.URL.Scheme + r.source.Host + r.source.RequestURI
+}
+
+func (r Request) All() inter.Bag {
+	urlBag := support.NewBagByMap(r.urlValues)
+	queryBag := support.NewBag(r.Source().URL.Query())
+	formBag := support.NewBag(r.source.Form)
+	return urlBag.Merge(queryBag, formBag)
+}
+
+func (r Request) Value(key string) inter.Value {
+	values := r.Values(key)
+	if values.Len() == 0 {
+		return support.NewValueE("", errors.New(key + " not found"))
+	}
+
+	return values.First()
+}
+
+func (r Request) ValueOr(key string, value interface{}) inter.Value {
+	values := r.Values(key)
+	if values.Len() == 0 {
+		return support.NewValue(value)
+	}
+
+	return values.First()
+}
+
+func (r Request) Values(key string) inter.Collection {
+	return r.All().GetMany(key)
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
-	r.urlValues = vars
+	r.urlValues = support.NewMapByString(vars)
 	return r
-}
-
-func (r Request) QueryValue(key string) inter.Value {
-	return NewUrlByMultiValues(r.Source().URL.Query()).Get(key)
-}
-
-func (r Request) QueryValues(key string) []inter.Value {
-	return NewUrlByMultiValues(r.Source().URL.Query()).GetMulti(key)
 }
 
 func (r Request) Header(key string) string {
