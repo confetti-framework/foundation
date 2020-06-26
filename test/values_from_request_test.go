@@ -33,12 +33,12 @@ func Test_numbers_from_uri(t *testing.T) {
 		Route:  new(mux.Route).Path("/user/{user_ids}"),
 	})
 
-	urlValues := request.Value("user_ids")
+	values := request.Value("user_ids")
 
-	assert.Equal(t, []int{1432, 5423}, urlValues.Numbers())
-	assert.Equal(t, []string{"1432", "5423"}, urlValues.Strings())
-	assert.NotEqual(t, []int{1432, 5423}, urlValues.Strings())
-	assert.NotEqual(t, []string{"1432", "5423"}, urlValues.Numbers())
+	assert.Equal(t, []int{1432, 5423}, values.Numbers())
+	assert.Equal(t, []string{"1432", "5423"}, values.Strings())
+	assert.NotEqual(t, []int{1432, 5423}, values.Strings())
+	assert.NotEqual(t, []string{"1432", "5423"}, values.Numbers())
 }
 
 func Test_number_from_query(t *testing.T) {
@@ -48,12 +48,12 @@ func Test_number_from_query(t *testing.T) {
 		Route:  new(mux.Route).Path("/users"),
 	})
 
-	queryValue := request.Value("user_id")
+	value := request.Value("user_id")
 
-	assert.Equal(t, 1432, queryValue.Number())
-	assert.Equal(t, "1432", queryValue.String())
-	assert.NotEqual(t, 1432, queryValue.String())
-	assert.NotEqual(t, "1432", queryValue.Number())
+	assert.Equal(t, 1432, value.Number())
+	assert.Equal(t, "1432", value.String())
+	assert.NotEqual(t, 1432, value.String())
+	assert.NotEqual(t, "1432", value.Number())
 }
 
 func Test_numbers_from_query(t *testing.T) {
@@ -63,12 +63,12 @@ func Test_numbers_from_query(t *testing.T) {
 		Route:  new(mux.Route).Path("/users"),
 	})
 
-	queryValues := request.Value("user_ids")
+	values := request.Value("user_ids")
 
-	assert.Equal(t, []int{1432, 5423}, queryValues.Numbers())
-	assert.Equal(t, []string{"1432", "5423"}, queryValues.Strings())
-	assert.NotEqual(t, []int{1432, 5423}, queryValues.Strings())
-	assert.NotEqual(t, []string{"1432", "5423"}, queryValues.Numbers())
+	assert.Equal(t, []int{1432, 5423}, values.Numbers())
+	assert.Equal(t, []string{"1432", "5423"}, values.Strings())
+	assert.NotEqual(t, []int{1432, 5423}, values.Strings())
+	assert.NotEqual(t, []string{"1432", "5423"}, values.Numbers())
 }
 
 func TestGetUrl(t *testing.T) {
@@ -89,14 +89,13 @@ func TestAllValues(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	assert.Equal(t,
-		support.Bag{
-			"field1": support.Collection{support.NewValue("value1")},
-			"field2": support.Collection{
-				support.NewValue("initial-value2"),
-				support.NewValue("value2")},
-			"language": support.Collection{support.NewValue("Go")},
-			"name":     support.Collection{support.NewValue("gopher")},
-			"user_id":  support.Collection{support.NewValue("1234")},
+		support.Map{
+			"age":      support.NewValue(support.NewCollection("10")),
+			"first":    support.NewValue(support.NewCollection("klaas")),
+			"second":   support.NewValue(support.NewCollection("bob", "tom")),
+			"language": support.NewValue(support.NewCollection("Go")),
+			"name":     support.NewValue(support.NewCollection("gopher")),
+			"user_id":  support.NewValue(support.NewCollection("1234")),
 		}, request.All())
 }
 
@@ -105,16 +104,18 @@ func TestFormValues(t *testing.T) {
 
 	assert.Equal(t, 1234, request.Value("user_id").Number())
 	assert.Equal(t, "Go", request.Value("language").String())
-	assert.Equal(t, "initial-value2", request.Value("field2").String())
-	assert.Equal(t, "initial-value2", request.Values("field2").First().String())
-	assert.Equal(t, support.NewCollection("initial-value2", "value2"), request.Values("field2"))
+	assert.Equal(t, "bob", request.Value("second").String())
+	assert.Equal(t, "bob", request.Values("second").First().String())
+	assert.Equal(t, support.NewCollection("bob", "tom"), request.Values("second"))
+	assert.Equal(t, "tom", request.Value("second.1").String())
 }
 
 //noinspection GoNilness
 func TestFormValueNotFound(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	_, err := request.Value("not_existing_param").NumberE()
+	value, err := request.Value("not_existing_param").NumberE()
+	assert.Equal(t, 0, value)
 	assert.Equal(t, "not_existing_param not found", err.Error())
 }
 
@@ -123,6 +124,11 @@ func TestValueOr(t *testing.T) {
 
 	assert.Equal(t, "Sally", request.ValueOr("fake", "Sally").String())
 	assert.Equal(t, "Go", request.ValueOr("language", "PHP").String())
+	assert.Equal(t, "Go", request.ValueOr("language.0", "PHP").String())
+
+	assert.Equal(t, 12, request.ValueOr("fake", 12).Number())
+	assert.Equal(t, 10, request.ValueOr("age", 12).Number())
+	assert.Equal(t, 10, request.ValueOr("age.0", 12).Number())
 }
 
 func fakeRequestWithForm() inter.Request {
@@ -131,10 +137,11 @@ func fakeRequestWithForm() inter.Request {
 		Host:   "https://api.lanvard.com",
 		Uri:    "/user/1432?user_id=1234",
 		Form: url.Values{
-			"language": []string{"Go"},
-			"name":     []string{"gopher"},
-			"field1":   []string{"value1"},
-			"field2":   []string{"initial-value2", "value2"},
+			"age":      {"10"},
+			"language": {"Go"},
+			"name":     {"gopher"},
+			"first":    {"klaas"},
+			"second":   {"bob", "tom"},
 		},
 	})
 }

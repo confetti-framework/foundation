@@ -1,7 +1,6 @@
 package http
 
 import (
-	"errors"
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/method"
@@ -139,38 +138,46 @@ func (r Request) FullUrl() string {
 	return r.source.URL.Scheme + r.source.Host + r.source.RequestURI
 }
 
-func (r Request) All() inter.Bag {
-	urlBag := support.NewBagByMap(r.urlValues)
-	queryBag := support.NewBag(r.Source().URL.Query())
-	formBag := support.NewBag(r.source.Form)
-	return urlBag.Merge(queryBag, formBag)
+func (r Request) All() support.Map {
+	result := r.urlValues
+	queryBag := support.NewMapByUrlValues(r.Source().URL.Query())
+	formBag := support.NewMapByUrlValues(r.source.Form)
+	return result.Merge(queryBag, formBag)
 }
 
-func (r Request) Value(key string) inter.Value {
-	values := r.Values(key)
-	if values.Len() == 0 {
-		return support.NewValueE("", errors.New(key + " not found"))
+func (r Request) Value(key string) support.Value {
+	return r.All().Get(key)
+}
+
+func (r Request) ValueOr(key string, defaultValue interface{}) support.Value {
+	value := r.Value(key)
+	if value.Error() == nil {
+		return value
 	}
 
-	return values.First()
+	return support.NewValue(defaultValue)
 }
 
-func (r Request) ValueOr(key string, value interface{}) inter.Value {
-	values := r.Values(key)
-	if values.Len() == 0 {
-		return support.NewValue(value)
-	}
-
-	return values.First()
-}
-
-func (r Request) Values(key string) inter.Collection {
+func (r Request) Values(key string) support.Collection {
 	return r.All().GetMany(key)
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
 	r.urlValues = support.NewMapByString(vars)
 	return r
+}
+
+func (r Request) Query(key string) support.Value {
+	return support.NewMapByUrlValues(r.Source().URL.Query()).Get(key)
+}
+
+func (r Request) QueryOr(key string, defaultValue interface{}) support.Value {
+	value := support.NewMapByUrlValues(r.Source().URL.Query()).Get(key)
+	if value.Error() == nil {
+		return value
+	}
+
+	return support.NewValue(defaultValue)
 }
 
 func (r Request) Header(key string) string {
