@@ -43,7 +43,7 @@ func Test_make_from_singleton_with_callback(t *testing.T) {
 		},
 	)
 
-	newStruct := app.Make(testStruct{}).(testStruct)
+	newStruct := app.Make(testStruct{})
 
 	assert.Equal(t, testStruct{TestCount: 1}, newStruct)
 }

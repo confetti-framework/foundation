@@ -153,7 +153,10 @@ func (c *Container) getConcreteBinding(concrete interface{}, object interface{},
 
 	// If concrete is a callback, run it and save the result
 	if support.Type(concrete) == reflect.Func {
-		concrete = concrete.(func() interface{})()
+		callback, simpleCallback := concrete.(func() interface{})
+		if simpleCallback {
+			concrete = callback()
+		}
 	}
 	c.bindings[abstractName] = concrete
 
@@ -165,7 +168,10 @@ func (c *Container) getConcreteAlias(concrete, abstract interface{}) interface{}
 
 	// If concrete is a callback, run it and save the result
 	if support.Type(concrete) == reflect.Func {
-		concrete = concrete.(func() interface{})()
+		callback, simpleCallback := concrete.(func() interface{})
+		if simpleCallback {
+			concrete = callback()
+		}
 	}
 	c.aliases[abstract.(string)] = concrete
 

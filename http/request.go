@@ -1,6 +1,7 @@
 package http
 
 import (
+	"bytes"
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/method"
@@ -36,7 +37,7 @@ func NewRequest(options Options) inter.Request {
 	var body io.Reader
 
 	if options.Body != "" {
-		body = strings.NewReader(options.Body)
+		body = bytes.NewBufferString(options.Body)
 	}
 
 	source := options.Source
@@ -76,24 +77,11 @@ func NewRequest(options Options) inter.Request {
 		}
 
 		request.SetUrlValues(match.Vars)
+	} else {
+		request.urlValues = support.Map{}
 	}
 
 	return &request
-}
-
-func (r Request) Content() string {
-	body, err := ioutil.ReadAll(r.source.Body)
-	if err == io.EOF {
-		return ""
-	}
-
-	return string(body)
-}
-
-func (r *Request) SetContent(content string) inter.Request {
-	r.source.Body = ioutil.NopCloser(strings.NewReader(content))
-
-	return r
 }
 
 func (r Request) App() inter.App {
@@ -138,19 +126,39 @@ func (r Request) FullUrl() string {
 	return r.source.URL.Scheme + r.source.Host + r.source.RequestURI
 }
 
-func (r Request) All() support.Map {
-	result := r.urlValues
-	queryBag := support.NewMapByUrlValues(r.Source().URL.Query())
-	formBag := support.NewMapByUrlValues(r.source.Form)
-	return result.Merge(queryBag, formBag)
+func (r Request) Content() string {
+	body, err := ioutil.ReadAll(r.source.Body)
+	if err == io.EOF {
+		return ""
+	}
+
+	return string(body)
 }
 
-func (r Request) Value(key string) support.Value {
-	return r.All().Get(key)
+func (r *Request) SetContent(content string) inter.Request {
+	r.source.Body = ioutil.NopCloser(strings.NewReader(content))
+
+	return r
 }
 
-func (r Request) ValueOr(key string, defaultValue interface{}) support.Value {
-	value := r.Value(key)
+func (r Request) Body(key string) support.Value {
+	formMap := support.NewMapByUrlValues(r.source.Form)
+	if !formMap.Empty() {
+		return formMap.Get(key)
+	}
+
+	rawBody, err := ioutil.ReadAll(r.source.Body)
+	if err != nil {
+		return support.NewValueE(rawBody, err)
+	}
+
+	decoder := r.Make(inter.RequestBodyDecoder).(func(string) support.Value)
+	body := decoder(string(rawBody))
+	return body.Get(key)
+}
+
+func (r Request) BodyOr(key string, defaultValue interface{}) support.Value {
+	value := r.Body(key)
 	if value.Error() == nil {
 		return value
 	}
@@ -158,8 +166,17 @@ func (r Request) ValueOr(key string, defaultValue interface{}) support.Value {
 	return support.NewValue(defaultValue)
 }
 
-func (r Request) Values(key string) support.Collection {
-	return r.All().GetMany(key)
+func (r Request) Parameter(key string) support.Value {
+	return r.parameters().Get(key)
+}
+
+func (r Request) ParameterOr(key string, defaultValue interface{}) support.Value {
+	value := r.Parameter(key)
+	if value.Error() == nil {
+		return value
+	}
+
+	return support.NewValue(defaultValue)
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
@@ -190,4 +207,11 @@ func (r Request) Headers() http.Header {
 
 func (r Request) Route() inter.Route {
 	return r.app.Make("route").(inter.Route)
+}
+
+func (r Request) parameters() support.Map {
+	urlMap := r.urlValues
+	queryMap := support.NewMapByUrlValues(r.Source().URL.Query())
+
+	return support.NewMap().Merge(urlMap, queryMap)
 }
