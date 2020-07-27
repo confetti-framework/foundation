@@ -142,7 +142,7 @@ func Test_get_from_json_body(t *testing.T) {
 	routes := Get("/user/{id}", func(request inter.Request) inter.Response {
 		value := request.Body("data.foo.0.bar.1.bar")
 		return outcome.Html(value)
-	}).Middleware(middleware.RequestJsonBody{})
+	}).Middleware(middleware.RequestBodyDecoder{})
 
 	request.App().Singleton("routes", routes)
 
