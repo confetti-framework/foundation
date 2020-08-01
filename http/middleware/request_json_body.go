@@ -10,7 +10,8 @@ type RequestBodyDecoder struct{}
 
 // This ensures the request can be decoded from JSON.
 func (j RequestBodyDecoder) Handle(request inter.Request, next inter.Next) inter.Response {
-	if helper.IsJson(request) {
+	switch {
+	case helper.IsJson(request):
 		request.App().Singleton(inter.RequestBodyDecoder, transformer.JsonToValue)
 	}
 

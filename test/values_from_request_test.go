@@ -7,7 +7,6 @@ import (
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
-	. "github.com/lanvard/routing"
 	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
@@ -135,19 +134,33 @@ func Test_value_or(t *testing.T) {
 	assert.Equal(t, 10, request.BodyOr("age.0", 12).Number())
 }
 
-func Test_get_from_json_body(t *testing.T) {
+func Test_request_without_content_type(t *testing.T) {
+	// Given
+	request := http.NewRequest(http.Options{
+		App: foundation.NewApp(),
+	})
+
+	// When
+	testFunc := func() {
+		middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
+			value := request.Body("data.foo.0.bar.1.bar")
+			return outcome.Html(value)
+		})
+	}
+
+	// Then
+	assert.PanicsWithValue(t, "Content-Type not supported", testFunc)
+}
+
+func Test_request_content_type_json(t *testing.T) {
 	// Given
 	request := fakeRequestWithJsonBody()
 
-	routes := Get("/user/{id}", func(request inter.Request) inter.Response {
+	// When
+	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
 		value := request.Body("data.foo.0.bar.1.bar")
 		return outcome.Html(value)
-	}).Middleware(middleware.RequestBodyDecoder{})
-
-	request.App().Singleton("routes", routes)
-
-	// When
-	response := http.Kernel{}.Handle(request)
+	})
 
 	// Then
 	assert.Equal(t, "A02", response.Content())
@@ -174,6 +187,9 @@ func fakeRequestWithJsonBody() inter.Request {
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
 		Uri:    "/user/2432?comment_id=1234",
+		Headers: map[string][]string{
+			"Content-Type": {"text/json; charset=UTF-8"},
+		},
 		Body:   `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
 	})
 }

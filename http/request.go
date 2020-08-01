@@ -2,6 +2,7 @@ package http
 
 import (
 	"bytes"
+	"errors"
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/method"
@@ -18,6 +19,7 @@ type Request struct {
 	app       inter.App
 	source    http.Request
 	urlValues support.Map
+	body      support.Value
 }
 
 type Options struct {
@@ -136,25 +138,30 @@ func (r Request) Content() string {
 }
 
 func (r *Request) SetContent(content string) inter.Request {
+	// Update source body
 	r.source.Body = ioutil.NopCloser(strings.NewReader(content))
+
+	// Invalidate Lanvard body. Rebuild this body when requested.
+	r.body = support.NewValue(nil)
 
 	return r
 }
 
-func (r Request) Body(key string) support.Value {
+func (r *Request) Body(keyInput ...string) support.Value {
+	// Let key be a default parameter
+	var key string
+	if len(key) > 0 {
+		key = keyInput[0]
+	}
+
 	formMap := support.NewMapByUrlValues(r.source.Form)
 	if !formMap.Empty() {
 		return formMap.Get(key)
 	}
 
-	rawBody, err := ioutil.ReadAll(r.source.Body)
-	if err != nil {
-		return support.NewValueE(rawBody, err)
-	}
+	r.body = r.generateBodyFromRawContent()
 
-	decoder := r.Make(inter.RequestBodyDecoder).(func(string) support.Value)
-	body := decoder(string(rawBody))
-	return body.Get(key)
+	return r.body.Get(key)
 }
 
 func (r Request) BodyOr(key string, defaultValue interface{}) support.Value {
@@ -214,4 +221,25 @@ func (r Request) parameters() support.Map {
 	queryMap := support.NewMapByUrlValues(r.Source().URL.Query())
 
 	return support.NewMap().Merge(urlMap, queryMap)
+}
+
+func (r Request) generateBodyFromRawContent() support.Value {
+	if r.body.Present() {
+		return r.body
+	}
+
+	rawBody, err := ioutil.ReadAll(r.source.Body)
+	if err != nil {
+		return support.NewValueE(rawBody, err)
+	}
+
+	rawDecoder := r.Make(inter.RequestBodyDecoder)
+	if rawDecoder == nil {
+		return support.NewValueE(nil, errors.New("Content-Type not supported"))
+	}
+
+	decoder := rawDecoder.(func(string) support.Value)
+	body := decoder(string(rawBody))
+
+	return body
 }
