@@ -150,7 +150,7 @@ func (r *Request) SetContent(content string) inter.Request {
 func (r *Request) Body(keyInput ...string) support.Value {
 	// Let key be a default parameter
 	var key string
-	if len(key) > 0 {
+	if len(keyInput) > 0 {
 		key = keyInput[0]
 	}
 

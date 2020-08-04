@@ -38,10 +38,8 @@ func Test_numbers_from_uri(t *testing.T) {
 
 	values := request.Parameter("user_ids")
 
-	assert.Equal(t, []int{1432, 5423}, values.Numbers())
-	assert.Equal(t, []string{"1432", "5423"}, values.Strings())
-	assert.NotEqual(t, []int{1432, 5423}, values.Strings())
-	assert.NotEqual(t, []string{"1432", "5423"}, values.Numbers())
+	assert.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
+	assert.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
 }
 
 func Test_number_from_query(t *testing.T) {
@@ -68,10 +66,8 @@ func Test_numbers_from_query(t *testing.T) {
 
 	values := request.Parameter("user_ids")
 
-	assert.Equal(t, []int{1432, 5423}, values.Numbers())
-	assert.Equal(t, []string{"1432", "5423"}, values.Strings())
-	assert.NotEqual(t, []int{1432, 5423}, values.Strings())
-	assert.NotEqual(t, []string{"1432", "5423"}, values.Numbers())
+	assert.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
+	assert.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
 }
 
 func Test_get_url(t *testing.T) {
@@ -98,7 +94,7 @@ func Test_all_values(t *testing.T) {
 			"second":   support.NewValue(support.NewCollection("bob", "tom")),
 			"language": support.NewValue(support.NewCollection("Go")),
 			"name":     support.NewValue(support.NewCollection("gopher")),
-		}, request.Body("").Source())
+		}, request.Body().Source())
 }
 
 func Test_form_values(t *testing.T) {
@@ -141,15 +137,13 @@ func Test_request_without_content_type(t *testing.T) {
 	})
 
 	// When
-	testFunc := func() {
-		middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
+	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
 			value := request.Body("data.foo.0.bar.1.bar")
-			return outcome.Html(value)
+			return outcome.Html(value.Error().Error())
 		})
-	}
 
 	// Then
-	assert.PanicsWithValue(t, "Content-Type not supported", testFunc)
+	assert.Equal(t, "Content-Type not supported", response.Content())
 }
 
 func Test_request_content_type_json(t *testing.T) {
