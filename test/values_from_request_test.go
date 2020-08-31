@@ -109,12 +109,12 @@ func Test_form_values(t *testing.T) {
 	assert.Equal(t, "tom", request.Body("").Map()["second"].Collection()[1].String())
 }
 
-//noinspection GoNilness
 func Test_form_value_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	value, err := request.Parameter("not_existing_param").NumberE()
 	assert.Equal(t, 0, value)
+	//goland:noinspection GoNilness
 	assert.Equal(t, "not_existing_param not found", err.Error())
 }
 
