@@ -31,42 +31,36 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 }
 
 func TestNilCanTransformToJson(t *testing.T) {
-	assert.True(t, transformer.StructToJson{}.IsValid(nil))
+	assert.True(t, transformer.InterfaceToJson{}.IsValid(nil))
 }
 
-func TestStringCanNotTransformToJson(t *testing.T) {
+func TestStringCanTransformToJson(t *testing.T) {
 	object := "foo"
-	assert.False(t, transformer.StructToJson{}.IsValid(object))
+	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
 }
 
-func TestIntCanNotTransformToJson(t *testing.T) {
+func TestIntCanTransformToJson(t *testing.T) {
 	object := 12
-	assert.False(t, transformer.StructToJson{}.IsValid(object))
+	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
 }
 
 func TestEmptyStructCanTransformToJson(t *testing.T) {
 	object := Foo{}
-	assert.True(t, transformer.StructToJson{}.IsValid(object))
-}
-
-func TestTransformUnsupportedTypeShouldPanic(t *testing.T) {
-	assert.PanicsWithValue(t, "can not transform to json with an unsupported type", func() {
-		transformer.StructToJson{}.Transform("foo")
-	})
+	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
 }
 
 func TestTransformStructWithIntToJson(t *testing.T) {
 	object := Foo{12}
-	assert.Equal(t, "{\"height\":12}", transformer.StructToJson{}.Transform(object))
+	assert.Equal(t, "{\"height\":12}", transformer.InterfaceToJson{}.Transform(object))
 }
 
 func TestTransformStructWithFloat(t *testing.T) {
 	object := Foo{12.34}
-	assert.Equal(t, "{\"height\":12.34}", transformer.StructToJson{}.Transform(object))
+	assert.Equal(t, "{\"height\":12.34}", transformer.InterfaceToJson{}.Transform(object))
 }
 
 func TestTransformNilToJson(t *testing.T) {
-	assert.Equal(t, "null", transformer.StructToJson{}.Transform(nil))
+	assert.Equal(t, "null", transformer.InterfaceToJson{}.Transform(nil))
 }
 
 type Foo struct {
