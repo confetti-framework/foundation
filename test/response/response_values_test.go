@@ -1,4 +1,4 @@
-package test
+package response
 
 import (
 	"github.com/lanvard/contract/inter"
@@ -40,24 +40,26 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 	response.SetApp(request.App())
 	response.App().Singleton(inter.ResponseBodyEncoder, nil)
 
-	assert.Panics(
+	_, err := response.ContentE()
+	assert.NotNil(t, err)
+	assert.Equal(
 		t,
-		func() {response.Content()},
-		"No response encoder found",
+		"no response encoder found",
+		err.Error(),
 	)
 }
 
-func TestJsonResponseFromStruct(t *testing.T) {
-	options := http.Options{App: foundation.NewApp()}
-	request := http.NewRequest(options)
-	response := middleware.ResponseJsonBody{}.Handle(request, func(request inter.Request) inter.Response {
-		return outcome.Json(Foo{12})
-	})
-
-	response.SetApp(request.App())
-
-	assert.Equal(t, "{\"height\": 12}", response.Content())
-}
+// func TestJsonResponseFromStruct(t *testing.T) {
+// 	options := http.Options{App: foundation.NewApp()}
+// 	request := http.NewRequest(options)
+// 	response := middleware.ResponseJsonBody{}.Handle(request, func(request inter.Request) inter.Response {
+// 		return outcome.Json(Foo{12})
+// 	})
+//
+// 	response.SetApp(request.App())
+//
+// 	assert.Equal(t, "{\"height\": 12}", response.Content())
+// }
 
 type Foo struct {
 	Height float32
