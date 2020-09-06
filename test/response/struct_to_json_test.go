@@ -65,6 +65,10 @@ func TestTransformStructWithFloat(t *testing.T) {
 	assert.Equal(t, "{\"height\":12.34}", transformer.StructToJson{}.Transform(object))
 }
 
+func TestTransformNilToJson(t *testing.T) {
+	assert.Equal(t, "null", transformer.StructToJson{}.Transform(nil))
+}
+
 type Foo struct {
 	Height float32 `json:"height"`
 }
