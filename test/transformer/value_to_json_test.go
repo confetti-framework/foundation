@@ -16,7 +16,7 @@ func TestCanTransformValue(t *testing.T) {
 }
 
 func TestTransformStringValueExpected(t *testing.T) {
-	assert.PanicsWithValue(t, "can not transform to json with an unsupported type", func() {
+	assert.PanicsWithValue(t, "can not transform to json with an unsupported type string", func() {
 		transformer.ValueToJson{}.Transform("foo")
 	})
 }

@@ -1,18 +1,19 @@
 package transformer
 
 import (
+	"github.com/lanvard/foundation/transformer"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestJsonToValue(t *testing.T) {
-	value := JsonToValue(`{"name":{"first":"Janet","last":"Prichard"},"age":47}`)
+	value := transformer.JsonToValue(`{"name":{"first":"Janet","last":"Prichard"},"age":47}`)
 
 	assert.Equal(t, "Janet", value.Get("name.first").String())
 }
 
 func TestDeepJsonToValue(t *testing.T) {
-	value := JsonToValue(`{
+	value := transformer.JsonToValue(`{
   "data": {
     "tracktraces": [
       {
