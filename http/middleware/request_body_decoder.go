@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/request_helper"
+	"github.com/lanvard/foundation/transformer"
 	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/support/transformer"
 )
 
 type RequestBodyDecoder struct{}

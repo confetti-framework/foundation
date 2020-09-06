@@ -1,12 +1,12 @@
-package response
+package transformer
 
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
+	"github.com/lanvard/foundation/transformer"
 	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/support/transformer"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,7 +15,7 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 	options := http.Options{App: foundation.NewApp()}
 	request := http.NewRequest(options)
 	response := middleware.ResponseJsonBody{}.Handle(request, func(request inter.Request) inter.Response {
-		return outcome.Json(Foo{12})
+		return outcome.Json(foo{12})
 	})
 
 	response.SetApp(request.App())
@@ -31,31 +31,31 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 }
 
 func TestNilCanTransformToJson(t *testing.T) {
-	assert.True(t, transformer.InterfaceToJson{}.IsValid(nil))
+	assert.True(t, transformer.InterfaceToJson{}.Transformable(nil))
 }
 
 func TestStringCanTransformToJson(t *testing.T) {
 	object := "foo"
-	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
+	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
 }
 
 func TestIntCanTransformToJson(t *testing.T) {
 	object := 12
-	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
+	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
 }
 
 func TestEmptyStructCanTransformToJson(t *testing.T) {
-	object := Foo{}
-	assert.True(t, transformer.InterfaceToJson{}.IsValid(object))
+	object := foo{}
+	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
 }
 
 func TestTransformStructWithIntToJson(t *testing.T) {
-	object := Foo{12}
+	object := foo{12}
 	assert.Equal(t, "{\"height\":12}", transformer.InterfaceToJson{}.Transform(object))
 }
 
 func TestTransformStructWithFloat(t *testing.T) {
-	object := Foo{12.34}
+	object := foo{12.34}
 	assert.Equal(t, "{\"height\":12.34}", transformer.InterfaceToJson{}.Transform(object))
 }
 
@@ -63,6 +63,6 @@ func TestTransformNilToJson(t *testing.T) {
 	assert.Equal(t, "null", transformer.InterfaceToJson{}.Transform(nil))
 }
 
-type Foo struct {
+type foo struct {
 	Height float32 `json:"height"`
 }

@@ -1,4 +1,4 @@
-package response
+package transformer
 
 import (
 	"github.com/lanvard/contract/inter"

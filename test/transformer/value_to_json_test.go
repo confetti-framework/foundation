@@ -1,18 +1,18 @@
-package response
+package transformer
 
 import (
+	"github.com/lanvard/foundation/transformer"
 	"github.com/lanvard/support"
-	"github.com/lanvard/support/transformer"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestStringCanNotTransformValueExpected(t *testing.T) {
-	assert.False(t, transformer.ValueToJson{}.IsValid("foo"))
+	assert.False(t, transformer.ValueToJson{}.Transformable("foo"))
 }
 
 func TestCanTransformValue(t *testing.T) {
-	assert.True(t, transformer.ValueToJson{}.IsValid(support.NewValue(Foo{})))
+	assert.True(t, transformer.ValueToJson{}.Transformable(support.NewValue(foo{})))
 }
 
 func TestTransformStringValueExpected(t *testing.T) {
