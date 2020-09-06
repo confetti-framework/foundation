@@ -87,13 +87,15 @@ func NewRequest(options Options) inter.Request {
 }
 
 func (r Request) App() inter.App {
+	if r.app == nil{
+		panic("no app found in request")
+	}
+
 	return r.app
 }
 
-func (r *Request) SetApp(app inter.App) inter.Request {
+func (r *Request) SetApp(app inter.App) {
 	r.app = app
-
-	return r
 }
 
 func (r *Request) Make(abstract interface{}) interface{} {
@@ -235,7 +237,7 @@ func (r Request) generateBodyFromRawContent() support.Value {
 
 	rawDecoder := r.Make(inter.RequestBodyDecoder)
 	if rawDecoder == nil {
-		return support.NewValueE(nil, errors.New("Content-Type not supported"))
+		return support.NewValueE(nil, errors.New("no request body decoder found"))
 	}
 
 	decoder := rawDecoder.(func(string) support.Value)

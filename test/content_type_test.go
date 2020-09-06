@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/lanvard/foundation/http/helper"
+	"github.com/lanvard/foundation/http/request_helper"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
@@ -11,20 +11,20 @@ func TestHeaderDoNotContainJson(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("content-type", "text/xml")
 
-	assert.False(t, helper.IsJson(newRequestWithHeader(headers)))
+	assert.False(t, request_helper.IsJson(newRequestWithHeader(headers)))
 }
 
 func TestHeaderDoNotContainContentType(t *testing.T) {
 	headers := http.Header{}
 
-	assert.False(t, helper.IsJson(newRequestWithHeader(headers)))
+	assert.False(t, request_helper.IsJson(newRequestWithHeader(headers)))
 }
 
 func TestHeaderDoesContainJson(t *testing.T) {
 	headers := http.Header{}
 	headers.Set("content-type", "application/json")
 
-	assert.True(t, helper.IsJson(newRequestWithHeader(headers)))
+	assert.True(t, request_helper.IsJson(newRequestWithHeader(headers)))
 }
 
 type headerContainer struct {

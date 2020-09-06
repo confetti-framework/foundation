@@ -1,4 +1,4 @@
-package helper
+package request_helper
 
 import (
 	"github.com/lanvard/contract/inter"
