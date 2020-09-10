@@ -1,4 +1,4 @@
-package transformer
+package encode
 
 import (
 	"github.com/lanvard/contract/inter"

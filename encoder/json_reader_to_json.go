@@ -1,4 +1,4 @@
-package transformer
+package encoder
 
 import (
 	"errors"
@@ -8,12 +8,12 @@ import (
 
 type JsonReaderToJson struct{}
 
-func (j JsonReaderToJson) Transformable(object interface{}) bool {
+func (j JsonReaderToJson) IsAble(object interface{}) bool {
 	jsonReader, ok := object.(inter.JsonReader)
-	return ok && InterfaceToJson{}.Transformable(jsonReader.Json())
+	return ok && InterfaceToJson{}.IsAble(jsonReader.Json())
 }
 
-func (j JsonReaderToJson) TransformThrough(object interface{}, encoders []inter.ResponseEncoder) (string, error) {
+func (j JsonReaderToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
 	jsonReader, ok := object.(inter.JsonReader)
 	if !ok {
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())

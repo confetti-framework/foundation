@@ -3,8 +3,8 @@ package middleware
 import (
 	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http/request_helper"
-	"github.com/lanvard/foundation/transformer"
 	"github.com/lanvard/routing/outcome"
 )
 
@@ -14,7 +14,7 @@ type RequestBodyDecoder struct{}
 func (j RequestBodyDecoder) Handle(request inter.Request, next inter.Next) inter.Response {
 	switch {
 	case request_helper.IsJson(request):
-		request.App().Singleton(inter.RequestBodyDecoder, transformer.JsonToValue)
+		request.App().Singleton(inter.RequestBodyDecoder, encoder.JsonToValue)
 	default:
 		return outcome.Error(errors.New("Content-Type not supported"))
 	}

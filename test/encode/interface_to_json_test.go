@@ -1,11 +1,11 @@
-package transformer
+package encode
 
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
-	"github.com/lanvard/foundation/transformer"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -31,40 +31,40 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 }
 
 func TestNilCanTransformToJson(t *testing.T) {
-	assert.True(t, transformer.InterfaceToJson{}.Transformable(nil))
+	assert.True(t, encoder.InterfaceToJson{}.IsAble(nil))
 }
 
 func TestStringCanTransformToJson(t *testing.T) {
 	object := "foo"
-	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
+	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
 func TestIntCanTransformToJson(t *testing.T) {
 	object := 12
-	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
+	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
 func TestEmptyStructCanTransformToJson(t *testing.T) {
 	object := foo{}
-	assert.True(t, transformer.InterfaceToJson{}.Transformable(object))
+	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
 func TestTransformStructWithIntToJson(t *testing.T) {
 	object := foo{12}
-	result, err := transformer.InterfaceToJson{}.TransformThrough(object, nil)
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(object, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"height\":12}", result)
 }
 
 func TestTransformStructWithFloat(t *testing.T) {
 	object := foo{12.34}
-	result, err := transformer.InterfaceToJson{}.TransformThrough(object, nil)
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(object, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"height\":12.34}", result)
 }
 
 func TestTransformNilToJson(t *testing.T) {
-	result, err := transformer.InterfaceToJson{}.TransformThrough(nil, nil)
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(nil, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "null", result)
 }

@@ -1,4 +1,11 @@
-package transformer
+package encode
+
+import (
+	"github.com/lanvard/foundation/encoder"
+	"github.com/lanvard/support"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 // func TestEmptyStringToJson(t *testing.T) {
 // 	assert.Equal(t, "\"\"", support.NewValue("").ToJson())
@@ -41,3 +48,16 @@ package transformer
 // func TestCollectionWithThoFloatToJson(t *testing.T) {
 // 	assert.Equal(t, "[1.5,0.4]", support.NewCollection(1.5, 0.4).ToJson())
 // }
+
+func TestStringCanNotTransformValueExpected(t *testing.T) {
+	assert.False(t, encoder.ValueToJson{}.IsAble("foo"))
+}
+
+func TestCanTransformValue(t *testing.T) {
+	assert.True(t, encoder.ValueToJson{}.IsAble(support.NewValue(foo{})))
+}
+
+func TestTransformStringValueExpected(t *testing.T) {
+	_, err := encoder.ValueToJson{}.EncodeThrough("foo", nil)
+	assert.EqualError(t, err, "can not transform to json with an unsupported type string")
+}

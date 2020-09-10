@@ -1,4 +1,4 @@
-package transformer
+package encoder
 
 import (
 	"errors"
@@ -9,13 +9,13 @@ import (
 
 type ValueToJson struct{}
 
-func (v ValueToJson) Transformable(object interface{}) bool {
+func (v ValueToJson) IsAble(object interface{}) bool {
 	value, ok := object.(support.Value)
 
-	return ok && InterfaceToJson{}.Transformable(value.Raw())
+	return ok && InterfaceToJson{}.IsAble(value.Raw())
 }
 
-func (v ValueToJson) TransformThrough(object interface{}, encoders []inter.ResponseEncoder) (string, error) {
+func (v ValueToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
 	value, ok := object.(support.Value)
 	if !ok {
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
