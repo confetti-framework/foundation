@@ -13,15 +13,11 @@ func (j JsonReaderToJson) Transformable(object interface{}) bool {
 	return ok && InterfaceToJson{}.Transformable(jsonReader.Json())
 }
 
-func (j JsonReaderToJson) Transform(object interface{}) (string, error) {
+func (j JsonReaderToJson) TransformThrough(object interface{}, encoders []inter.ResponseEncoder) (string, error) {
 	jsonReader, ok := object.(inter.JsonReader)
 	if !ok {
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
-	if (ValueToJson{}.Transformable(jsonReader.Json())) {
-		return ValueToJson{}.Transform(jsonReader.Json())
-	}
-
-	return InterfaceToJson{}.Transform(jsonReader.Json())
+	return TransformThrough(jsonReader.Json(), encoders)
 }

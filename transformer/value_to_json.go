@@ -1,6 +1,8 @@
 package transformer
 
 import (
+	"errors"
+	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/support"
 	"reflect"
 )
@@ -13,11 +15,11 @@ func (v ValueToJson) Transformable(object interface{}) bool {
 	return ok && InterfaceToJson{}.Transformable(value.Raw())
 }
 
-func (v ValueToJson) Transform(object interface{}) (string, error) {
+func (v ValueToJson) TransformThrough(object interface{}, encoders []inter.ResponseEncoder) (string, error) {
 	value, ok := object.(support.Value)
 	if !ok {
-		panic("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
+		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
-	return InterfaceToJson{}.Transform(value.Raw())
+	return TransformThrough(value.Raw(), encoders)
 }
