@@ -13,7 +13,7 @@ func (v ValueToJson) Transformable(object interface{}) bool {
 	return ok && InterfaceToJson{}.Transformable(value.Raw())
 }
 
-func (v ValueToJson) Transform(object interface{}) string {
+func (v ValueToJson) Transform(object interface{}) (string, error) {
 	value, ok := object.(support.Value)
 	if !ok {
 		panic("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())

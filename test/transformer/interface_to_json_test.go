@@ -51,16 +51,22 @@ func TestEmptyStructCanTransformToJson(t *testing.T) {
 
 func TestTransformStructWithIntToJson(t *testing.T) {
 	object := foo{12}
-	assert.Equal(t, "{\"height\":12}", transformer.InterfaceToJson{}.Transform(object))
+	result, err := transformer.InterfaceToJson{}.Transform(object)
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"height\":12}", result)
 }
 
 func TestTransformStructWithFloat(t *testing.T) {
 	object := foo{12.34}
-	assert.Equal(t, "{\"height\":12.34}", transformer.InterfaceToJson{}.Transform(object))
+	result, err := transformer.InterfaceToJson{}.Transform(object)
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"height\":12.34}", result)
 }
 
 func TestTransformNilToJson(t *testing.T) {
-	assert.Equal(t, "null", transformer.InterfaceToJson{}.Transform(nil))
+	result, err := transformer.InterfaceToJson{}.Transform(nil)
+	assert.Nil(t, err)
+	assert.Equal(t, "null", result)
 }
 
 type foo struct {

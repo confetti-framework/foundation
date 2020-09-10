@@ -16,22 +16,23 @@ func TestStructWithJsonReaderIsValid(t *testing.T) {
 }
 
 func TestTransformNormalStructToJson(t *testing.T) {
-	assert.PanicsWithValue(t, "can not transform to json with an unsupported type transformer.foo", func() {
-		transformer.JsonReaderToJson{}.Transform(foo{})
-	})
+	_, err := transformer.JsonReaderToJson{}.Transform(foo{})
+	assert.EqualError(t, err, "can not transform to json with an unsupported type transformer.foo")
 }
 
 func TestTransformJsonReaderWithStringToJson(t *testing.T) {
 	data := jsonReader{map[string]string{"Unit": "gigatonne"}}
-	result := transformer.JsonReaderToJson{}.Transform(data)
+	result, err := transformer.JsonReaderToJson{}.Transform(data)
 
+	assert.Nil(t, err)
 	assert.Equal(t, "{\"Unit\":\"gigatonne\"}", result)
 }
 
 func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 	value := support.NewValue(map[string]interface{}{"Unit": "megatonne"})
-	result := transformer.JsonReaderToJson{}.Transform(jsonReader{value})
+	result, err := transformer.JsonReaderToJson{}.Transform(jsonReader{value})
 
+	assert.Nil(t, err)
 	assert.Equal(t, "{\"Unit\":\"megatonne\"}", result)
 }
 
