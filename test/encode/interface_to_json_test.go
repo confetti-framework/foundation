@@ -19,7 +19,7 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 	})
 
 	response.SetApp(request.App())
-	response.App().Singleton(inter.ResponseBodyEncoder, nil)
+	response.App().Singleton(inter.Encoders, nil)
 
 	_, err := response.ContentE()
 	assert.NotNil(t, err)
@@ -66,7 +66,7 @@ func TestTransformStructWithFloat(t *testing.T) {
 func TestTransformNilToJson(t *testing.T) {
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(nil, nil)
 	assert.Nil(t, err)
-	assert.Equal(t, "null", result)
+	assert.Equal(t, "", result)
 }
 
 type foo struct {

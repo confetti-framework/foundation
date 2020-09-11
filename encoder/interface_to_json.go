@@ -12,6 +12,10 @@ func (j InterfaceToJson) IsAble(_ interface{}) bool {
 }
 
 func (j InterfaceToJson) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+	if object == nil {
+		return "", nil
+	}
+
 	result, err := json.Marshal(object)
 	return string(result), err
 }

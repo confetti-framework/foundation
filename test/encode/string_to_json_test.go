@@ -17,6 +17,7 @@ func TestJsonResponseFromEmptyString(t *testing.T) {
 	response := middleware.ResponseJsonBody{}.Handle(request, func(request inter.Request) inter.Response {
 		return outcome.NewResponse(outcome.Options{})
 	})
+	response.SetApp(request.App())
 
 	assert.Equal(t, "", response.Content())
 }
@@ -27,6 +28,7 @@ func TestJsonResponseFromJsonString(t *testing.T) {
 	response := middleware.ResponseJsonBody{}.Handle(request, func(request inter.Request) inter.Response {
 		return outcome.Json("{\"height\": 12}")
 	})
+	response.SetApp(request.App())
 
 	assert.Equal(t, "{\"height\": 12}", response.Content())
 }
