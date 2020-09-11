@@ -5,7 +5,7 @@ import (
 	"github.com/lanvard/contract/inter"
 )
 
-func TransformThrough(object interface{}, encoders []inter.Encoder) (string, error) {
+func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
 	for _, encoder := range encoders {
 		if encoder.IsAble(object) {
 			return encoder.EncodeThrough(object, encoders)

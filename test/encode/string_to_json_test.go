@@ -3,6 +3,7 @@ package encode
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/routing/outcome"
@@ -28,4 +29,10 @@ func TestJsonResponseFromJsonString(t *testing.T) {
 	})
 
 	assert.Equal(t, "{\"height\": 12}", response.Content())
+}
+
+func TestStringToJson(t *testing.T) {
+	result, _ := encoder.EncodeThrough("foo", defaultEncoders)
+
+	assert.Equal(t, "\"foo\"", result)
 }

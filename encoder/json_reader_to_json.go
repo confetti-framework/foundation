@@ -19,5 +19,5 @@ func (j JsonReaderToJson) EncodeThrough(object interface{}, encoders []inter.Enc
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
-	return TransformThrough(jsonReader.Json(), encoders)
+	return EncodeThrough(jsonReader.Json(), encoders)
 }

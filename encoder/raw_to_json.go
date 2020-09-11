@@ -19,5 +19,5 @@ func (v RawToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
-	return TransformThrough(value.Raw(), encoders)
+	return EncodeThrough(value.Raw(), encoders)
 }
