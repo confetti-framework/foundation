@@ -40,7 +40,7 @@ func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 
 var defaultEncoders = []inter.Encoder{
 	encoder.JsonReaderToJson{},
-	encoder.ValueToJson{},
+	encoder.RawToJson{},
 	encoder.InterfaceToJson{},
 }
 

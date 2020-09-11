@@ -7,57 +7,87 @@ import (
 	"testing"
 )
 
-// func TestEmptyStringToJson(t *testing.T) {
-// 	assert.Equal(t, "\"\"", support.NewValue("").ToJson())
-// }
-//
-// func TestNilStringToJson(t *testing.T) {
-// 	assert.Equal(t, "\"\"", support.NewValue(nil).ToJson())
-// }
-//
-// func TestStringToJson(t *testing.T) {
-// 	assert.Equal(t, "\"foo\"", support.NewValue("foo").ToJson())
-// }
-//
-// func TestBoolToJson(t *testing.T) {
-// 	assert.Equal(t, "true", support.NewValue(true).ToJson())
-// 	assert.Equal(t, "false", support.NewValue(false).ToJson())
-// }
-//
-// func TestNumberToJson(t *testing.T) {
-// 	assert.Equal(t, "100", support.NewValue(100).ToJson())
-// 	assert.Equal(t, "-100", support.NewValue(-100).ToJson())
-// }
-//
-// func TestFloatToJson(t *testing.T) {
-// 	assert.Equal(t, "0.1", support.NewValue(0.1).ToJson())
-// }
-//
-// func TestCollectionWithOneStringToJson(t *testing.T) {
-// 	assert.Equal(t, "[\"foo\"]", support.NewCollection("foo").ToJson())
-// }
-//
-// func TestCollectionWithThoStringsToJson(t *testing.T) {
-// 	assert.Equal(t, "[\"foo\",\"bar\"]", support.NewCollection("foo", "bar").ToJson())
-// }
-//
-// func TestCollectionWithThoNumbersToJson(t *testing.T) {
-// 	assert.Equal(t, "[12,14]", support.NewCollection(12, 14).ToJson())
-// }
-//
-// func TestCollectionWithThoFloatToJson(t *testing.T) {
-// 	assert.Equal(t, "[1.5,0.4]", support.NewCollection(1.5, 0.4).ToJson())
-// }
+func TestEmptyStringToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(""), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "\"\"", result)
+}
+
+func TestNilStringToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(nil), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "null", result)
+}
+
+func TestStringToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue("foo"), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "\"foo\"", result)
+}
+
+func TestBoolTrueToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(true), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "true", result)
+}
+
+func TestBoolFalseToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(false), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "false", result)
+}
+
+func TestPositiveNumberToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(100), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "100", result)
+}
+
+func TestNegativeNumberToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(-100), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "-100", result)
+}
+
+func TestFloatToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewValue(1.2), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "1.2", result)
+}
+
+func TestCollectionWithOneStringToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewCollection("foo"), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "[\"foo\"]", result)
+}
+
+func TestCollectionWithThoStringsToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewCollection("foo", "bar"), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "[\"foo\",\"bar\"]", result)
+}
+
+func TestCollectionWithThoNumbersToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewCollection(12, 14), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "[12,14]", result)
+}
+
+func TestCollectionWithThoFloatToJson(t *testing.T) {
+	result, err := encoder.TransformThrough(support.NewCollection(1.5, 0.4), defaultEncoders)
+	assert.Nil(t, err)
+	assert.Equal(t, "[1.5,0.4]", result)
+}
 
 func TestStringCanNotTransformValueExpected(t *testing.T) {
-	assert.False(t, encoder.ValueToJson{}.IsAble("foo"))
+	assert.False(t, encoder.RawToJson{}.IsAble("foo"))
 }
 
 func TestCanTransformValue(t *testing.T) {
-	assert.True(t, encoder.ValueToJson{}.IsAble(support.NewValue(foo{})))
+	assert.True(t, encoder.RawToJson{}.IsAble(support.NewValue(foo{})))
 }
 
 func TestTransformStringValueExpected(t *testing.T) {
-	_, err := encoder.ValueToJson{}.EncodeThrough("foo", nil)
+	_, err := encoder.RawToJson{}.EncodeThrough("foo", nil)
 	assert.EqualError(t, err, "can not transform to json with an unsupported type string")
 }
