@@ -7,8 +7,12 @@ import (
 )
 
 type ErrorToJson struct {
-	Jsonapi map[string]string        `json:"jsonapi"`
-	Errors  []map[string]interface{} `json:"errors"`
+	Jsonapi map[string]string `json:"jsonapi"`
+	Errors  []Error           `json:"errors"`
+}
+
+type Error struct {
+	Title string `json:"title"`
 }
 
 func (e ErrorToJson) IsAble(object interface{}) bool {
@@ -22,9 +26,10 @@ func (e ErrorToJson) EncodeThrough(object interface{}, encoders []inter.Encoder)
 		return "", errors.New("can't convert object to json in error format")
 	}
 
-	title := str.UpperFirst(err.Error())
 	e.Jsonapi = map[string]string{"version": "1.0"}
-	e.Errors = []map[string]interface{}{{"title": title}}
+	e.Errors = append(e.Errors, Error{
+		Title: str.UpperFirst(err.Error()),
+	})
 
 	return EncodeThrough(e, encoders)
 }
