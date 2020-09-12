@@ -34,7 +34,7 @@ func TestJsonResponseFromJsonString(t *testing.T) {
 }
 
 func TestStringToJson(t *testing.T) {
-	result, _ := encoder.EncodeThrough("foo", defaultEncoders)
+	result, _ := encoder.EncodeThrough("foo", jsonEncoders)
 
 	assert.Equal(t, "\"foo\"", result)
 }

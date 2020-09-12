@@ -16,7 +16,7 @@ func (v RawToJson) IsAble(object interface{}) bool {
 func (v RawToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
 	value, ok := object.(interface{ Raw() interface{} })
 	if !ok {
-		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
+		return "", errors.New("can not encode to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
 	result := value.Raw()

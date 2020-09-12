@@ -3,6 +3,7 @@ package encoder
 import (
 	"errors"
 	"github.com/lanvard/contract/inter"
+	"reflect"
 )
 
 func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
@@ -12,5 +13,5 @@ func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error)
 		}
 	}
 
-	return "", errors.New("no transformer found to encode response body")
+	return "", errors.New("no encoder found to encode response body with type " + reflect.TypeOf(object).String())
 }

@@ -6,18 +6,18 @@ import (
 	"testing"
 )
 
-func TestEmptyHtmlReaderToHtmlCanNotEncode(t *testing.T) {
+func TestHtmlReaderToHtmlWithStringCanNotEncode(t *testing.T) {
 	assert.False(t, encoder.HtmlReaderToJson{}.IsAble(""))
 }
 
-func TestHtmlReaderCanEncode(t *testing.T) {
+func TestHtmlReaderToHtmlWithEmptyHtmlReaderCanEncode(t *testing.T) {
 	assert.True(t, encoder.HtmlReaderToJson{}.IsAble(htmlReader{}))
 }
 
 func TestHtmlReaderToHmlWithString(t *testing.T) {
 	result, err := encoder.HtmlReaderToJson{}.EncodeThrough("foo", nil)
 	assert.Equal(t, "", result)
-	assert.EqualError(t, err, "can not transform to html with an unsupported type string")
+	assert.EqualError(t, err, "can not encode to html with an unsupported type string")
 }
 
 func TestHtmlReaderToHtmlWithValidHtmlReader(t *testing.T) {

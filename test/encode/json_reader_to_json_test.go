@@ -18,12 +18,12 @@ func TestStructWithJsonReaderIsValid(t *testing.T) {
 
 func TestTransformNormalStructToJson(t *testing.T) {
 	_, err := encoder.JsonReaderToJson{}.EncodeThrough(foo{}, nil)
-	assert.EqualError(t, err, "can not transform to json with an unsupported type encode.foo")
+	assert.EqualError(t, err, "can not encode to json with an unsupported type encode.foo")
 }
 
 func TestTransformJsonReaderWithStringToJson(t *testing.T) {
 	data := jsonReader{map[string]string{"Unit": "gigatonne"}}
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(data, defaultEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(data, jsonEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"Unit\":\"gigatonne\"}", result)
@@ -32,20 +32,20 @@ func TestTransformJsonReaderWithStringToJson(t *testing.T) {
 func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 	value := support.NewValue(map[string]interface{}{"Unit": "megatonne"})
 
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(jsonReader{value}, defaultEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(jsonReader{value}, jsonEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"Unit\":\"megatonne\"}", result)
 }
 
 func TestJsonReaderWithNilToJson(t *testing.T) {
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(jsonReader{nil}, defaultEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(jsonReader{nil}, jsonEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "null", result)
 }
 
-var defaultEncoders = []inter.Encoder{
+var jsonEncoders = []inter.Encoder{
 	encoder.JsonReaderToJson{},
 	encoder.RawToJson{},
 	encoder.JsonToJson{},

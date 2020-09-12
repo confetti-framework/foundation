@@ -141,7 +141,7 @@ func Test_request_content_type_json(t *testing.T) {
 		return outcome.Html(value)
 	})
 	response.SetApp(request.App())
-	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.InterfaceToJson{}})
+	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.HtmlReaderToJson{}})
 
 	// Then
 	assert.Equal(t, "A02", response.Content())
