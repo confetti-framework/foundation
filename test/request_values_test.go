@@ -131,24 +131,6 @@ func Test_value_or(t *testing.T) {
 	assert.Equal(t, 10, request.BodyOr("age.0", 12).Number())
 }
 
-func Test_request_without_content_type(t *testing.T) {
-	// Given
-	request := http.NewRequest(http.Options{
-		App: foundation.NewApp(),
-	})
-
-	// When
-	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
-		value := request.Body("data.foo.0.bar.1.bar")
-		return outcome.Html(value.Error().Error())
-	})
-	response.SetApp(request.App())
-	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.InterfaceToJson{}})
-
-	// Then
-	assert.Equal(t, "Content-Type not supported", response.Content())
-}
-
 func Test_request_content_type_json(t *testing.T) {
 	// Given
 	request := fakeRequestWithJsonBody()
@@ -158,6 +140,8 @@ func Test_request_content_type_json(t *testing.T) {
 		value := request.Body("data.foo.0.bar.1.bar")
 		return outcome.Html(value)
 	})
+	response.SetApp(request.App())
+	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.InterfaceToJson{}})
 
 	// Then
 	assert.Equal(t, "A02", response.Content())
