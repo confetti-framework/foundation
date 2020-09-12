@@ -38,10 +38,18 @@ func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 	assert.Equal(t, "{\"Unit\":\"megatonne\"}", result)
 }
 
+func TestJsonReaderWithNilToJson(t *testing.T) {
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(jsonReader{nil}, defaultEncoders)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "null", result)
+}
+
 var defaultEncoders = []inter.Encoder{
 	encoder.JsonReaderToJson{},
 	encoder.RawToJson{},
 	encoder.JsonToJson{},
+	encoder.ErrorToJson{},
 	encoder.InterfaceToJson{},
 }
 

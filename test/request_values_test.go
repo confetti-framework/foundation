@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
@@ -138,9 +139,11 @@ func Test_request_without_content_type(t *testing.T) {
 
 	// When
 	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
-			value := request.Body("data.foo.0.bar.1.bar")
-			return outcome.Html(value.Error().Error())
-		})
+		value := request.Body("data.foo.0.bar.1.bar")
+		return outcome.Html(value.Error().Error())
+	})
+	response.SetApp(request.App())
+	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.InterfaceToJson{}})
 
 	// Then
 	assert.Equal(t, "Content-Type not supported", response.Content())
@@ -184,6 +187,6 @@ func fakeRequestWithJsonBody() inter.Request {
 		Headers: map[string][]string{
 			"Content-Type": {"text/json; charset=UTF-8"},
 		},
-		Body:   `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
+		Body: `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
 	})
 }

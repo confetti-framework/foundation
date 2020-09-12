@@ -19,5 +19,12 @@ func (j JsonReaderToJson) EncodeThrough(object interface{}, encoders []inter.Enc
 		return "", errors.New("can not transform to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
-	return EncodeThrough(jsonReader.Json(), encoders)
+	result := jsonReader.Json()
+
+	// If the object is nil, we don't want to return an empty body
+	if result == nil {
+		return "null", nil
+	}
+
+	return EncodeThrough(result, encoders)
 }
