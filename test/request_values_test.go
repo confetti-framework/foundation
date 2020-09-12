@@ -134,6 +134,11 @@ func Test_value_or(t *testing.T) {
 func Test_request_content_type_json(t *testing.T) {
 	// Given
 	request := fakeRequestWithJsonBody()
+	request.App().Singleton(inter.Encoders, []inter.Encoder{
+		encoder.HtmlReaderToJson{},
+		encoder.RawToHtml{},
+		encoder.InterfaceToHtml{},
+	})
 
 	// When
 	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
@@ -141,7 +146,6 @@ func Test_request_content_type_json(t *testing.T) {
 		return outcome.Html(value)
 	})
 	response.SetApp(request.App())
-	response.App().Singleton(inter.Encoders, []inter.Encoder{encoder.HtmlReaderToJson{}})
 
 	// Then
 	assert.Equal(t, "A02", response.Content())

@@ -31,4 +31,5 @@ func TestValueToHtmlWithValidValue(t *testing.T) {
 var htmlEncoders = []inter.Encoder{
 	encoder.HtmlReaderToJson{},
 	encoder.RawToHtml{},
+	encoder.InterfaceToHtml{},
 }
