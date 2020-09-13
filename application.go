@@ -47,20 +47,6 @@ func (a *Application) BindStruct(abstract interface{}) interface{} {
 	return (*a.container).BindStruct(abstract)
 }
 
-// Bind all of the application paths in the container.
-func (a *Application) BindPathsInContainer(path inter.BasePath) {
-	container := *a.container
-	container.Instance("path.app", path.AppPath())
-	container.Instance("path.base", path.BasePath())
-	container.Instance("path.lang", path.LangPath())
-	container.Instance("path.config", path.ConfigPath())
-	container.Instance("path.public", path.PublicPath())
-	container.Instance("path.storage", path.StoragePath())
-	container.Instance("path.database", path.DatabasePath())
-	container.Instance("path.resources", path.ResourcePath())
-	container.Instance("path.bootstrap", path.BootstrapPath())
-}
-
 func (a *Application) Environment() (string, error) {
 	if a.Make("env") == "" {
 		return "", fmt.Errorf("environment not found")
