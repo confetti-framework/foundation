@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func Test_one_binding_with_an_alias(t *testing.T) {
+func TestOneBindingWithAnAlias(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
@@ -20,7 +20,7 @@ func Test_one_binding_with_an_alias(t *testing.T) {
 	assert.Equal(t, testStruct{}, kernel)
 }
 
-func Test_make_from_singleton(t *testing.T) {
+func TestMakeFromSingleton(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
@@ -33,7 +33,7 @@ func Test_make_from_singleton(t *testing.T) {
 	assert.Equal(t, testStruct{}, kernel)
 }
 
-func Test_make_from_singleton_with_callback(t *testing.T) {
+func TestMakeFromSingletonWithCallback(t *testing.T) {
 	app := foundation.NewApp()
 
 	app.Singleton(
@@ -48,7 +48,7 @@ func Test_make_from_singleton_with_callback(t *testing.T) {
 	assert.Equal(t, testStruct{TestCount: 1}, newStruct)
 }
 
-func Test_resolve_automatically(t *testing.T) {
+func TestResolveAutomatically(t *testing.T) {
 	container := foundation.NewContainer()
 
 	resolvedStruct := container.Make(testStruct{})
@@ -56,7 +56,7 @@ func Test_resolve_automatically(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func Test_binding_existing_object(t *testing.T) {
+func TestBindingExistingObject(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
@@ -67,7 +67,7 @@ func Test_binding_existing_object(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func Test_one_binding_with_contract(t *testing.T) {
+func TestOneBindingWithContract(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Bind(
@@ -78,7 +78,7 @@ func Test_one_binding_with_contract(t *testing.T) {
 	assert.Len(t, container.Bindings(), 1)
 }
 
-func Test_multiple_binding_with_contract(t *testing.T) {
+func TestMultipleBindingWithContract(t *testing.T) {
 	app := foundation.NewContainer()
 
 	app.Bind(
@@ -94,7 +94,7 @@ func Test_multiple_binding_with_contract(t *testing.T) {
 	assert.Len(t, app.Bindings(), 2)
 }
 
-func Test_binding_two_with_the_same_interfaces(t *testing.T) {
+func TestBindingTwoWithTheSameInterfaces(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Bind(
@@ -110,7 +110,7 @@ func Test_binding_two_with_the_same_interfaces(t *testing.T) {
 	assert.Len(t, container.Bindings(), 1)
 }
 
-func Test_binding_and_make_from_interface(t *testing.T) {
+func TestBindingAndMakeFromInterface(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
@@ -121,7 +121,7 @@ func Test_binding_and_make_from_interface(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func Test_binding_without_abstract(t *testing.T) {
+func TestBindingWithoutAbstract(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.BindStruct(testStruct{TestCount: 1})
@@ -131,7 +131,7 @@ func Test_binding_without_abstract(t *testing.T) {
 	assert.Equal(t, testStruct{TestCount: 1}, resolvedStruct)
 }
 
-func Test_extending_bindings(t *testing.T) {
+func TestExtendingBindings(t *testing.T) {
 
 	container := foundation.NewContainer()
 
@@ -147,4 +147,32 @@ func Test_extending_bindings(t *testing.T) {
 	resolvedStruct := container.Make(testStruct{}).(testStruct)
 
 	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
+}
+
+func TestResolveWithBootApp(t *testing.T) {
+	bootContainer := foundation.NewContainer()
+	container := foundation.NewContainerByBoot(bootContainer)
+
+	container.Instance("application_name", "Cooler")
+
+	assert.Equal(t, "Cooler", container.Make("application_name"))
+}
+
+func TestResolveFromBootApp(t *testing.T) {
+	bootContainer := foundation.NewContainer()
+	bootContainer.Instance("application_name", "Cooler")
+
+	container := foundation.NewContainerByBoot(bootContainer)
+
+	assert.Equal(t, "Cooler", container.Make("application_name"))
+}
+
+func TestResolveFromNormalContainerButNotFromBoot(t *testing.T) {
+	bootContainer := foundation.NewContainer()
+	bootContainer.Instance("application_name", "Heater")
+
+	container := foundation.NewContainerByBoot(bootContainer)
+	container.Instance("application_name", "Cooler")
+
+	assert.Equal(t, "Cooler", container.Make("application_name"))
 }

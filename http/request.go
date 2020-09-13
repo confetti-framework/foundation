@@ -87,10 +87,6 @@ func NewRequest(options Options) inter.Request {
 }
 
 func (r Request) App() inter.App {
-	if r.app == nil{
-		panic("no app found in request")
-	}
-
 	return r.app
 }
 

@@ -7,6 +7,9 @@ import (
 )
 
 type Container struct {
+	// The container created at boot time
+	bootContainer inter.Container
+
 	// The container's bindings.
 	bindings inter.Bindings
 
@@ -28,26 +31,11 @@ func NewContainer() *Container {
 	return &containerStruct
 }
 
-func (c Container) Copy() inter.Container {
+func NewContainerByBoot(bootContainer inter.Container) inter.Container {
 	container := NewContainer()
+	container.bootContainer = bootContainer
 
-	for key, value := range c.bindings {
-		container.bindings[key] = value
-	}
-
-	for key, value := range c.aliases {
-		container.aliases[key] = value
-	}
-
-	for key, value := range c.abstractAliases {
-		container.abstractAliases[key] = value
-	}
-
-	for key, value := range c.instances {
-		container.instances[key] = value
-	}
-
-	return inter.Container(container)
+	return container
 }
 
 // Determine if the given abstract type has been bound.
@@ -121,8 +109,7 @@ func (c *Container) Make(abstract interface{}) interface{} {
 // Resolve the given type from the container.
 func (c *Container) resolve(abstract interface{}) interface{} {
 	var concrete interface{}
-
-	abstractName := support.Name(abstract)
+	var abstractName = support.Name(abstract)
 
 	if support.Type(abstract) == reflect.Ptr && abstract == nil {
 		panic("Can't resolve interface. To resolve an interface, use the following syntax: (*interface)(nil), " +
@@ -133,11 +120,15 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 		// The instance will always be returned on subsequent calls
 		concrete = object
 
-	} else if support.Type(abstract) == reflect.String && c.IsAlias(abstract.(string)) {
+	} else if support.Type(abstract) == reflect.String && c.IsAlias(abstractName) {
 		concrete = c.getConcreteAlias(concrete, abstract)
 
 	} else if object, present := c.bindings[abstractName]; present {
 		concrete = c.getConcreteBinding(concrete, object, abstractName)
+
+	} else if c.bootContainer != nil && c.bootContainer.Bound(abstractName) {
+		// Check the container that was created at boot time
+		concrete = c.bootContainer.Make(abstract)
 
 	} else if support.Type(abstract) == reflect.Struct {
 		// If struct cannot be found, we simply have to use the struct itself.

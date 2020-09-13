@@ -13,6 +13,7 @@ func (j ResponseJsonBody) Handle(request inter.Request, next inter.Next) inter.R
 		encoder.JsonReaderToJson{},
 		encoder.RawToJson{},
 		encoder.JsonToJson{},
+		encoder.ErrorToJson{},
 		encoder.InterfaceToJson{},
 	})
 
