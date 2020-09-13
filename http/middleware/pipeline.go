@@ -6,7 +6,7 @@ import (
 )
 
 type Pipe interface {
-	Handle(data inter.Request, next inter.Next) inter.Response
+	Handle(request inter.Request, next inter.Next) inter.Response
 }
 
 // noinspection GoNameStartsWithPackageName
@@ -46,9 +46,11 @@ func (p Pipeline) Through(pipes []inter.HttpMiddleware) Pipeline {
 func (p Pipeline) Then(destination inter.Next) inter.Response {
 
 	var callbacks []func(data inter.Request) inter.Response
-	var nextCallback = 0
+	nextCallback := 0
+	pipes := p.Pipes
 
-	pipes := reverse(p.Pipes)
+	pipes = append(pipes, AppendAppMiddleware{})
+	pipes = reverse(pipes)
 
 	for i, pipe := range pipes {
 		pipe := pipe
