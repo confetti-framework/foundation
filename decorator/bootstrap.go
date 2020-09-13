@@ -8,10 +8,10 @@ type BootstrapDecorator struct {
 	Bootstraps []inter.Bootstrap
 }
 
-func (d BootstrapDecorator) BootstrapWith(app inter.App) inter.App {
+func (d BootstrapDecorator) BootstrapWith(container inter.Container) inter.Container {
 	for _, bootstrapper := range d.Bootstraps {
-		app = bootstrapper.Bootstrap(app)
+		container = bootstrapper.Bootstrap(container)
 	}
 
-	return app
+	return container
 }
