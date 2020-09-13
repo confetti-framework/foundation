@@ -73,3 +73,10 @@ func Test_request_without_content_type(t *testing.T) {
 	// Then
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Content-Type not supported\"}]}", response.Content())
 }
+
+func TestSystemErrorConvertToJson(t *testing.T) {
+	result, err := encoder.EncodeThrough("", []inter.Encoder{})
+
+	assert.Equal(t, "No encoder found to handle error: no encoder found to encode response body with type string", result)
+	assert.EqualError(t, err, "No encoder found to handle error: no encoder found to encode response body with type string")
+}

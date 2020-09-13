@@ -13,5 +13,11 @@ func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error)
 		}
 	}
 
-	return "", errors.New("no encoder found to encode response body with type " + reflect.TypeOf(object).String())
+	if err, ok := object.(error); ok {
+		err := errors.New("No encoder found to handle error: " + err.Error())
+		return err.Error(), err
+	}
+
+	err := errors.New("no encoder found to encode response body with type " + reflect.TypeOf(object).String())
+	return EncodeThrough(err, encoders)
 }
