@@ -15,7 +15,7 @@ func TestJsonResponseFromEmptyString(t *testing.T) {
 	})
 	response.SetApp(foundation.NewApp())
 
-	assert.Equal(t, "", response.Content())
+	assert.Equal(t, "\"\"", response.Content())
 }
 
 func TestJsonResponseFromJsonString(t *testing.T) {

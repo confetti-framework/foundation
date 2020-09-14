@@ -16,7 +16,7 @@ func (j RequestBodyDecoder) Handle(request inter.Request, next inter.Next) inter
 	case request_helper.IsJson(request):
 		request.App().Singleton(inter.RequestBodyDecoder, encoder.JsonToValue)
 	default:
-		return outcome.Error(errors.New("Content-Type not supported"))
+		return outcome.Json(errors.New("Content-Type not supported"))
 	}
 
 	return next(request)
