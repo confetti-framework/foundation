@@ -4,7 +4,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
@@ -134,11 +133,6 @@ func Test_value_or(t *testing.T) {
 func Test_request_content_type_json(t *testing.T) {
 	// Given
 	request := fakeRequestWithJsonBody()
-	request.App().Singleton(inter.Encoders, []inter.Encoder{
-		encoder.HtmlReaderToJson{},
-		encoder.RawToHtml{},
-		encoder.InterfaceToHtml{},
-	})
 
 	// When
 	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {

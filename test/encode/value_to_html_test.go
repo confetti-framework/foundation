@@ -1,8 +1,8 @@
 package encode
 
 import (
-	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/encoder"
+	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -23,14 +23,7 @@ func TestValueToHmlWithString(t *testing.T) {
 }
 
 func TestValueToHtmlWithValidValue(t *testing.T) {
-	result, err := encoder.RawToHtml{}.EncodeThrough(support.NewValue("foo"), htmlEncoders)
+	result, err := encoder.RawToHtml{}.EncodeThrough(support.NewValue("foo"), outcome.HtmlEncoders)
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", result)
-}
-
-var htmlEncoders = []inter.Encoder{
-	encoder.HtmlReaderToJson{},
-	encoder.RawToHtml{},
-	encoder.ErrorToHtml{},
-	encoder.InterfaceToHtml{},
 }

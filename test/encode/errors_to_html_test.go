@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/encoder"
+	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -27,7 +28,7 @@ func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
 }
 
 func TestOneErrorToHtml(t *testing.T) {
-	result, err := encoder.ErrorToHtml{}.EncodeThrough(errors.New("entity not found"), htmlEncoders)
+	result, err := encoder.ErrorToHtml{}.EncodeThrough(errors.New("entity not found"), outcome.HtmlEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "Entity not found", result)

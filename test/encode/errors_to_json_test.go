@@ -31,7 +31,7 @@ func TestNotCorrectErrorCanNotConvertToJson(t *testing.T) {
 }
 
 func TestOneErrorToJson(t *testing.T) {
-	result, err := encoder.ErrorToJson{}.EncodeThrough(errors.New("entity not found"), jsonEncoders)
+	result, err := encoder.ErrorToJson{}.EncodeThrough(errors.New("entity not found"), outcome.JsonEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Entity not found\"}]}", result)
@@ -48,7 +48,7 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 				"this is a long error message, "+
 				"this is a long error message",
 		),
-		jsonEncoders,
+		outcome.JsonEncoders,
 	)
 
 	assert.Nil(t, err)
@@ -68,7 +68,6 @@ func Test_request_without_content_type(t *testing.T) {
 		return outcome.Html(value.Error().Error())
 	})
 	response.SetApp(request.App())
-	response.App().Singleton(inter.Encoders, jsonEncoders)
 
 	// Then
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Content-Type not supported\"}]}", response.Content())
