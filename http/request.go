@@ -110,10 +110,6 @@ func (r Request) Method() string {
 	return r.source.Method
 }
 
-func (r Request) IsMethod(method string) bool {
-	return r.Method() == strings.ToUpper(method)
-}
-
 func (r Request) Path() string {
 	return r.source.URL.Path
 }

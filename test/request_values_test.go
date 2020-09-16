@@ -7,6 +7,7 @@ import (
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
+	"github.com/lanvard/foundation/http/request_helper"
 	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
@@ -78,7 +79,7 @@ func Test_get_url(t *testing.T) {
 	})
 
 	assert.Equal(t, "GET", request.Method())
-	assert.True(t, request.IsMethod("GET"))
+	assert.True(t, request_helper.IsMethod(request, "GET"))
 	assert.Equal(t, "/user/1432", request.Path())
 	assert.Equal(t, "https://api.lanvard.com/user/1432", request.Url())
 	assert.Equal(t, "https://api.lanvard.com/user/1432?test=123", request.FullUrl())
