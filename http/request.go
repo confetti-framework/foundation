@@ -218,7 +218,7 @@ func (r Request) parameters() support.Map {
 }
 
 func (r Request) generateBodyFromRawContent() support.Value {
-	if r.body.Present() {
+	if r.body.Filled() {
 		return r.body
 	}
 
