@@ -206,8 +206,22 @@ func (r Request) Headers() http.Header {
 	return r.source.Header
 }
 
-func (r Request) Cookie(key string) http.Cookie {
-	return Cookie{Name: key, Value: "home"}
+func (r Request) Cookie(key string) string {
+	result, err := r.CookieE(key)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (r Request) CookieE(key string) (string, error) {
+	var result string
+	cookie, err := r.source.Cookie(key)
+	if cookie != nil {
+		result = cookie.Value
+	}
+
+	return result, err
 }
 
 func (r Request) Route() inter.Route {
