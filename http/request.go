@@ -224,6 +224,10 @@ func (r Request) CookieE(key string) (string, error) {
 	return result, err
 }
 
+func (r Request) FilesE(key string) (support.Files, error) {
+	return nil, errors.New("files not found by key: " + key)
+}
+
 func (r Request) Route() inter.Route {
 	return r.app.Make("route").(inter.Route)
 }

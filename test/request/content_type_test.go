@@ -1,4 +1,4 @@
-package test
+package request
 
 import (
 	"github.com/lanvard/foundation/http/request_helper"
