@@ -18,7 +18,7 @@ import (
 func Test_number_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Uri:    "/user/1432",
+		Url:    "/user/1432",
 		Route:  new(mux.Route).Path("/user/{user_id}"),
 	})
 
@@ -33,7 +33,7 @@ func Test_number_from_uri(t *testing.T) {
 func Test_numbers_from_uri(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Uri:    "/user/1432,5423",
+		Url:    "/user/1432,5423",
 		Route:  new(mux.Route).Path("/user/{user_ids}"),
 	})
 
@@ -46,7 +46,7 @@ func Test_numbers_from_uri(t *testing.T) {
 func Test_number_from_query(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Uri:    "/users?user_id=1432",
+		Url:    "/users?user_id=1432",
 		Route:  new(mux.Route).Path("/users"),
 	})
 
@@ -61,7 +61,7 @@ func Test_number_from_query(t *testing.T) {
 func Test_numbers_from_query(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Uri:    "/users?user_ids=1432,5423",
+		Url:    "/users?user_ids=1432,5423",
 		Route:  new(mux.Route).Path("/users"),
 	})
 
@@ -75,7 +75,7 @@ func Test_get_url(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
-		Uri:    "/user/1432?test=123",
+		Url:    "/user/1432?test=123",
 	})
 
 	assert.Equal(t, "GET", request.Method())
@@ -150,7 +150,7 @@ func fakeRequestWithForm() inter.Request {
 	return http.NewRequest(http.Options{
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
-		Uri:    "/user/1432?user_id=1234",
+		Url:    "/user/1432?user_id=1234",
 		Form: url.Values{
 			"age":      {"10"},
 			"language": {"Go"},
@@ -166,7 +166,7 @@ func fakeRequestWithJsonBody() inter.Request {
 		App:    foundation.NewApp(),
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
-		Uri:    "/user/2432?comment_id=1234",
+		Url:    "/user/2432?comment_id=1234",
 		Headers: map[string][]string{
 			"Content-Type": {"text/json; charset=UTF-8"},
 		},

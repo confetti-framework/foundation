@@ -15,6 +15,13 @@ func TestFilesNotFoundInRequest(t *testing.T) {
 	assert.Len(t, files, 0)
 }
 
+func TestTwoFilesFound(t *testing.T) {
+	request := requestByFiles()
+
+	files, _ := request.FilesE("photos")
+	assert.Len(t, files, 2)
+}
+
 func requestByFiles() inter.Request {
 	options := http.Options{}
 	return http.NewRequest(options)

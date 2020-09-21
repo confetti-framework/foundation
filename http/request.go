@@ -27,7 +27,7 @@ type Options struct {
 	Source  http.Request
 	Method  string
 	Host    string
-	Uri     string
+	Url     string
 	Headers http.Header
 	Form    url.Values
 	Body    string
@@ -42,26 +42,27 @@ func NewRequest(options Options) inter.Request {
 		body = bytes.NewBufferString(options.Body)
 	}
 
+	if options.Url == "" {
+		options.Url = "/"
+	}
+
 	source := options.Source
+	if source.Method == "" {
+		// For testing purpose
+		source = *httptest.NewRequest(options.Method, options.Url, body)
+		if options.Form != nil {
+			source.Header.Set("Content-Type", "multipart/form-data; boundary=xxx")
 
-	if options.Uri == "" {
-		options.Uri = "/"
-	}
+			source.Form = options.Form
+		}
 
-	source = *httptest.NewRequest(options.Method, options.Uri, body)
+		if options.Host != "" {
+			source.Host = options.Host
+		}
 
-	if options.Form != nil {
-		source.Header.Set("Content-Type", "multipart/form-data; boundary=xxx")
-
-		source.Form = options.Form
-	}
-
-	if options.Host != "" {
-		source.Host = options.Host
-	}
-
-	if options.Headers != nil {
-		source.Header = options.Headers
+		if options.Headers != nil {
+			source.Header = options.Headers
+		}
 	}
 
 	request := Request{source: source}
