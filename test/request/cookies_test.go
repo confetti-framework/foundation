@@ -54,7 +54,7 @@ func TestRequestCookieENotFoundMustGiveAnError(t *testing.T) {
 
 func requestByCookies(cookies []string) inter.Request {
 	options := http.Options{
-		Headers: http.Header{
+		Header: http.Header{
 			"Cookie": cookies,
 		},
 	}

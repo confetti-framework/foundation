@@ -167,9 +167,9 @@ func fakeRequestWithJsonBody() inter.Request {
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
 		Url:    "/user/2432?comment_id=1234",
-		Headers: map[string][]string{
+		Header: map[string][]string{
 			"Content-Type": {"text/json; charset=UTF-8"},
 		},
-		Body: `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
+		Content: `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
 	})
 }

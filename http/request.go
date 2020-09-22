@@ -28,18 +28,18 @@ type Options struct {
 	Method  string
 	Host    string
 	Url     string
-	Headers http.Header
+	Header  http.Header
 	Form    url.Values
-	Body    string
+	Content string
 	Route   *mux.Route
+	Body    io.ReadCloser
 }
 
 func NewRequest(options Options) inter.Request {
-
 	var body io.Reader
 
-	if options.Body != "" {
-		body = bytes.NewBufferString(options.Body)
+	if options.Content != "" {
+		body = bytes.NewBufferString(options.Content)
 	}
 
 	if options.Url == "" {
@@ -52,7 +52,6 @@ func NewRequest(options Options) inter.Request {
 		source = *httptest.NewRequest(options.Method, options.Url, body)
 		if options.Form != nil {
 			source.Header.Set("Content-Type", "multipart/form-data; boundary=xxx")
-
 			source.Form = options.Form
 		}
 
@@ -60,8 +59,12 @@ func NewRequest(options Options) inter.Request {
 			source.Host = options.Host
 		}
 
-		if options.Headers != nil {
-			source.Header = options.Headers
+		if options.Body != nil {
+			source.Body = options.Body
+		}
+
+		if options.Header != nil {
+			source.Header = options.Header
 		}
 	}
 
@@ -225,8 +228,13 @@ func (r Request) CookieE(key string) (string, error) {
 	return result, err
 }
 
-func (r Request) FilesE(key string) (support.Files, error) {
-	return nil, errors.New("files not found by key: " + key)
+func (r Request) FileE(key string) (support.File, error) {
+	file, header, err := r.source.FormFile(key)
+	if errors.Is(http.ErrMissingFile, err) {
+		return support.File{}, errors.New("file not found by key: " + key)
+	}
+
+	return support.NewFile(file, header), err
 }
 
 func (r Request) Route() inter.Route {
