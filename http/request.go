@@ -228,6 +228,14 @@ func (r Request) CookieE(key string) (string, error) {
 	return result, err
 }
 
+func (r Request) File(key string) support.File {
+	file, err := r.FileE(key)
+	if err != nil {
+		panic(err)
+	}
+	return file
+}
+
 func (r Request) FileE(key string) (support.File, error) {
 	file, header, err := r.source.FormFile(key)
 	if errors.Is(http.ErrMissingFile, err) {

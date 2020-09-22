@@ -17,21 +17,36 @@ func TestFileNoContentTypeInRequest(t *testing.T) {
 }
 
 func TestFileNotFoundInRequest(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"the_key\"; filename" +
-		"=\"file." +
-		"txt\"\nContent-Type: text/plain\n\ncontent_of_file\n\n--xxx--")
+	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	_, err := request.FileE("book")
 	assert.EqualError(t, err, "file not found by key: book")
 }
 
 func TestOneFileFoundWithContent(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename" +
-		"=\"file.txt\"\nContent-Type: text/plain\n\ncontent_of_file\n--xxx--")
+	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	file, err := request.FileE("photo")
 	assert.Nil(t, err)
 	assert.Equal(t, "content_of_file", file.Content())
+}
+
+func TestFileNotFoundShouldPanic(t *testing.T) {
+	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Panics(t, func() {
+		request.File("book")
+	})
+}
+
+func TestFileGetContent(t *testing.T) {
+	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "content_of_file", request.File("photo").Content())
 }
 
 func requestByFiles(content string) inter.Request {
