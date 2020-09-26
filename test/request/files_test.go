@@ -17,7 +17,8 @@ func TestFileNoContentTypeInRequest(t *testing.T) {
 }
 
 func TestFileNotFoundInRequest(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	_, err := request.FileE("book")
@@ -25,7 +26,8 @@ func TestFileNotFoundInRequest(t *testing.T) {
 }
 
 func TestOneFileFoundWithContent(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	file, err := request.FileE("photo")
@@ -34,10 +36,10 @@ func TestOneFileFoundWithContent(t *testing.T) {
 }
 
 func TestTwoFilesGivenReceiveOneFile(t *testing.T) {
-	request := requestByFiles("" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
-		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	file, err := request.FileE("photo")
@@ -46,10 +48,10 @@ func TestTwoFilesGivenReceiveOneFile(t *testing.T) {
 }
 
 func TestTwoFilesDifferentKeyGiven(t *testing.T) {
-	request := requestByFiles("" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo1\"; filename=\"file1.txt\"\n" +
-		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo2\"; filename=\"file2.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo1\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo2\"; filename=\"file2.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	file, err := request.FileE("photo2")
@@ -62,7 +64,8 @@ func TestTwoFilesDifferentKeyGiven(t *testing.T) {
 }
 
 func TestFileNotFoundShouldPanic(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	assert.Panics(t, func() {
@@ -71,7 +74,8 @@ func TestFileNotFoundShouldPanic(t *testing.T) {
 }
 
 func TestFileGetContent(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	assert.Equal(t, "content_of_file", request.File("photo").Content())
@@ -85,7 +89,8 @@ func TestFilesNoContentTypeInRequest(t *testing.T) {
 }
 
 func TestFilesNotFoundInRequest(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	_, err := request.FilesE("book")
@@ -93,7 +98,8 @@ func TestFilesNotFoundInRequest(t *testing.T) {
 }
 
 func TestFilesOneFoundWithContent(t *testing.T) {
-	request := requestByFiles("--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
@@ -102,10 +108,10 @@ func TestFilesOneFoundWithContent(t *testing.T) {
 }
 
 func TestFilesMultipleFoundWithContent(t *testing.T) {
-	request := requestByFiles("" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
-		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
@@ -115,10 +121,10 @@ func TestFilesMultipleFoundWithContent(t *testing.T) {
 }
 
 func TestGetFileHeaderFromSecondFile(t *testing.T) {
-	request := requestByFiles("" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
-		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
-		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
