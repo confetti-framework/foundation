@@ -9,6 +9,7 @@ import (
 	"github.com/lanvard/support"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -232,7 +233,7 @@ func (r Request) CookieE(key string) (string, error) {
 	return result, err
 }
 
-func (r Request) File(key string) support.File {
+func (r *Request) File(key string) support.File {
 	file, err := r.FileE(key)
 	if err != nil {
 		panic(err)
@@ -240,7 +241,7 @@ func (r Request) File(key string) support.File {
 	return file
 }
 
-func (r Request) FileE(key string) (support.File, error) {
+func (r *Request) FileE(key string) (support.File, error) {
 	var file support.File
 	files, err := r.FilesE(key)
 
@@ -253,7 +254,7 @@ func (r Request) FileE(key string) (support.File, error) {
 	return file, err
 }
 
-func (r Request) FilesE(key string) ([]support.File, error) {
+func (r *Request) FilesE(key string) ([]support.File, error) {
 	if r.source.MultipartForm == nil {
 		err := r.source.ParseMultipartForm(defaultMaxMemory)
 		if err != nil {
@@ -261,9 +262,9 @@ func (r Request) FilesE(key string) ([]support.File, error) {
 		}
 	}
 	if r.source.MultipartForm != nil && r.source.MultipartForm.File != nil {
-		if fileHeaders := r.source.MultipartForm.File[key]; len(fileHeaders) > 0 {
-			file, err := fileHeaders[0].Open()
-			return []support.File{support.NewFile(file, fileHeaders[0])}, err
+		allFiles := r.source.MultipartForm.File
+		if fileHeaders := allFiles[key]; len(fileHeaders) > 0 {
+			return r.getFilesByHeaders(fileHeaders)
 		}
 	}
 	return []support.File{}, errors.New("file not found by key: " + key)
@@ -299,4 +300,16 @@ func (r Request) generateBodyFromRawContent() support.Value {
 	body := decoder(string(rawBody))
 
 	return body
+}
+
+func (r *Request) getFilesByHeaders(fileHeaders []*multipart.FileHeader) ([]support.File, error) {
+	var result []support.File
+	for _, fileHeader := range fileHeaders {
+		file, err := fileHeader.Open()
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, support.NewFile(file, fileHeaders[0]))
+	}
+	return result, nil
 }

@@ -101,18 +101,18 @@ func TestFilesOneFoundWithContent(t *testing.T) {
 	assert.Equal(t, "content_of_file", files[0].Content())
 }
 
-// func TestFilesMultipleFoundWithContent(t *testing.T) {
-// 	request := requestByFiles("" +
-// 		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
-// 		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
-// 		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
-// 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
-//
-// 	files, err := request.FilesE("photo")
-// 	assert.Nil(t, err)
-// 	assert.Equal(t, "content_of_first_file", files[0].Content())
-// 	assert.Equal(t, "content_of_second_file", files[1].Content())
-// }
+func TestFilesMultipleFoundWithContent(t *testing.T) {
+	request := requestByFiles("" +
+		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n" +
+		"--xxx\nContent-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
+
+	files, err := request.FilesE("photo")
+	assert.Nil(t, err)
+	assert.Equal(t, "content_of_first_file", files[0].Content())
+	assert.Equal(t, "content_of_second_file", files[1].Content())
+}
 
 func requestByFiles(content string) inter.Request {
 	body := ioutil.NopCloser(strings.NewReader(content))
