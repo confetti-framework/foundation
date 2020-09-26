@@ -15,6 +15,10 @@ import (
 	"strings"
 )
 
+const (
+	defaultMaxMemory = 32 << 20 // 32 MB
+)
+
 type Request struct {
 	app       inter.App
 	source    http.Request
@@ -237,12 +241,32 @@ func (r Request) File(key string) support.File {
 }
 
 func (r Request) FileE(key string) (support.File, error) {
-	file, header, err := r.source.FormFile(key)
-	if errors.Is(http.ErrMissingFile, err) {
-		return support.File{}, errors.New("file not found by key: " + key)
+	var file support.File
+	files, err := r.FilesE(key)
+
+	if len(files) != 0 {
+		file = files[0]
+	} else {
+		file = support.File{}
 	}
 
-	return support.NewFile(file, header), err
+	return file, err
+}
+
+func (r Request) FilesE(key string) ([]support.File, error) {
+	if r.source.MultipartForm == nil {
+		err := r.source.ParseMultipartForm(defaultMaxMemory)
+		if err != nil {
+			return []support.File{}, err
+		}
+	}
+	if r.source.MultipartForm != nil && r.source.MultipartForm.File != nil {
+		if fileHeaders := r.source.MultipartForm.File[key]; len(fileHeaders) > 0 {
+			file, err := fileHeaders[0].Open()
+			return []support.File{support.NewFile(file, fileHeaders[0])}, err
+		}
+	}
+	return []support.File{}, errors.New("file not found by key: " + key)
 }
 
 func (r Request) Route() inter.Route {

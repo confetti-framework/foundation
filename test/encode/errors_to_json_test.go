@@ -70,7 +70,7 @@ func Test_request_without_content_type(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Content-Type not supported\"}]}", response.Content())
+	assert.Equal(t, "no request body decoder found", response.Content())
 }
 
 func TestSystemErrorConvertToJson(t *testing.T) {
