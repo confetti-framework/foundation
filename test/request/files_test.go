@@ -152,6 +152,22 @@ func TestFilesWithoutError(t *testing.T) {
 	assert.Equal(t, "content_of_second_file", request.Files("photo")[1].Content())
 }
 
+func TestFileNameNotPresent(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "", request.File("photo").Name())
+}
+
+func TestFileNamePresent(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "file1.txt", request.File("photo").Name())
+}
+
 func requestByFiles(content string) inter.Request {
 	body := ioutil.NopCloser(strings.NewReader(content))
 	options := http.Options{
