@@ -132,6 +132,26 @@ func TestGetFileHeaderFromSecondFile(t *testing.T) {
 	assert.Equal(t, "file2.txt", files[1].Header().Filename)
 }
 
+func TestFilesNotFoundShouldPanic(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Panics(t, func() {
+		request.Files("book")
+	})
+}
+
+func TestFilesWithoutError(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
+
+	assert.Equal(t, "content_of_second_file", request.Files("photo")[1].Content())
+}
+
 func requestByFiles(content string) inter.Request {
 	body := ioutil.NopCloser(strings.NewReader(content))
 	options := http.Options{

@@ -254,6 +254,14 @@ func (r *Request) FileE(key string) (support.File, error) {
 	return file, err
 }
 
+func (r *Request) Files(key string) []support.File {
+	files, err := r.FilesE(key)
+	if err != nil {
+		panic(err)
+	}
+	return files
+}
+
 func (r *Request) FilesE(key string) ([]support.File, error) {
 	if r.source.MultipartForm == nil {
 		err := r.source.ParseMultipartForm(defaultMaxMemory)
