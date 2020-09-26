@@ -309,7 +309,7 @@ func (r *Request) getFilesByHeaders(fileHeaders []*multipart.FileHeader) ([]supp
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, support.NewFile(file, fileHeaders[0]))
+		result = append(result, support.NewFile(file, fileHeader))
 	}
 	return result, nil
 }
