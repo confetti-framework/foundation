@@ -157,7 +157,9 @@ func TestFileNameNotPresent(t *testing.T) {
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
-	assert.Equal(t, "", request.File("photo").Name())
+	assert.Panics(t, func() {
+		request.File("book").Name()
+	})
 }
 
 func TestFileNamePresent(t *testing.T) {
@@ -181,7 +183,15 @@ func TestFileExtensionTxt(t *testing.T) {
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
-	assert.Equal(t, "txt", request.File("photo").Extension())
+	assert.Equal(t, ".txt", request.File("photo").Extension())
+}
+
+func TestFileExtensionWithCharset(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain; charset=utf-32le\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, ".txt", request.File("photo").Extension())
 }
 
 func TestFileExtensionJpeg(t *testing.T) {
@@ -189,7 +199,7 @@ func TestFileExtensionJpeg(t *testing.T) {
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
 		"Content-Type: image/jpeg\n\ncontent_of_file\n--xxx--")
 
-	assert.Equal(t, "jpeg", request.File("photo").Extension())
+	assert.Equal(t, ".jpg", request.File("photo").Extension())
 }
 
 func requestByFiles(content string) inter.Request {
