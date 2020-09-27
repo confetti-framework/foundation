@@ -168,6 +168,30 @@ func TestFileNamePresent(t *testing.T) {
 	assert.Equal(t, "file1.txt", request.File("photo").Name())
 }
 
+func TestFileExtensionNotFound(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: invalid\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "", request.File("photo").Extension())
+}
+
+func TestFileExtensionTxt(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "txt", request.File("photo").Extension())
+}
+
+func TestFileExtensionJpeg(t *testing.T) {
+	request := requestByFiles("--xxx\n" +
+		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
+		"Content-Type: image/jpeg\n\ncontent_of_file\n--xxx--")
+
+	assert.Equal(t, "jpeg", request.File("photo").Extension())
+}
+
 func requestByFiles(content string) inter.Request {
 	body := ioutil.NopCloser(strings.NewReader(content))
 	options := http.Options{
