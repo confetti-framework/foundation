@@ -33,19 +33,19 @@ func TestGetByExistingKey(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-// func TestGetNestedFromStruct(t *testing.T) {
-// 	mockConfig := struct{ House map[string]string }{House: map[string]string{"door": "blue"}}
-// 	result, err := config.GetE(mockConfig, "House.door")
-// 	assert.Equal(t, "blue", result)
-// 	assert.Nil(t, err)
-// }
+func TestGetNestedFromStruct(t *testing.T) {
+	mockConfig := struct{ House map[string]string }{House: map[string]string{"door": "blue"}}
+	result, err := config.GetE(mockConfig, "House.door")
+	assert.Equal(t, "blue", result)
+	assert.Nil(t, err)
+}
 
-// func TestGetByAsterisk(t *testing.T) {
-// 	mockConfig := struct { Title string}{Title: "The horse"}
-// 	result, err := config.GetE(mockConfig, "Title")
-// 	assert.Equal(t, "The horse", result)
-// 	assert.Nil(t, err)
-// }
+func TestGetByAsterisk(t *testing.T) {
+	mockConfig := struct{ Title string }{Title: "The horse"}
+	result, err := config.GetE(mockConfig, "Title")
+	assert.Equal(t, "The horse", result)
+	assert.Nil(t, err)
+}
 
 func TestGetEmptyStructByEmptyKeyWithoutError(t *testing.T) {
 	result := config.Get(struct{}{}, "")

@@ -157,7 +157,7 @@ func (r *Request) Body(keyInput ...string) support.Value {
 		key = keyInput[0]
 	}
 
-	formMap := support.NewMapByUrlValues(r.source.Form)
+	formMap := support.NewMap(r.source.Form)
 	if !formMap.Empty() {
 		return formMap.Get(key)
 	}
@@ -190,16 +190,16 @@ func (r Request) ParameterOr(key string, defaultValue interface{}) support.Value
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
-	r.urlValues = support.NewMapByString(vars)
+	r.urlValues = support.NewMap(vars)
 	return r
 }
 
 func (r Request) Query(key string) support.Value {
-	return support.NewMapByUrlValues(r.Source().URL.Query()).Get(key)
+	return support.NewMap(r.Source().URL.Query()).Get(key)
 }
 
 func (r Request) QueryOr(key string, defaultValue interface{}) support.Value {
-	value := support.NewMapByUrlValues(r.Source().URL.Query()).Get(key)
+	value := support.NewMap(r.Source().URL.Query()).Get(key)
 	if value.Error() == nil {
 		return value
 	}
@@ -284,7 +284,7 @@ func (r Request) Route() inter.Route {
 
 func (r Request) parameters() support.Map {
 	urlMap := r.urlValues
-	queryMap := support.NewMapByUrlValues(r.Source().URL.Query())
+	queryMap := support.NewMap(r.Source().URL.Query())
 
 	return support.NewMap().Merge(urlMap, queryMap)
 }
