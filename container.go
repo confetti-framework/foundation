@@ -13,12 +13,6 @@ type Container struct {
 	// The container's bindings.
 	bindings inter.Bindings
 
-	// The registered type aliases.
-	aliases map[string]interface{}
-
-	// The registered aliases keyed by the abstract name.
-	abstractAliases map[string]map[string]interface{}
-
 	// The container's shared instances.
 	instances inter.Instances
 }
@@ -43,16 +37,7 @@ func (c *Container) Bound(abstract string) bool {
 	_, bind := c.bindings[abstract]
 	_, instance := c.instances[abstract]
 
-	if bind || instance || c.IsAlias(abstract) {
-		return true
-	}
-
-	return false
-}
-
-// Determine if a given string is an alias.
-func (c *Container) IsAlias(name string) bool {
-	if _, ok := c.aliases[name]; ok {
+	if bind || instance {
 		return true
 	}
 
@@ -74,11 +59,6 @@ func (c *Container) Singleton(abstract interface{}, concrete interface{}) {
 // Register an existing instance as shared in the container.
 func (c *Container) Instance(abstract interface{}, concrete interface{}) interface{} {
 	abstractName := support.Name(abstract)
-
-	_, ok := c.aliases[abstractName]
-	if ok {
-		delete(c.aliases, abstractName)
-	}
 
 	if c.instances == nil {
 		c.instances = make(inter.Instances)
@@ -120,9 +100,6 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 		// The instance will always be returned on subsequent calls
 		concrete = object
 
-	} else if support.Type(abstract) == reflect.String && c.IsAlias(abstractName) {
-		concrete = c.getConcreteAlias(concrete, abstract)
-
 	} else if object, present := c.bindings[abstractName]; present {
 		concrete = c.getConcreteBinding(concrete, object, abstractName)
 
@@ -133,6 +110,9 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 	} else if support.Type(abstract) == reflect.Struct {
 		// If struct cannot be found, we simply have to use the struct itself.
 		concrete = abstract
+	} else if support.Type(abstract) == reflect.String {
+		value := support.NewValue(c.instances).Get(abstract.(string))
+		concrete, _ = value.RawE()
 	}
 
 	return concrete
@@ -150,21 +130,6 @@ func (c *Container) getConcreteBinding(concrete interface{}, object interface{},
 		}
 	}
 	c.bindings[abstractName] = concrete
-
-	return concrete
-}
-
-func (c *Container) getConcreteAlias(concrete, abstract interface{}) interface{} {
-	concrete = c.aliases[abstract.(string)]
-
-	// If concrete is a callback, run it and save the result
-	if support.Type(concrete) == reflect.Func {
-		callback, simpleCallback := concrete.(func() interface{})
-		if simpleCallback {
-			concrete = callback()
-		}
-	}
-	c.aliases[abstract.(string)] = concrete
 
 	return concrete
 }
