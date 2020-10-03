@@ -9,7 +9,7 @@ import (
 )
 
 func TestGetEmptyStructByEmptyKey(t *testing.T) {
-	var index []interface{}
+	var index = map[string]interface{}{}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
@@ -21,8 +21,7 @@ func TestGetEmptyStructByEmptyKey(t *testing.T) {
 }
 
 func TestGetFilledStructByEmptyKey(t *testing.T) {
-	firstConfig := firstConfig{Title: "The horse"}
-	index := []interface{}{firstConfig}
+	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
@@ -30,8 +29,7 @@ func TestGetFilledStructByEmptyKey(t *testing.T) {
 }
 
 func TestGetByNotExistingKey(t *testing.T) {
-	firstConfig := firstConfig{Title: "The horse"}
-	index := []interface{}{firstConfig}
+	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
@@ -39,8 +37,7 @@ func TestGetByNotExistingKey(t *testing.T) {
 }
 
 func TestGetByExistingKey(t *testing.T) {
-	firstConfig := firstConfig{Title: "The horse"}
-	index := []interface{}{firstConfig}
+	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
@@ -48,7 +45,14 @@ func TestGetByExistingKey(t *testing.T) {
 }
 
 func TestGetNestedFromStruct(t *testing.T) {
-	index := []interface{}{nestedConfig}
+	index := map[string]interface{}{"deepConfig": deepConfig{
+		Deep: map[string]interface{}{
+			"deeper": []string{
+				"bottom of the sea",
+			},
+		},
+	}}
+
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
@@ -56,18 +60,9 @@ func TestGetNestedFromStruct(t *testing.T) {
 }
 
 func TestGetByAsterisk(t *testing.T) {
-	firstConfig := firstConfig{Title: "The horse"}
-	index := []interface{}{firstConfig, secondConfig{}}
+	var index = map[string]interface{}{"firstConfig": firstConfig, "secondConfig": secondConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
 	assert.Len(t, container.Make("config.*"), 2)
-}
-
-var nestedConfig = deepConfig{
-	Deep: map[string]interface{}{
-		"deeper": []string{
-			"bottom of the sea",
-		},
-	},
 }
