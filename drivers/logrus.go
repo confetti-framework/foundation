@@ -1,6 +1,7 @@
 package drivers
 
 import (
+	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"os"
 	"testing"
@@ -15,14 +16,10 @@ type LogRus struct {
 	Formatter   logrus.Formatter
 }
 
-func (r *LogRus) init() {
+func (r LogRus) init() *logrus.Logger {
 	if r.Permissions == 0 {
 		r.Permissions = 0644
 	}
-}
-
-func (r LogRus) Log(level logrus.Level, message interface{}) {
-	r.init()
 
 	// Delete the file later if a test is used
 	if r.Testing != nil {
@@ -41,5 +38,14 @@ func (r LogRus) Log(level logrus.Level, message interface{}) {
 		logger.Out = file
 	}
 
-	logger.WithFields(logrus.Fields{"test": "bla"}).Log(level, message)
+	return logger
+}
+
+func (r LogRus) Log(level logrus.Level, message string) {
+	r.init().Log(level, message)
+}
+
+func (r LogRus) LogWith(level logrus.Level, message string, data interface{}) {
+	result, _ := json.Marshal(data)
+	r.init().WithField("data", string(result)).Log(level, message)
 }

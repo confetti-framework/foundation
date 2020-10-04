@@ -32,7 +32,7 @@ func TestCreateLogFileIfNotExists(t *testing.T) {
 func TestGetAddOneErrorLine(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
-	logger.Log(logrus.InfoLevel, "error on line 1")
+	logger.Log(logrus.InfoLevel, "info on line 1")
 
 	assert.Len(t, openAndReadFile(testFile), 1)
 }
@@ -40,8 +40,8 @@ func TestGetAddOneErrorLine(t *testing.T) {
 func TestGetAddTwoErrorLines(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
-	logger.Log(logrus.InfoLevel, "error on line 1")
-	logger.Log(logrus.InfoLevel, "error on line 2")
+	logger.Log(logrus.InfoLevel, "info on line 1")
+	logger.Log(logrus.InfoLevel, "info on line 2")
 
 	assert.Len(t, openAndReadFile(testFile), 2)
 }
@@ -49,32 +49,32 @@ func TestGetAddTwoErrorLines(t *testing.T) {
 func TestContentOfError(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
-	logger.Log(logrus.InfoLevel, "error on line 1")
-	logger.Log(logrus.InfoLevel, "error on line 2")
+	logger.Log(logrus.InfoLevel, "info on line 1")
+	logger.Log(logrus.InfoLevel, "info on line 2")
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], "time=")
-	assert.Contains(t, lines[0][0], "msg=\"error on line 1\"")
+	assert.Contains(t, lines[0][0], "msg=\"info on line 1\"")
 	assert.Contains(t, lines[1][0], "time=")
-	assert.Contains(t, lines[1][0], "msg=\"error on line 2\"")
+	assert.Contains(t, lines[1][0], "msg=\"info on line 2\"")
 }
 
 func TestLogWithLevel(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
-	logger.Log(logrus.InfoLevel, "error message")
+	logger.Log(logrus.InfoLevel, "info message")
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], "level=info msg=\"error message\"")
+	assert.Contains(t, lines[0][0], "level=info msg=\"info message\"")
 }
 
 func TestLogWithoutFormatter(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
-	logger.Log(logrus.InfoLevel, "error message")
+	logger.Log(logrus.InfoLevel, "info message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, "^time=\"[^\"]*\" level=info msg=\"error message\"$", lines[0][0])
+	assert.Regexp(t, "^time=\"[^\"]*\" level=info msg=\"info message\"$", lines[0][0])
 }
 
 func TestLogWithFormatterWithoutQuotes(t *testing.T) {
@@ -84,10 +84,46 @@ func TestLogWithFormatterWithoutQuotes(t *testing.T) {
 		Formatter: &logrus.TextFormatter{DisableQuote: true},
 	}
 
-	logger.Log(logrus.InfoLevel, "error message")
+	logger.Log(logrus.InfoLevel, "info message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, "level=info msg=error message$", lines[0][0])
+	assert.Regexp(t, "level=info msg=info message$", lines[0][0])
+}
+
+func TestLogWithString(t *testing.T) {
+	logger := drivers.LogRus{
+		Testing: t,
+		Path:    testFile,
+	}
+
+	logger.LogWith(logrus.InfoLevel, "the info", "string data")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], `data="\"string data\""`)
+}
+
+func TestLogWithMap(t *testing.T) {
+	logger := drivers.LogRus{
+		Testing: t,
+		Path:    testFile,
+	}
+
+	logger.LogWith(logrus.InfoLevel, "the info", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], `data="{\"key\":\"value\"}"`)
+}
+
+func TestLogWithStruct(t *testing.T) {
+	logger := drivers.LogRus{
+		Testing: t,
+		Path:    testFile,
+	}
+
+	logger.LogWith(logrus.InfoLevel, "the info", mock)
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], `data="{\"FirstLevel\":{\"SecondLevel\":\"ceiling\"}}"`)
 }
 
 func openAndReadFile(fileName string) [][]string {
