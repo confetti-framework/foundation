@@ -12,8 +12,8 @@ type LogRus struct {
 	Permissions os.FileMode
 	Level       logrus.Level
 	Days        int
-	Testing     *testing.T
 	Formatter   logrus.Formatter
+	Testing     *testing.T
 }
 
 func (r LogRus) init() *logrus.Logger {

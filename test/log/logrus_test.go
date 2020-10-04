@@ -91,10 +91,7 @@ func TestLogWithFormatterWithoutQuotes(t *testing.T) {
 }
 
 func TestLogWithString(t *testing.T) {
-	logger := drivers.LogRus{
-		Testing: t,
-		Path:    testFile,
-	}
+	logger := drivers.LogRus{Testing: t, Path: testFile}
 
 	logger.LogWith(logrus.InfoLevel, "the info", "string data")
 
@@ -103,10 +100,7 @@ func TestLogWithString(t *testing.T) {
 }
 
 func TestLogWithMap(t *testing.T) {
-	logger := drivers.LogRus{
-		Testing: t,
-		Path:    testFile,
-	}
+	logger := drivers.LogRus{Testing: t, Path: testFile}
 
 	logger.LogWith(logrus.InfoLevel, "the info", map[string]string{"key": "value"})
 
@@ -115,10 +109,7 @@ func TestLogWithMap(t *testing.T) {
 }
 
 func TestLogWithStruct(t *testing.T) {
-	logger := drivers.LogRus{
-		Testing: t,
-		Path:    testFile,
-	}
+	logger := drivers.LogRus{Testing: t, Path: testFile}
 
 	logger.LogWith(logrus.InfoLevel, "the info", mock)
 
