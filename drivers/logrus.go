@@ -12,6 +12,7 @@ type LogRus struct {
 	Level       logrus.Level
 	Days        int
 	Testing     *testing.T
+	Formatter   logrus.Formatter
 }
 
 func (r *LogRus) init() {
@@ -20,7 +21,7 @@ func (r *LogRus) init() {
 	}
 }
 
-func (r LogRus) Log(level logrus.Level, message string) {
+func (r LogRus) Log(level logrus.Level, message interface{}) {
 	r.init()
 
 	// Delete the file later if a test is used
@@ -31,11 +32,14 @@ func (r LogRus) Log(level logrus.Level, message string) {
 	}
 
 	logger := logrus.New()
+	if r.Formatter != nil {
+		logger.Formatter = r.Formatter
+	}
 
 	file, err := os.OpenFile(r.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.Permissions)
 	if err == nil {
 		logger.Out = file
 	}
 
-	logger.Log(level, message)
+	logger.WithFields(logrus.Fields{"test": "bla"}).Log(level, message)
 }

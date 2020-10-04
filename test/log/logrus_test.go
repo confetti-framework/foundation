@@ -15,6 +15,12 @@ import (
 const testDir = "/tmp/"
 const testFile = testDir + "log_test.log"
 
+var mock = struct{ FirstLevel interface{} }{
+	struct{ SecondLevel string }{
+		"ceiling",
+	},
+}
+
 func TestCreateLogFileIfNotExists(t *testing.T) {
 	logger := drivers.LogRus{Testing: t, Path: testFile}
 
@@ -60,6 +66,28 @@ func TestLogWithLevel(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], "level=info msg=\"error message\"")
+}
+
+func TestLogWithoutFormatter(t *testing.T) {
+	logger := drivers.LogRus{Testing: t, Path: testFile}
+
+	logger.Log(logrus.InfoLevel, "error message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, "^time=\"[^\"]*\" level=info msg=\"error message\"$", lines[0][0])
+}
+
+func TestLogWithFormatterWithoutQuotes(t *testing.T) {
+	logger := drivers.LogRus{
+		Testing:   t,
+		Path:      testFile,
+		Formatter: &logrus.TextFormatter{DisableQuote: true},
+	}
+
+	logger.Log(logrus.InfoLevel, "error message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, "level=info msg=error message$", lines[0][0])
 }
 
 func openAndReadFile(fileName string) [][]string {
