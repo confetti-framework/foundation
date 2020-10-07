@@ -1,6 +1,7 @@
 package drivers
 
 import (
+	"encoding/json"
 	"github.com/lanvard/syslog"
 	"os"
 	"testing"
@@ -25,13 +26,6 @@ func (r Syslog) init() syslog.Logger {
 		r.FileMode = 0644
 	}
 
-	// Delete the file later if a test is used
-	if r.Testing != nil {
-		r.Testing.Cleanup(func() {
-			_ = os.Remove(r.Path)
-		})
-	}
-
 	// We overwrite the default value of 0.
 	if r.Facility == 0 {
 		r.Facility = syslog.USER
@@ -45,10 +39,24 @@ func (r Syslog) init() syslog.Logger {
 }
 
 func (r Syslog) Log(severity Severity, message string) {
+	r.LogWith(severity, message, "")
+}
+
+func (r Syslog) LogWith(severity Severity, message string, data interface{}) {
+	var structuredData syslog.StructuredData
+	var rawData string
+	switch data := data.(type) {
+	case syslog.StructuredData:
+		structuredData = data
+	default:
+		rawDataBytes, _ := json.Marshal(data)
+		rawData = string(rawDataBytes)
+	}
+
 	r.init().Log(
 		severity,
-		syslog.KeyBySeverity(severity)+" "+message,
-		nil,
-		"",
+		syslog.KeyBySeverity(severity)+": "+message,
+		structuredData,
+		rawData,
 	)
 }
