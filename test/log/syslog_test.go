@@ -75,40 +75,40 @@ func TestLogWithString(t *testing.T) {
 	setUp()
 	logger := drivers.Syslog{Testing: t, Path: testFile}
 
-	logger.LogWith(syslog.INFO, "the info", "string data")
+	logger.LogWith(syslog.INFO, "the message", "string data")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - info: the info - "string data"`, lines[0][0])
+	assert.Regexp(t, ` - - info: the message - string data$`, lines[0][0])
 }
 
 func TestLogWithMap(t *testing.T) {
 	setUp()
 	logger := drivers.Syslog{Testing: t, Path: testFile}
 
-	logger.LogWith(syslog.INFO, "the info", map[string]string{"key": "value"})
+	logger.LogWith(syslog.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the info - {"key":"value"}`)
+	assert.Contains(t, lines[0][0], ` - - info: the message - {"key":"value"}`)
 }
 
 func TestLogWithStruct(t *testing.T) {
 	setUp()
 	logger := drivers.Syslog{Testing: t, Path: testFile}
 
-	logger.LogWith(syslog.INFO, "the info", structMock)
+	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the info - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], ` - - info: the message - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogLevels(t *testing.T) {
 	setUp()
 	logger := drivers.Syslog{Testing: t, Path: testFile}
 
-	logger.LogWith(syslog.INFO, "the info", structMock)
+	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the info - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], ` - - info: the message - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogWithStructuredData(t *testing.T) {
@@ -118,11 +118,171 @@ func TestLogWithStructuredData(t *testing.T) {
 		"firstLevel": {"secondLevel": "the value"},
 	}
 
-	logger.LogWith(syslog.INFO, "the info", data)
+	logger.LogWith(syslog.INFO, "the message", data)
 
 	lines := openAndReadFile(testFile)
 
-	assert.Contains(t, lines[0][0], ` - - info: the info [firstLevel secondLevel="the value"]`)
+	assert.Contains(t, lines[0][0], ` - - info: the message [firstLevel secondLevel="the value"]`)
+}
+
+func TestLogEmergency(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Emergency("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - emerg: the message - $`, lines[0][0])
+}
+
+func TestLogEmergencyWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.EmergencyWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - emerg: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogAlert(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Alert("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - alert: the message - $`, lines[0][0])
+}
+
+func TestLogAlertWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.AlertWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - alert: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogCritical(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Critical("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - crit: the message - $`, lines[0][0])
+}
+
+func TestLogCriticalWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.CriticalWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - crit: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogError(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Error("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - err: the message - $`, lines[0][0])
+}
+
+func TestLogErrorWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.ErrorWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - err: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogWarning(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Warning("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - warning: the message - $`, lines[0][0])
+}
+
+func TestLogWarningWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.WarningWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - warning: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogNotice(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Notice("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - notice: the message - $`, lines[0][0])
+}
+
+func TestLogNoticeWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.NoticeWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - notice: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogInfo(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Info("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - info: the message - $`, lines[0][0])
+}
+
+func TestLogInfoWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.InfoWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - info: the message - {"key":"value"}$`, lines[0][0])
+}
+
+func TestLogDebug(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.Debug("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - debug: the message - $`, lines[0][0])
+}
+
+func TestLogDebugWithData(t *testing.T) {
+	setUp()
+	logger := drivers.Syslog{Testing: t, Path: testFile}
+
+	logger.DebugWith("the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Regexp(t, ` - - debug: the message - {"key":"value"}$`, lines[0][0])
 }
 
 func setUp() {
