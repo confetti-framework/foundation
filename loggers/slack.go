@@ -1,4 +1,4 @@
-package drivers
+package loggers
 
 import "github.com/sirupsen/logrus"
 

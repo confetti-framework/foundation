@@ -1,22 +1,20 @@
-package drivers
+package loggers
 
 import (
 	"encoding/json"
+	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"os"
 	"testing"
 )
 
-type Severity = syslog.Priority
-type Facility = syslog.Priority
-
 type Syslog struct {
 	Path     string
 	FileMode os.FileMode
-	MinLevel Severity
+	MinLevel inter.Severity
 	Days     int
 	Testing  *testing.T
-	Facility Facility
+	Facility inter.Facility
 	AppName  string
 	Procid   string
 }
@@ -38,11 +36,11 @@ func (r Syslog) init() syslog.Logger {
 	return syslog.NewLogger(file, r.Facility, hostname, r.AppName, "")
 }
 
-func (r Syslog) Log(severity Severity, message string) {
+func (r Syslog) Log(severity inter.Severity, message string) {
 	r.LogWith(severity, message, "")
 }
 
-func (r Syslog) LogWith(severity Severity, message string, data interface{}) {
+func (r Syslog) LogWith(severity inter.Severity, message string, data interface{}) {
 	var structuredData syslog.StructuredData
 	var rawData string
 	switch data := data.(type) {

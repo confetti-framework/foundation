@@ -10,6 +10,8 @@ github.com/lanvard/routing v0.0.0/go.mod h1:N1lg0rW6JKCFqjKHfXSHqStCzUDt4x8farCP
 github.com/lanvard/support v0.0.0/go.mod h1:g670WUDk2/AV0VIBL/saQaCFP0XZ8iE5NNituXsjdF4=
 github.com/lanvard/syslog v0.0.0-20201006212613-1a854c73ef48 h1:FBUyQDuTSVN6GfKvt1RX6mFAsgj6QlJKEQ4miPLmZcQ=
 github.com/lanvard/syslog v0.0.0-20201006212613-1a854c73ef48/go.mod h1:8a4fckuv2otec6e5QrkR0xwJ82e5PA84ot7wjDWhXQQ=
+github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8 h1:UNQVQUBzWHftviJ5fZi+QQs4NS3Jbwfe+GoYP8U3oCw=
+github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8/go.mod h1:8a4fckuv2otec6e5QrkR0xwJ82e5PA84ot7wjDWhXQQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.7.0 h1:ShrD1U9pZB12TX0cVy0DtePoCH97K8EtX+mg7ZARUtM=
