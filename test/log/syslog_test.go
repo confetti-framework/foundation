@@ -291,6 +291,7 @@ func setUp() {
 
 func openAndReadFile(fileName string) [][]string {
 	file, err := os.Open(fileName)
+	defer func() { file.Close() }()
 	if err != nil {
 		fmt.Printf("Failed to open file: %s\n", fileName)
 	}
