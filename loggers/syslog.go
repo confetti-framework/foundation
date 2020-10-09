@@ -11,7 +11,7 @@ import (
 type Syslog struct {
 	Path     string
 	FileMode os.FileMode
-	Level    inter.Severity
+	MinLevel inter.Severity
 	Days     int
 	Testing  *testing.T
 	Facility inter.Facility
@@ -41,7 +41,7 @@ func (r Syslog) Log(severity inter.Severity, message string) {
 }
 
 func (r Syslog) LogWith(severity inter.Severity, message string, data interface{}) {
-	if r.Level < severity {
+	if r.MinLevel < severity {
 		return
 	}
 

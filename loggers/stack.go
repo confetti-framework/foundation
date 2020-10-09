@@ -27,99 +27,99 @@ func (s Stack) LogWith(severity inter.Severity, message string, data interface{}
 }
 
 func (s Stack) Emergency(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Emergency(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Emergency(message)
+	}
 }
 
 func (s Stack) EmergencyWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.EmergencyWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.EmergencyWith(message, data)
+	}
 }
 
 func (s Stack) Alert(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Alert(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Alert(message)
+	}
 }
 
 func (s Stack) AlertWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.AlertWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.AlertWith(message, data)
+	}
 }
 
 func (s Stack) Critical(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Critical(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Critical(message)
+	}
 }
 
 func (s Stack) CriticalWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.CriticalWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.CriticalWith(message, data)
+	}
 }
 
 func (s Stack) Error(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Error(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Error(message)
+	}
 }
 
 func (s Stack) ErrorWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.ErrorWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.ErrorWith(message, data)
+	}
 }
 
 func (s Stack) Warning(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Warning(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Warning(message)
+	}
 }
 
 func (s Stack) WarningWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.WarningWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.WarningWith(message, data)
+	}
 }
 
 func (s Stack) Notice(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Notice(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Notice(message)
+	}
 }
 
 func (s Stack) NoticeWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.NoticeWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.NoticeWith(message, data)
+	}
 }
 
 func (s Stack) Info(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Info(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Info(message)
+	}
 }
 
 func (s Stack) InfoWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.InfoWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.InfoWith(message, data)
+	}
 }
 
 func (s Stack) Debug(message string) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.Debug(message)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.Debug(message)
+	}
 }
 
 func (s Stack) DebugWith(message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.DebugWith(message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.DebugWith(message, data)
+	}
 }
 
 func (s Stack) getLoggers() []inter.Logger {
