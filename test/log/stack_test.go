@@ -18,7 +18,7 @@ func TestStackWithEmptySlice(t *testing.T) {
 }
 
 func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
-	single := loggers.Syslog{Testing: t, Path: testFile}
+	single := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
 	allLoggers := map[string]inter.Logger{"single": single}
 	logger := setUpStack(allLoggers, "single")
 
@@ -30,8 +30,8 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 }
 
 func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
-	first := loggers.Syslog{Testing: t, Path: testFile}
-	second := loggers.Syslog{Testing: t, Path: testFile}
+	first := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
+	second := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
 	allLoggers := map[string]inter.Logger{"first": first, "second": second}
 	logger := setUpStack(allLoggers, "first", "second")
 
@@ -41,6 +41,18 @@ func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
 	assert.Len(t, lines, 2)
 	assert.Contains(t, lines[0][0], ` - - info: the message - `)
 	assert.Contains(t, lines[1][0], ` - - info: the message - `)
+}
+
+func TestStackWithData(t *testing.T) {
+	single := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
+	allLoggers := map[string]inter.Logger{"single": single}
+	logger := setUpStack(allLoggers, "single")
+
+	logger.LogWith(syslog.INFO, "the message", map[string]string{"key": "value"})
+
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 1)
+	assert.Contains(t, lines[0][0], ` - - info: the message - {"key":"value"}`)
 }
 
 func setUpStack(allLoggers map[string]inter.Logger, loggersInStack ...string) inter.Logger {

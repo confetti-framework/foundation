@@ -21,9 +21,9 @@ func (s Stack) Log(severity inter.Severity, message string) {
 }
 
 func (s Stack) LogWith(severity inter.Severity, message string, data interface{}) {
-	// 	for _, logger := range s.getLoggers() {
-	// 		logger.LogWith(severity, message, data)
-	// 	}
+	for _, logger := range s.getLoggers() {
+		logger.LogWith(severity, message, data)
+	}
 }
 
 func (s Stack) Emergency(message string) {
