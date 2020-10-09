@@ -11,7 +11,7 @@ import (
 type Syslog struct {
 	Path     string
 	FileMode os.FileMode
-	MinLevel inter.Severity
+	Level    inter.Severity
 	Days     int
 	Testing  *testing.T
 	Facility inter.Facility
@@ -41,8 +41,13 @@ func (r Syslog) Log(severity inter.Severity, message string) {
 }
 
 func (r Syslog) LogWith(severity inter.Severity, message string, data interface{}) {
+	if r.Level < severity {
+		return
+	}
+
 	var structuredData syslog.StructuredData
 	var rawData string
+
 	switch data := data.(type) {
 	case syslog.StructuredData:
 		structuredData = data

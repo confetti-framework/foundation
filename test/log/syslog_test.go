@@ -285,6 +285,26 @@ func TestLogDebugWithData(t *testing.T) {
 	assert.Regexp(t, ` - - debug: the message - {"key":"value"}$`, lines[0][0])
 }
 
+func TestLogWithMinLevel(t *testing.T) {
+	setUp()
+	logger := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
+
+	logger.Debug("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 0)
+}
+
+func TestLogSameLevelAsMinLevel(t *testing.T) {
+	setUp()
+	logger := loggers.Syslog{Testing: t, Path: testFile, Level: syslog.INFO}
+
+	logger.Info("the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 1)
+}
+
 func setUp() {
 	_ = os.Remove(testFile)
 }
@@ -293,7 +313,7 @@ func openAndReadFile(fileName string) [][]string {
 	file, err := os.Open(fileName)
 	defer func() { file.Close() }()
 	if err != nil {
-		fmt.Printf("Failed to open file: %s\n", fileName)
+		return [][]string{}
 	}
 	lines, err := readFile(file)
 	if err != nil {
