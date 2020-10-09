@@ -128,7 +128,7 @@ func (s Stack) getLoggers() []inter.Logger {
 	for _, loggerName := range s.Loggers {
 		logger, ok := allChannels[loggerName]
 		if !ok {
-			panic(errors.New("no logger found with by " + loggerName))
+			panic(errors.New("no logger found by: " + loggerName))
 		}
 		loggers = append(loggers, logger)
 	}

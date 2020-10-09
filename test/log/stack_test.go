@@ -29,6 +29,20 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 	assert.Contains(t, lines[0][0], ` - - info: the message - `)
 }
 
+func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
+	first := loggers.Syslog{Testing: t, Path: testFile}
+	second := loggers.Syslog{Testing: t, Path: testFile}
+	allLoggers := map[string]inter.Logger{"first": first, "second": second}
+	logger := setUpStack(allLoggers, "first", "second")
+
+	logger.Log(syslog.INFO, "the message")
+
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 2)
+	assert.Contains(t, lines[0][0], ` - - info: the message - `)
+	assert.Contains(t, lines[1][0], ` - - info: the message - `)
+}
+
 func setUpStack(allLoggers map[string]inter.Logger, loggersInStack ...string) inter.Logger {
 	setUp()
 	app := foundation.NewApp()
