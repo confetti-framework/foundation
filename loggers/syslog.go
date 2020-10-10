@@ -5,6 +5,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -29,6 +30,13 @@ func (r Syslog) init() syslog.Logger {
 		r.Facility = syslog.USER
 	}
 	hostname, _ := os.Hostname()
+
+	// create channel dir
+	err := os.MkdirAll(filepath.Dir(r.Path), 0755)
+	if err != nil {
+		panic(err)
+	}
+
 	file, err := os.OpenFile(r.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
 	if err != nil {
 		panic(err)
@@ -40,7 +48,7 @@ func (r Syslog) Log(severity inter.Severity, message string) {
 	r.LogWith(severity, message, "")
 }
 
-func (r Syslog) LogWith(severity inter.Severity, message string, data interface{}) {
+func (r Syslog) LogWith(severity inter.Severity, message string, context interface{}) {
 	if r.MinLevel < severity {
 		return
 	}
@@ -48,13 +56,13 @@ func (r Syslog) LogWith(severity inter.Severity, message string, data interface{
 	var structuredData syslog.StructuredData
 	var rawData string
 
-	switch data := data.(type) {
+	switch context := context.(type) {
 	case syslog.StructuredData:
-		structuredData = data
+		structuredData = context
 	case string:
-		rawData = data
+		rawData = context
 	default:
-		rawDataBytes, _ := json.Marshal(data)
+		rawDataBytes, _ := json.Marshal(context)
 		rawData = string(rawDataBytes)
 	}
 
@@ -72,18 +80,18 @@ func (r Syslog) Emergency(message string) {
 }
 
 // Log that the system is unusable
-func (r Syslog) EmergencyWith(message string, data interface{}) {
-	r.LogWith(syslog.EMERG, message, data)
+func (r Syslog) EmergencyWith(message string, context interface{}) {
+	r.LogWith(syslog.EMERG, message, context)
 }
 
-// A condition that should be corrected immediately, such as a corrupted system database.
+// A condition that should be corrected immediately, such as a corrupted system contextbase.
 func (r Syslog) Alert(message string) {
 	r.Log(syslog.ALERT, message)
 }
 
-// A condition that should be corrected immediately, such as a corrupted system database. w
-func (r Syslog) AlertWith(message string, data interface{}) {
-	r.LogWith(syslog.ALERT, message, data)
+// A condition that should be corrected immediately, such as a corrupted system contextbase. w
+func (r Syslog) AlertWith(message string, context interface{}) {
+	r.LogWith(syslog.ALERT, message, context)
 }
 
 // Critical conditions
@@ -92,8 +100,8 @@ func (r Syslog) Critical(message string) {
 }
 
 // Critical conditions
-func (r Syslog) CriticalWith(message string, data interface{}) {
-	r.LogWith(syslog.CRIT, message, data)
+func (r Syslog) CriticalWith(message string, context interface{}) {
+	r.LogWith(syslog.CRIT, message, context)
 }
 
 // Error conditions
@@ -102,8 +110,8 @@ func (r Syslog) Error(message string) {
 }
 
 // Error conditions
-func (r Syslog) ErrorWith(message string, data interface{}) {
-	r.LogWith(syslog.ERR, message, data)
+func (r Syslog) ErrorWith(message string, context interface{}) {
+	r.LogWith(syslog.ERR, message, context)
 }
 
 // Warning conditions
@@ -112,8 +120,8 @@ func (r Syslog) Warning(message string) {
 }
 
 // Warning conditions
-func (r Syslog) WarningWith(message string, data interface{}) {
-	r.LogWith(syslog.WARNING, message, data)
+func (r Syslog) WarningWith(message string, context interface{}) {
+	r.LogWith(syslog.WARNING, message, context)
 }
 
 // Normal but significant conditions
@@ -124,8 +132,8 @@ func (r Syslog) Notice(message string) {
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
-func (r Syslog) NoticeWith(message string, data interface{}) {
-	r.LogWith(syslog.NOTICE, message, data)
+func (r Syslog) NoticeWith(message string, context interface{}) {
+	r.LogWith(syslog.NOTICE, message, context)
 }
 
 // Informational messages
@@ -134,8 +142,8 @@ func (r Syslog) Info(message string) {
 }
 
 // Informational messages
-func (r Syslog) InfoWith(message string, data interface{}) {
-	r.LogWith(syslog.INFO, message, data)
+func (r Syslog) InfoWith(message string, context interface{}) {
+	r.LogWith(syslog.INFO, message, context)
 }
 
 // Debug-level messages
@@ -146,6 +154,6 @@ func (r Syslog) Debug(message string) {
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
-func (r Syslog) DebugWith(message string, data interface{}) {
-	r.LogWith(syslog.DEBUG, message, data)
+func (r Syslog) DebugWith(message string, context interface{}) {
+	r.LogWith(syslog.DEBUG, message, context)
 }

@@ -12,7 +12,7 @@ import (
 	"testing"
 )
 
-const testDir = "/tmp/"
+const testDir = "/tmp/error_tests/"
 const testFile = testDir + "log_test.log"
 
 var structMock = struct{ FirstLevel interface{} }{
@@ -28,6 +28,15 @@ func TestCreateLogFileIfNotExists(t *testing.T) {
 	logger.Log(syslog.INFO, "some content")
 
 	assert.FileExists(t, testFile)
+}
+
+func TestCreateDirIfDirNotExists(t *testing.T) {
+	setUp()
+	logger := loggers.Syslog{Testing: t, Path: testDir + "external/log_test.log", MinLevel: syslog.DEBUG}
+
+	logger.Log(syslog.INFO, "some content")
+
+	assert.FileExists(t, testDir+"external_errors/log_test.log")
 }
 
 func TestGetAddOneErrorLine(t *testing.T) {
@@ -306,7 +315,14 @@ func TestLogSameLevelAsMinLevel(t *testing.T) {
 }
 
 func setUp() {
-	_ = os.Remove(testFile)
+	// Remove old test files
+	_ = os.RemoveAll(testDir)
+
+	// create empty test dir
+	err := os.MkdirAll(testDir, 0755)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func openAndReadFile(fileName string) [][]string {
