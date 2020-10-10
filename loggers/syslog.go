@@ -5,6 +5,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"github.com/vigneshuvi/GoDateFormat"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -25,7 +26,7 @@ type Syslog struct {
 
 func (r Syslog) init() syslog.Logger {
 	if r.FileMode == 0 {
-		r.FileMode = 0644
+		r.FileMode = 0744
 	}
 
 	// We overwrite the default value of 0.
@@ -34,7 +35,7 @@ func (r Syslog) init() syslog.Logger {
 	}
 	hostname, _ := os.Hostname()
 
-	// create channel dir
+	// create extra dir if needed
 	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
 	if err != nil {
 		panic(err)
@@ -160,6 +161,21 @@ func (r Syslog) Debug(message string) {
 // Messages containing information that is normally only useful when debugging a program.
 func (r Syslog) DebugWith(message string, context interface{}) {
 	r.LogWith(syslog.DEBUG, message, context)
+}
+
+func (r Syslog) Close() {
+	// Zero is not possible, use the default
+	if r.MaxFiles == 0 {
+		r.MaxFiles = 14
+	}
+
+	dir := filepath.Dir(r.Path)
+	files, _ := ioutil.ReadDir(dir)
+	for i, file := range files {
+		if i >= r.MaxFiles {
+			_ = os.Remove(dir + string(os.PathSeparator) + file.Name())
+		}
+	}
 }
 
 func getDynamicFileName(rawFileName string) string {

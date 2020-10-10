@@ -36,7 +36,7 @@ func TestCreateDirIfDirNotExists(t *testing.T) {
 
 	logger.Log(syslog.INFO, "some content")
 
-	assert.FileExists(t, testDir+"external_errors/log_test.log")
+	assert.FileExists(t, testDir+"external/log_test.log")
 }
 
 func TestGetAddOneErrorLine(t *testing.T) {
