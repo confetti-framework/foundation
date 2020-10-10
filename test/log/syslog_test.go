@@ -6,10 +6,12 @@ import (
 	"github.com/lanvard/foundation/loggers"
 	"github.com/lanvard/syslog"
 	"github.com/stretchr/testify/assert"
+	"github.com/vigneshuvi/GoDateFormat"
 	"io"
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 const testDir = "/tmp/error_tests/"
@@ -312,6 +314,16 @@ func TestLogSameLevelAsMinLevel(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
+}
+
+func TestNameWithDateSoItCanRotate(t *testing.T) {
+	setUp()
+	logger := loggers.Syslog{Testing: t, Path: testDir + "{yyyy-MM-dd}-log_test.log", MinLevel: syslog.INFO}
+
+	logger.Info("the message")
+
+	dateWithCorrectFormat := time.Now().Format(GoDateFormat.ConvertFormat("yyyy-MM-dd"))
+	assert.FileExists(t, testDir+dateWithCorrectFormat+"-log_test.log")
 }
 
 func setUp() {

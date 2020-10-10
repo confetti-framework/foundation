@@ -4,9 +4,12 @@ import (
 	"encoding/json"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
+	"github.com/vigneshuvi/GoDateFormat"
 	"os"
 	"path/filepath"
+	"regexp"
 	"testing"
+	"time"
 )
 
 type Syslog struct {
@@ -32,12 +35,13 @@ func (r Syslog) init() syslog.Logger {
 	hostname, _ := os.Hostname()
 
 	// create channel dir
-	err := os.MkdirAll(filepath.Dir(r.Path), 0755)
+	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
 	if err != nil {
 		panic(err)
 	}
+	fileName := getDynamicFileName(r.Path)
 
-	file, err := os.OpenFile(r.Path, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
 	if err != nil {
 		panic(err)
 	}
@@ -156,4 +160,22 @@ func (r Syslog) Debug(message string) {
 // Messages containing information that is normally only useful when debugging a program.
 func (r Syslog) DebugWith(message string, context interface{}) {
 	r.LogWith(syslog.DEBUG, message, context)
+}
+
+func getDynamicFileName(rawFileName string) string {
+	r := regexp.MustCompile(`(?P<prefix>.*)(?P<braces_r>{)(?P<date_format>.*?)(?P<braces_l>})(?P<suffix>.*)`)
+	match := r.FindStringSubmatch(rawFileName)
+
+	if len(match) < 5 {
+		return rawFileName
+	}
+
+	result := make(map[string]string)
+	for i, name := range r.SubexpNames() {
+		if i != 0 && name != "" {
+			result[name] = match[i]
+		}
+	}
+
+	return result["prefix"] + time.Now().Format(GoDateFormat.ConvertFormat(result["date_format"])) + result["suffix"]
 }

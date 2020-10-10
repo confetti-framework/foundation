@@ -8,10 +8,6 @@ github.com/joho/godotenv v1.3.0/go.mod h1:7hK45KPybAkOC6peb+G5yklZfMxEjkZhHbwpqx
 github.com/lanvard/foundation v0.2.2/go.mod h1:mYbtvzdGzw0ZNP2gI3lZHGxUVZXhcp1x77Fet9+DbjE=
 github.com/lanvard/routing v0.0.0/go.mod h1:N1lg0rW6JKCFqjKHfXSHqStCzUDt4x8farCPWMYOj+A=
 github.com/lanvard/support v0.0.0/go.mod h1:g670WUDk2/AV0VIBL/saQaCFP0XZ8iE5NNituXsjdF4=
-github.com/lanvard/syslog v0.0.0-20201006212613-1a854c73ef48 h1:FBUyQDuTSVN6GfKvt1RX6mFAsgj6QlJKEQ4miPLmZcQ=
-github.com/lanvard/syslog v0.0.0-20201006212613-1a854c73ef48/go.mod h1:8a4fckuv2otec6e5QrkR0xwJ82e5PA84ot7wjDWhXQQ=
-github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8 h1:UNQVQUBzWHftviJ5fZi+QQs4NS3Jbwfe+GoYP8U3oCw=
-github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8/go.mod h1:8a4fckuv2otec6e5QrkR0xwJ82e5PA84ot7wjDWhXQQ=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.7.0 h1:ShrD1U9pZB12TX0cVy0DtePoCH97K8EtX+mg7ZARUtM=
@@ -22,14 +18,14 @@ github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.5.1 h1:nOGnQDM7FYENwehXlg/kFVnos3rEvtKTjRvOWSzb6H4=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
-github.com/szxp/syslog v0.0.0-20170820204052-4e2334afe03f h1:iBOH9jSX+1Y32EzhF+iD9Bj9qV/s7OGZF1L0pI+4WRw=
-github.com/szxp/syslog v0.0.0-20170820204052-4e2334afe03f/go.mod h1:n9MWUGy23tKmYTVrMWbAkEb8SvA1BDs7TsNRSo0klq0=
 github.com/tidwall/gjson v1.6.0 h1:9VEQWz6LLMUsUl6PueE49ir4Ka6CzLymOAZDxpFsTDc=
 github.com/tidwall/gjson v1.6.0/go.mod h1:P256ACg0Mn+j1RXIDXoss50DeIABTYK1PULOJHhxOls=
 github.com/tidwall/match v1.0.1 h1:PnKP62LPNxHKTwvHHZZzdOAOCtsJTjo6dZLCwpKm5xc=
 github.com/tidwall/match v1.0.1/go.mod h1:LujAq0jyVjBy028G1WhWfIzbpQfMO8bBZ6Tyb0+pL9E=
 github.com/tidwall/pretty v1.0.0 h1:HsD+QiTn7sK6flMKIvNmpqz1qrpP3Ps6jOKIKMooyg4=
 github.com/tidwall/pretty v1.0.0/go.mod h1:XNkn88O1ChpSDQmQeStsy+sBenx6DDtFZJxhVysOjyk=
+github.com/vigneshuvi/GoDateFormat v0.0.0-20190923034126-379ee8a8c45f h1:DvU+3RlTw42qO9oCjOtVHv5//ulVTozzO9ihktEK99w=
+github.com/vigneshuvi/GoDateFormat v0.0.0-20190923034126-379ee8a8c45f/go.mod h1:190gFTWxRNREiiPal7zWZlNrwFSpv3BxDmOfgYqoYCY=
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037 h1:YyJpGZS1sBuBCzLAR1VEpK193GlqGZbnPFnPV/5Rsb4=
 golang.org/x/sys v0.0.0-20191026070338-33540a1f6037/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=

@@ -6,11 +6,11 @@ import (
 )
 
 type Stack struct {
-	app     inter.App
+	app     inter.Maker
 	Loggers []string
 }
 
-func (s *Stack) SetApp(app inter.App) {
+func (s *Stack) SetApp(app inter.Maker) {
 	s.app = app
 }
 
