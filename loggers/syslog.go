@@ -16,7 +16,7 @@ type Syslog struct {
 	Path     string
 	FileMode os.FileMode
 	MinLevel inter.Severity
-	Days     int
+	MaxFiles int
 	Testing  *testing.T
 	Facility inter.Facility
 	AppName  string
