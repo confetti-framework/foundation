@@ -1,24 +1,34 @@
 package loggers
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
-	"github.com/sirupsen/logrus"
+	"net/http"
+	"time"
 )
 
 type Slack struct {
-	Url      string
-	Username string
-	Emoji    string
-	Level    logrus.Level
+	WebhookUrl string
+	MinLevel   inter.Severity
 }
 
 func (s Slack) Log(severity inter.Severity, message string) {
-	s.LogWith(severity, message, "")
+	s.LogWith(severity, syslog.KeyBySeverity(severity)+": "+message, "")
 }
 
 func (s Slack) LogWith(severity inter.Severity, message string, data interface{}) {
-	panic("implement me")
+	if s.MinLevel < severity {
+		return
+	}
+
+	if s.WebhookUrl == "" {
+		panic(errors.New("no URL found for Slack logger"))
+	}
+
+	sendSlackNotification(s.WebhookUrl, message)
 }
 
 // Log that the system is unusable
@@ -103,4 +113,40 @@ func (s Slack) Debug(message string) {
 // Messages containing information that is normally only useful when debugging a program.
 func (s Slack) DebugWith(message string, context interface{}) {
 	s.LogWith(syslog.DEBUG, message, context)
+}
+
+type SlackRequestBody struct {
+	Text string `json:"text"`
+}
+
+// @todo use notifications https://github.com/lanvard/lanvard/issues/70
+//
+// SendSlackNotification will post to an 'Incoming Webook' url setup in Slack Apps. It accepts
+// some text and the slack channel is saved within Slack.
+func sendSlackNotification(webhookUrl string, msg string) {
+
+	slackBody, _ := json.Marshal(SlackRequestBody{Text: msg})
+	req, err := http.NewRequest(http.MethodPost, webhookUrl, bytes.NewBuffer(slackBody))
+	if err != nil {
+		panic(err)
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil {
+		panic(err)
+	}
+	if buf.String() != "ok" {
+		panic(errors.New("non-ok response returned from Slack"))
+	}
+
+	return
 }

@@ -35,30 +35,6 @@ func (r Syslog) init() syslog.Logger {
 	return syslog.NewLogger(r.Writer, r.Facility, hostname, r.AppName, "")
 }
 
-func fileWriter(r Syslog) *os.File {
-	if r.FileMode == 0 {
-		r.FileMode = 0744
-	}
-
-	// We overwrite the default value of 0.
-	if r.Facility == 0 {
-		r.Facility = syslog.USER
-	}
-
-	// create extra dir if needed
-	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
-	if err != nil {
-		panic(err)
-	}
-	fileName := getDynamicFileName(r.Path)
-
-	writer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
-	if err != nil {
-		panic(err)
-	}
-	return writer
-}
-
 func (r Syslog) Log(severity inter.Severity, message string) {
 	r.LogWith(severity, message, "")
 }
@@ -186,6 +162,30 @@ func (r Syslog) Clear() {
 			_ = os.Remove(dir + string(os.PathSeparator) + file.Name())
 		}
 	}
+}
+
+func fileWriter(r Syslog) *os.File {
+	if r.FileMode == 0 {
+		r.FileMode = 0744
+	}
+
+	// We overwrite the default value of 0.
+	if r.Facility == 0 {
+		r.Facility = syslog.USER
+	}
+
+	// create extra dir if needed
+	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
+	if err != nil {
+		panic(err)
+	}
+	fileName := getDynamicFileName(r.Path)
+
+	writer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
+	if err != nil {
+		panic(err)
+	}
+	return writer
 }
 
 func getDynamicFileName(rawFileName string) string {
