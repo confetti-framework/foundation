@@ -173,7 +173,7 @@ func (r Syslog) DebugWith(message string, context interface{}) {
 	r.LogWith(syslog.DEBUG, message, context)
 }
 
-func (r Syslog) CleanUp() {
+func (r Syslog) Clear() {
 	// No files will be deleted when MaxFiles is 0
 	if r.MaxFiles == 0 {
 		return

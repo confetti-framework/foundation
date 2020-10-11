@@ -28,7 +28,7 @@ func TestDonNotRemoveLatestFile(t *testing.T) {
 	logger.Info("the message")
 
 	// When
-	logger.Close()
+	logger.Clear()
 
 	// Then
 	assert.Len(t, getFiles(), 1)
@@ -43,7 +43,7 @@ func TestRemoveSecondFileIfMaxOne(t *testing.T) {
 	logger.Info("new message")
 
 	// When
-	logger.Close()
+	logger.Clear()
 
 	// Then
 	assert.Len(t, getFiles(), 1)
@@ -65,7 +65,7 @@ func TestRemoveWithMaxThree(t *testing.T) {
 	logger.Info("new message")
 
 	// When
-	logger.Close()
+	logger.Clear()
 
 	// Then
 	files := getFiles()
