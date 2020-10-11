@@ -65,7 +65,7 @@ func TestLogWithLevel(t *testing.T) {
 	logger.Log(syslog.INFO, "message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, "^<14.*info:", lines[0][0])
+	assert.Regexp(t, "^<6.*info:", lines[0][0])
 }
 
 func TestContentOfError(t *testing.T) {
@@ -76,8 +76,8 @@ func TestContentOfError(t *testing.T) {
 	logger.Log(syslog.INFO, "error line 2")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `^<14>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 1 -`, lines[0][0])
-	assert.Regexp(t, `^<14>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 2 -`, lines[1][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 1 -`, lines[0][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 2 -`, lines[1][0])
 }
 
 func TestLogWithString(t *testing.T) {
