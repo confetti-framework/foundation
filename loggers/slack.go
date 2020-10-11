@@ -2,6 +2,7 @@ package loggers
 
 import (
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/syslog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -13,73 +14,93 @@ type Slack struct {
 }
 
 func (s Slack) Log(severity inter.Severity, message string) {
-	panic("implement me")
+	s.LogWith(severity, message, "")
 }
 
 func (s Slack) LogWith(severity inter.Severity, message string, data interface{}) {
 	panic("implement me")
 }
 
+// Log that the system is unusable
 func (s Slack) Emergency(message string) {
-	panic("implement me")
+	s.Log(syslog.EMERG, message)
 }
 
-func (s Slack) EmergencyWith(message string, data interface{}) {
-	panic("implement me")
+// Log that the system is unusable
+func (s Slack) EmergencyWith(message string, context interface{}) {
+	s.LogWith(syslog.EMERG, message, context)
 }
 
+// A condition that should be corrected immediately, such as a corrupted system contextbase.
 func (s Slack) Alert(message string) {
-	panic("implement me")
+	s.Log(syslog.ALERT, message)
 }
 
-func (s Slack) AlertWith(message string, data interface{}) {
-	panic("implement me")
+// A condition that should be corrected immediately, such as a corrupted system contextbase. w
+func (s Slack) AlertWith(message string, context interface{}) {
+	s.LogWith(syslog.ALERT, message, context)
 }
 
+// Critical conditions
 func (s Slack) Critical(message string) {
-	panic("implement me")
+	s.Log(syslog.CRIT, message)
 }
 
-func (s Slack) CriticalWith(message string, data interface{}) {
-	panic("implement me")
+// Critical conditions
+func (s Slack) CriticalWith(message string, context interface{}) {
+	s.LogWith(syslog.CRIT, message, context)
 }
 
+// Error conditions
 func (s Slack) Error(message string) {
-	panic("implement me")
+	s.Log(syslog.ERR, message)
 }
 
-func (s Slack) ErrorWith(message string, data interface{}) {
-	panic("implement me")
+// Error conditions
+func (s Slack) ErrorWith(message string, context interface{}) {
+	s.LogWith(syslog.ERR, message, context)
 }
 
+// Warning conditions
 func (s Slack) Warning(message string) {
-	panic("implement me")
+	s.Log(syslog.WARNING, message)
 }
 
-func (s Slack) WarningWith(message string, data interface{}) {
-	panic("implement me")
+// Warning conditions
+func (s Slack) WarningWith(message string, context interface{}) {
+	s.LogWith(syslog.WARNING, message, context)
 }
 
+// Normal but significant conditions
+// Conditions that are not error conditions, but that may require special handling.
 func (s Slack) Notice(message string) {
-	panic("implement me")
+	s.Log(syslog.NOTICE, message)
 }
 
-func (s Slack) NoticeWith(message string, data interface{}) {
-	panic("implement me")
+// Normal but significant conditions
+// Conditions that are not error conditions, but that may require special handling.
+func (s Slack) NoticeWith(message string, context interface{}) {
+	s.LogWith(syslog.NOTICE, message, context)
 }
 
+// Informational messages
 func (s Slack) Info(message string) {
-	panic("implement me")
+	s.Log(syslog.INFO, message)
 }
 
-func (s Slack) InfoWith(message string, data interface{}) {
-	panic("implement me")
+// Informational messages
+func (s Slack) InfoWith(message string, context interface{}) {
+	s.LogWith(syslog.INFO, message, context)
 }
 
+// Debug-level messages
+// Messages containing information that is normally only useful when debugging a program.
 func (s Slack) Debug(message string) {
-	panic("implement me")
+	s.Log(syslog.DEBUG, message)
 }
 
-func (s Slack) DebugWith(message string, data interface{}) {
-	panic("implement me")
+// Debug-level messages
+// Messages containing information that is normally only useful when debugging a program.
+func (s Slack) DebugWith(message string, context interface{}) {
+	s.LogWith(syslog.DEBUG, message, context)
 }
