@@ -5,6 +5,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"github.com/vigneshuvi/GoDateFormat"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -22,9 +23,19 @@ type Syslog struct {
 	Facility inter.Facility
 	AppName  string
 	Procid   string
+	Writer   io.Writer
 }
 
 func (r Syslog) init() syslog.Logger {
+	hostname, _ := os.Hostname()
+	if r.Writer == nil {
+		r.Writer = fileWriter(r)
+	}
+
+	return syslog.NewLogger(r.Writer, r.Facility, hostname, r.AppName, "")
+}
+
+func fileWriter(r Syslog) *os.File {
 	if r.FileMode == 0 {
 		r.FileMode = 0744
 	}
@@ -33,7 +44,6 @@ func (r Syslog) init() syslog.Logger {
 	if r.Facility == 0 {
 		r.Facility = syslog.USER
 	}
-	hostname, _ := os.Hostname()
 
 	// create extra dir if needed
 	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
@@ -42,11 +52,11 @@ func (r Syslog) init() syslog.Logger {
 	}
 	fileName := getDynamicFileName(r.Path)
 
-	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
+	writer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
 	if err != nil {
 		panic(err)
 	}
-	return syslog.NewLogger(file, r.Facility, hostname, r.AppName, "")
+	return writer
 }
 
 func (r Syslog) Log(severity inter.Severity, message string) {
@@ -163,10 +173,10 @@ func (r Syslog) DebugWith(message string, context interface{}) {
 	r.LogWith(syslog.DEBUG, message, context)
 }
 
-func (r Syslog) Close() {
-	// Zero is not possible, use the default
+func (r Syslog) CleanUp() {
+	// No files will be deleted when MaxFiles is 0
 	if r.MaxFiles == 0 {
-		r.MaxFiles = 14
+		return
 	}
 
 	dir := filepath.Dir(r.Path)
