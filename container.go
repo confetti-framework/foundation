@@ -12,15 +12,11 @@ type Container struct {
 
 	// The container's bindings.
 	bindings inter.Bindings
-
-	// The container's shared instances.
-	instances inter.Instances
 }
 
 func NewContainer() *Container {
 	containerStruct := Container{}
 	containerStruct.bindings = make(inter.Bindings)
-	containerStruct.instances = make(inter.Instances)
 
 	return &containerStruct
 }
@@ -34,14 +30,8 @@ func NewContainerByBoot(bootContainer inter.Container) inter.Container {
 
 // Determine if the given abstract type has been bound.
 func (c *Container) Bound(abstract string) bool {
-	_, bind := c.bindings[abstract]
-	_, instance := c.instances[abstract]
-
-	if bind || instance {
-		return true
-	}
-
-	return false
+	_, bound := c.bindings[abstract]
+	return bound
 }
 
 // Register a binding with the container.
@@ -56,22 +46,9 @@ func (c *Container) Singleton(abstract interface{}, concrete interface{}) {
 	c.Bind(abstract, concrete)
 }
 
-// Register an existing instance as shared in the container.
-func (c *Container) Instance(abstract interface{}, concrete interface{}) interface{} {
-	abstractName := support.Name(abstract)
-
-	if c.instances == nil {
-		c.instances = make(inter.Instances)
-	}
-
-	c.instances[abstractName] = concrete
-
-	return concrete
-}
-
 // Register an existing instance as shared in the container without an abstract
-func (c *Container) BindStruct(concrete interface{}) interface{} {
-	c.Instance(concrete, concrete)
+func (c *Container) Instance(concrete interface{}) interface{} {
+	c.Bind(concrete, concrete)
 
 	return concrete
 }
@@ -96,11 +73,7 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 			"use a string or use the struct itself.")
 	}
 
-	if object, present := c.instances[abstractName]; present {
-		// The instance will always be returned on subsequent calls
-		concrete = object
-
-	} else if object, present := c.bindings[abstractName]; present {
+	if object, present := c.bindings[abstractName]; present {
 		concrete = c.getConcreteBinding(concrete, object, abstractName)
 
 	} else if c.bootContainer != nil && c.bootContainer.Bound(abstractName) {
@@ -111,8 +84,11 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 		// If struct cannot be found, we simply have to use the struct itself.
 		concrete = abstract
 	} else if support.Type(abstract) == reflect.String {
-		value := support.NewValue(c.instances).Get(abstract.(string))
-		concrete, _ = value.RawE()
+		instances := support.NewMap(c.bindings)
+		if c.bootContainer != nil {
+			instances.Merge(support.NewMap(c.bootContainer.Bindings()))
+		}
+		concrete = instances.Get(abstract.(string)).Raw()
 	}
 
 	return concrete
@@ -140,5 +116,5 @@ func (c *Container) Extend(abstract interface{}, function func(service interface
 
 	newConcrete := function(concrete)
 
-	c.Instance(abstract, newConcrete)
+	c.Bind(abstract, newConcrete)
 }

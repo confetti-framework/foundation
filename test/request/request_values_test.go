@@ -116,7 +116,7 @@ func Test_form_value_not_found(t *testing.T) {
 	value, err := request.Parameter("not_existing_param").NumberE()
 	assert.Equal(t, 0, value)
 	//goland:noinspection GoNilness
-	assert.Equal(t, "not_existing_param not found", err.Error())
+	assert.Equal(t, "no value found with key 'not_existing_param'", err.Error())
 }
 
 func Test_value_or(t *testing.T) {

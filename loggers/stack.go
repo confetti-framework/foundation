@@ -1,12 +1,10 @@
 package loggers
 
 import (
-	"errors"
 	"github.com/lanvard/contract/inter"
 )
 
 type Stack struct {
-	app     inter.Maker
 	Loggers []string
 }
 

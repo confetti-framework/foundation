@@ -9,7 +9,7 @@ import (
 
 type testInterface interface{}
 type testStruct struct {
-	App *inter.App
+	App       *inter.App
 	TestCount int
 }
 
@@ -47,7 +47,7 @@ func Test_application_make(t *testing.T) {
 
 func Test_application_environment(t *testing.T) {
 	app := foundation.NewApp()
-	(*app.Container()).Instance("env", "local")
+	(*app.Container()).Bind("env", "local")
 
 	environment, _ := app.Environment()
 	assert.Equal(t, "local", environment)
@@ -55,7 +55,7 @@ func Test_application_environment(t *testing.T) {
 
 func Test_application_environment_error(t *testing.T) {
 	app := foundation.NewApp()
-	(*app.Container()).Instance("env", "")
+	(*app.Container()).Bind("env", "")
 
 	_, err := app.Environment()
 
@@ -65,7 +65,7 @@ func Test_application_environment_error(t *testing.T) {
 
 func Test_application_is_environment(t *testing.T) {
 	app := foundation.NewApp()
-	(*app.Container()).Instance("env", "local")
+	(*app.Container()).Bind("env", "local")
 
 	assert.True(t, true, app.IsEnvironment("local"))
 	assert.True(t, true, app.IsEnvironment("production", "local"))

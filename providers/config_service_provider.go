@@ -9,7 +9,7 @@ type ConfigServiceProvider struct {
 }
 
 func (c ConfigServiceProvider) Register(container inter.Container) inter.Container {
-	container.Instance("config", c.Index)
+	container.Bind("config", c.Index)
 
 	return container
 }

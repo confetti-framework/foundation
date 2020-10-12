@@ -6,7 +6,7 @@ import (
 )
 
 type Kernel struct {
-	App        *inter.App
+	App *inter.App
 	// The application's middleware stack.
 	Middleware []inter.HttpMiddleware
 }
@@ -19,7 +19,7 @@ func (k Kernel) Handle(request inter.Request) inter.Response {
 
 // Send the given request through the middleware / router.
 func (k Kernel) sendRequestThroughRouter(request inter.Request) inter.Response {
-	request.App().Instance("request", request)
+	request.App().Bind("request", request)
 
 	return middleware.NewPipeline(request.App()).
 		Send(request).

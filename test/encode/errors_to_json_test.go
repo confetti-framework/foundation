@@ -56,7 +56,7 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 		"this is a long error message, this is a long error message, this is a long error message, this is a long error message, this is a long error message, this is a long error message\"}]}", result)
 }
 
-func Test_request_without_content_type(t *testing.T) {
+func TestRequestWithoutContentType(t *testing.T) {
 	// Given
 	request := http.NewRequest(http.Options{
 		App: foundation.NewApp(),

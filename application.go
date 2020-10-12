@@ -39,12 +39,12 @@ func (a *Application) Make(abstract interface{}) interface{} {
 	return (*a.container).Make(abstract)
 }
 
-func (a *Application) Instance(abstract interface{}, concrete interface{}) interface{} {
-	return (*a.container).Instance(abstract, concrete)
+func (a *Application) Bind(abstract interface{}, concrete interface{}) {
+	(*a.container).Bind(abstract, concrete)
 }
 
-func (a *Application) BindStruct(abstract interface{}) interface{} {
-	return (*a.container).BindStruct(abstract)
+func (a *Application) Instance(abstract interface{}) interface{} {
+	return (*a.container).Instance(abstract)
 }
 
 func (a *Application) Environment() (string, error) {
@@ -63,4 +63,9 @@ func (a *Application) IsEnvironment(environments ...string) bool {
 	}
 
 	return false
+}
+
+func (a *Application) Log() inter.Logger {
+	logger := a.Make("config.Logging.Default").(string)
+	return a.Make("config.Logging.Loggers").(map[string]interface{})[logger].(inter.Logger)
 }

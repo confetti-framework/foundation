@@ -60,7 +60,7 @@ func TestBindingExistingObject(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
-	container.Instance("testStruct", kernel)
+	container.Bind("testStruct", kernel)
 
 	resolvedStruct := container.Make("testStruct")
 
@@ -114,7 +114,7 @@ func TestBindingAndMakeFromInterface(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
-	container.Instance((*testInterface)(nil), kernel)
+	container.Bind((*testInterface)(nil), kernel)
 
 	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
 
@@ -124,7 +124,7 @@ func TestBindingAndMakeFromInterface(t *testing.T) {
 func TestBindingWithoutAbstract(t *testing.T) {
 	container := foundation.NewContainer()
 
-	container.BindStruct(testStruct{TestCount: 1})
+	container.Instance(testStruct{TestCount: 1})
 
 	resolvedStruct := container.Make(testStruct{}).(testStruct)
 
@@ -135,7 +135,7 @@ func TestExtendingBindings(t *testing.T) {
 
 	container := foundation.NewContainer()
 
-	container.Instance(testStruct{}, testStruct{TestCount: 1})
+	container.Bind(testStruct{}, testStruct{TestCount: 1})
 
 	container.Extend(testStruct{}, func(service interface{}) interface{} {
 		testService := service.(testStruct)
@@ -153,14 +153,14 @@ func TestResolveWithBootApp(t *testing.T) {
 	bootContainer := foundation.NewContainer()
 	container := foundation.NewContainerByBoot(bootContainer)
 
-	container.Instance("application_name", "Cooler")
+	container.Bind("application_name", "Cooler")
 
 	assert.Equal(t, "Cooler", container.Make("application_name"))
 }
 
 func TestResolveFromBootApp(t *testing.T) {
 	bootContainer := foundation.NewContainer()
-	bootContainer.Instance("application_name", "Cooler")
+	bootContainer.Bind("application_name", "Cooler")
 
 	container := foundation.NewContainerByBoot(bootContainer)
 
@@ -169,10 +169,10 @@ func TestResolveFromBootApp(t *testing.T) {
 
 func TestResolveFromNormalContainerButNotFromBoot(t *testing.T) {
 	bootContainer := foundation.NewContainer()
-	bootContainer.Instance("application_name", "Heater")
+	bootContainer.Bind("application_name", "Heater")
 
 	container := foundation.NewContainerByBoot(bootContainer)
-	container.Instance("application_name", "Cooler")
+	container.Bind("application_name", "Cooler")
 
 	assert.Equal(t, "Cooler", container.Make("application_name"))
 }
