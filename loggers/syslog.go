@@ -35,6 +35,10 @@ func (r Syslog) init() syslog.Logger {
 	return syslog.NewLogger(r.Writer, r.Facility, hostname, r.AppName, "")
 }
 
+func (r Syslog) SetApp(_ inter.Maker) inter.Logger {
+	return r
+}
+
 func (r Syslog) Log(severity inter.Severity, message string) {
 	r.LogWith(severity, message, "")
 }

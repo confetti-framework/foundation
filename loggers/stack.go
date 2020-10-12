@@ -1,15 +1,18 @@
 package loggers
 
 import (
+	"errors"
 	"github.com/lanvard/contract/inter"
 )
 
 type Stack struct {
 	Loggers []string
+	app     inter.Maker
 }
 
-func (s *Stack) SetApp(app inter.Maker) {
+func (s Stack) SetApp(app inter.Maker) inter.Logger {
 	s.app = app
+	return s
 }
 
 func (s Stack) Log(severity inter.Severity, message string) {
@@ -122,13 +125,15 @@ func (s Stack) DebugWith(message string, context interface{}) {
 
 func (s Stack) getLoggers() []inter.Logger {
 	var loggers []inter.Logger
-	allChannels := s.app.Make("config.Logging.Loggers").(map[string]inter.Logger)
+	allLoggers := s.app.Make("config.Logging.Loggers").(map[string]interface{})
+
 	for _, loggerName := range s.Loggers {
-		logger, ok := allChannels[loggerName]
+		logger, ok := allLoggers[loggerName]
 		if !ok {
 			panic(errors.New("no logger found by: " + loggerName))
 		}
-		loggers = append(loggers, logger)
+		loggers = append(loggers, logger.(inter.Logger))
 	}
+
 	return loggers
 }

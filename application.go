@@ -66,6 +66,10 @@ func (a *Application) IsEnvironment(environments ...string) bool {
 }
 
 func (a *Application) Log() inter.Logger {
-	logger := a.Make("config.Logging.Default").(string)
-	return a.Make("config.Logging.Loggers").(map[string]interface{})[logger].(inter.Logger)
+	key := a.Make("config.Logging.Default").(string)
+	logger := a.Make("config.Logging.Loggers").(map[string]interface{})[key].(inter.Logger)
+
+	logger = logger.SetApp(a)
+
+	return logger
 }
