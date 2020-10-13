@@ -20,7 +20,7 @@ func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 }
 
 func (s Slack) Log(severity inter.Severity, message string) {
-	s.LogWith(severity, syslog.KeyBySeverity(severity)+": "+message, "")
+	s.LogWith(severity, message, "")
 }
 
 func (s Slack) LogWith(severity inter.Severity, message string, data interface{}) {
@@ -32,7 +32,7 @@ func (s Slack) LogWith(severity inter.Severity, message string, data interface{}
 		panic(errors.New("no URL found for Slack logger"))
 	}
 
-	sendSlackNotification(s.WebhookUrl, message)
+	sendSlackNotification(s.WebhookUrl, syslog.KeyBySeverity(severity)+": "+message, data)
 }
 
 // Log that the system is unusable
@@ -125,10 +125,13 @@ type SlackRequestBody struct {
 
 // @todo use notifications https://github.com/lanvard/lanvard/issues/70
 //
-// SendSlackNotification will post to an 'Incoming Webook' url setup in Slack Apps. It accepts
-// some text and the slack channel is saved within Slack.
-func sendSlackNotification(webhookUrl string, msg string) {
-
+// sendSlackNotification will post to an 'Incoming Webook' url setup in Slack Apps. It accepts
+// some text and extra data.
+func sendSlackNotification(webhookUrl string, msg string, rawData interface{}) {
+	if rawData == nil {
+		data, _ := json.Marshal(rawData)
+		msg = msg + "\n" + string(data)
+	}
 	slackBody, _ := json.Marshal(SlackRequestBody{Text: msg})
 	req, err := http.NewRequest(http.MethodPost, webhookUrl, bytes.NewBuffer(slackBody))
 	if err != nil {
