@@ -2,7 +2,6 @@ package loggers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"github.com/vigneshuvi/GoDateFormat"
@@ -34,7 +33,10 @@ func (r Syslog) Clear() {
 
 	for i, file := range files {
 		if i >= r.MaxFiles {
-			_ = os.Remove(r.Path + string(os.PathSeparator) + file.Name())
+			err := os.Remove(filepath.Dir(r.Path) + string(os.PathSeparator) + file.Name())
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 }
@@ -225,12 +227,13 @@ func getFilesByPath(filePath string) []os.FileInfo {
 		}
 
 		re := regexp.MustCompile(`(\{.*\})`)
-		regexFilename := re.ReplaceAllString(fileName, "$1")
-		fmt.Println(regexFilename)
+		regexFilename := re.ReplaceAllString(fileName, ".*")
 
-		// r := regexp.MustCompile(`(?P<prefix>.*)(?P<braces_r>{)(?P<date_format>.*?)(?P<braces_l>})(?P<suffix>.*)`)
-		// match := r.FindStringSubmatch(info.Name())
-
+		r := regexp.MustCompile(regexFilename)
+		if !r.Match([]byte(info.Name())) {
+			return nil
+		}
+		files = append(files, info)
 		return nil
 	})
 	if err != nil {
