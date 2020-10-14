@@ -2,11 +2,11 @@ package loggers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"github.com/vigneshuvi/GoDateFormat"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -30,11 +30,11 @@ func (r Syslog) Clear() {
 		return
 	}
 
-	dir := filepath.Dir(r.Path)
-	files, _ := ioutil.ReadDir(dir)
+	files := getFilesByPath(r.Path)
+
 	for i, file := range files {
 		if i >= r.MaxFiles {
-			_ = os.Remove(dir + string(os.PathSeparator) + file.Name())
+			_ = os.Remove(r.Path + string(os.PathSeparator) + file.Name())
 		}
 	}
 }
@@ -212,4 +212,29 @@ func getDynamicFileName(rawFileName string) string {
 	}
 
 	return result["prefix"] + time.Now().Format(GoDateFormat.ConvertFormat(result["date_format"])) + result["suffix"]
+}
+
+func getFilesByPath(filePath string) []os.FileInfo {
+	var files []os.FileInfo
+
+	dir, fileName := filepath.Split(filePath)
+	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		// logic to check info.IsDir(), info.Name(), and written actual filename
+		if info.IsDir() {
+			return nil
+		}
+
+		re := regexp.MustCompile(`(\{.*\})`)
+		regexFilename := re.ReplaceAllString(fileName, "$1")
+		fmt.Println(regexFilename)
+
+		// r := regexp.MustCompile(`(?P<prefix>.*)(?P<braces_r>{)(?P<date_format>.*?)(?P<braces_l>})(?P<suffix>.*)`)
+		// match := r.FindStringSubmatch(info.Name())
+
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	return files
 }

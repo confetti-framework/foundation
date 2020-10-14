@@ -16,7 +16,7 @@ import (
 func TestNameWithDateSoItCanRotate(t *testing.T) {
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
-	logger = logger.SetApp(foundation.NewApp())
+	logger = logger.SetApp(newTestApp())
 	logger.Info("the message")
 
 	dateWithCorrectFormat := time.Now().Format(GoDateFormat.ConvertFormat("yyyy-mm-dd"))
@@ -27,7 +27,7 @@ func TestDonNotRemoveLatestFile(t *testing.T) {
 	// Given
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
-	logger = logger.SetApp(foundation.NewApp())
+	logger = logger.SetApp(newTestApp())
 	logger.Info("the message")
 
 	// When
@@ -37,52 +37,44 @@ func TestDonNotRemoveLatestFile(t *testing.T) {
 	assert.Len(t, getFiles(), 1)
 }
 
-func TestRemoveSecondFileIfMaxOne(t *testing.T) {
+func TestDontRemoveOtherLogs(t *testing.T) {
 	// Given
 	setUp()
-	logger := getLogger("1_log_test.log", 1)
-	logger.Info("old message")
-	logger2 := getLogger("2_log_test.log", 1)
-	logger2.Info("old message")
-	logger2.Info("new message")
-
-	// When
-	logger.Clear()
-
-	// Then
-	assert.Len(t, getFiles(), 1)
-}
-
-func TestRemoveWithMaxThree(t *testing.T) {
-	// Given
-	setUp()
-	logger1 := getLogger("1_log_test.log", 3)
+	logger1 := getLogger(testDir+"1_log_test.log", 2)
 	logger1.Info("old message")
 
-	logger2 := getLogger("2_log_test.log", 3)
+	logger2 := getLogger(testDir+"2_log_test.log", 2)
 	logger2.Info("new message")
 
-	logger3 := getLogger("3_log_test.log", 3)
+	logger3 := getLogger(testDir+"3_log_test.log", 2)
 	logger3.Info("new message")
-
-	logger4 := getLogger("4_log_test.log", 3)
-	logger4.Info("new message")
-
-	logger5 := getLogger("5_log_test.log", 3)
-	logger5.Info("new message")
 
 	// When
 	logger1.Clear()
 
 	// Then
 	files := getFiles()
-	assert.Len(t, files, 5)
+	assert.Len(t, files, 3)
 	assert.Equal(t, testDir+"1_log_test.log", files[0])
 	assert.Equal(t, testDir+"2_log_test.log", files[1])
 	assert.Equal(t, testDir+"3_log_test.log", files[2])
-	assert.Equal(t, testDir+"4_log_test.log", files[2])
-	assert.Equal(t, testDir+"5_log_test.log", files[2])
 }
+
+// func TestRemoveSecondFileIfMaxOne(t *testing.T) {
+// 	// Given
+// 	setUp()
+// 	logger := getLogger("1_log_test.log", 1)
+// 	logger.Info("old message")
+// 	logger2 := getLogger("2_log_test.log", 1)
+// 	logger2.Info("old message")
+// 	logger2.Info("new message")
+//
+// 	// When
+// 	logger.Clear()
+//
+// 	// Then
+// 	assert.Len(t, getFiles(), 1)
+// }
 
 func getFiles() []string {
 	var files []string
@@ -101,10 +93,14 @@ func getFiles() []string {
 	return files
 }
 
-func getLogger(path string, maxFiles int) inter.Logger {
-	var logger inter.Logger = loggers.Syslog{Path: testDir + path, MinLevel: syslog.INFO, MaxFiles: maxFiles}
+func getLogger(file string, maxFiles int) inter.Logger {
+	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: syslog.DEBUG, MaxFiles: maxFiles}
+	logger = logger.SetApp(newTestApp())
+	return logger
+}
+
+func newTestApp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("config.App.Name", "testApp")
-	logger = logger.SetApp(app)
-	return logger
+	return app
 }

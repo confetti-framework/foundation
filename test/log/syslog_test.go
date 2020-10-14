@@ -23,25 +23,16 @@ var structMock = struct{ FirstLevel interface{} }{
 
 func TestCreateLogFileIfNotExists(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Log(syslog.INFO, "some content")
 
 	assert.FileExists(t, testFile)
 }
 
-func TestCreateDirIfDirNotExists(t *testing.T) {
-	setUp()
-	logger := loggers.Syslog{Path: testDir + "external/log_test.log", MinLevel: syslog.DEBUG}
-
-	logger.Log(syslog.INFO, "some content")
-
-	assert.FileExists(t, testDir+"external/log_test.log")
-}
-
 func TestGetAddOneErrorLine(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Log(syslog.INFO, "error line 1")
 
@@ -50,7 +41,7 @@ func TestGetAddOneErrorLine(t *testing.T) {
 
 func TestGetAddTwoErrorLines(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Log(syslog.INFO, "error line 1")
 	logger.Log(syslog.INFO, "error line 2")
@@ -60,69 +51,69 @@ func TestGetAddTwoErrorLines(t *testing.T) {
 
 func TestLogWithLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Log(syslog.INFO, "message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, "^<6.*info:", lines[0][0])
+	assert.Regexp(t, "^<6.*\"info\"", lines[0][0])
 }
 
 func TestContentOfError(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Log(syslog.INFO, "error line 1")
 	logger.Log(syslog.INFO, "error line 2")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 1 -`, lines[0][0])
-	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* - info: error line 2 -`, lines[1][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* error line 1 \[level severity="info"\]`, lines[0][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* error line 2 \[level severity="info"\]`, lines[1][0])
 }
 
 func TestLogWithString(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.LogWith(syslog.INFO, "the message", "string data")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - info: the message - string data$`, lines[0][0])
+	assert.Regexp(t, ` the message \[level severity="info"\] string data$`, lines[0][0])
 }
 
 func TestLogWithMap(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.LogWith(syslog.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the message - {"key":"value"}`)
+	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"key":"value"}`)
 }
 
 func TestLogWithStruct(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the message - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogLevels(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` - - info: the message - {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogWithStructuredData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 	data := syslog.StructuredData{
 		"firstLevel": {"secondLevel": "the value"},
 	}
@@ -131,167 +122,167 @@ func TestLogWithStructuredData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 
-	assert.Contains(t, lines[0][0], ` - - info: the message [firstLevel secondLevel="the value"]`)
+	assert.Contains(t, lines[0][0], `the message [firstLevel secondLevel="the value"][level severity="info"]`)
 }
 
 func TestLogEmergency(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Emergency("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - emerg: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="emerg"\] $`, lines[0][0])
 }
 
 func TestLogEmergencyWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.EmergencyWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - emerg: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="emerg"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogAlert(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Alert("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - alert: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="alert"\] $`, lines[0][0])
 }
 
 func TestLogAlertWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.AlertWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - alert: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="alert"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogCritical(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Critical("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - crit: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="crit"\] $`, lines[0][0])
 }
 
 func TestLogCriticalWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.CriticalWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - crit: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="crit"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogError(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Error("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - err: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="err"\] $`, lines[0][0])
 }
 
 func TestLogErrorWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.ErrorWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - err: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="err"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogWarning(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Warning("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - warning: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="warning"\] $`, lines[0][0])
 }
 
 func TestLogWarningWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.WarningWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - warning: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="warning"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogNotice(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Notice("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - notice: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="notice"\] $`, lines[0][0])
 }
 
 func TestLogNoticeWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.NoticeWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - notice: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="notice"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogInfo(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Info("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - info: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="info"\] $`, lines[0][0])
 }
 
 func TestLogInfoWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.InfoWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - info: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="info"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogDebug(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.Debug("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - debug: the message - $`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="debug"\] $`, lines[0][0])
 }
 
 func TestLogDebugWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
+	logger := getLogger(testFile, 1)
 
 	logger.DebugWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` - - debug: the message - {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, `the message \[level severity="debug"\] {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogWithMinLevel(t *testing.T) {
@@ -306,7 +297,7 @@ func TestLogWithMinLevel(t *testing.T) {
 
 func TestLogSameLevelAsMinLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
+	logger := getLogger(testFile, 1)
 
 	logger.Info("the message")
 

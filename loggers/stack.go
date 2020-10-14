@@ -128,14 +128,15 @@ func (s Stack) DebugWith(message string, context interface{}) {
 
 func (s Stack) getLoggers() []inter.Logger {
 	var loggers []inter.Logger
-	allLoggers := s.app.Make("config.Logging.Channels").(map[string]interface{})
+	allLoggers := s.app.Make("config.Logging.Channels").(map[string]inter.Logger)
 
 	for _, loggerName := range s.Loggers {
 		logger, ok := allLoggers[loggerName]
 		if !ok {
 			panic(errors.New("no logger found by: " + loggerName))
 		}
-		loggers = append(loggers, logger.(inter.Logger))
+		logger = logger.SetApp(s.app)
+		loggers = append(loggers, logger)
 	}
 
 	return loggers
