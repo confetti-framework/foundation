@@ -221,9 +221,8 @@ func getFilesToCleanUp(filePath string) []os.FileInfo {
 
 	dir, fileName := filepath.Split(filePath)
 
+	// if no dynamic filename is present, then we don't have to clean up anything
 	regexDynamic := regexp.MustCompile(`(\{.*\})`)
-
-	// if no dynamic filename is present, don not delete old files
 	if !regexDynamic.Match([]byte(fileName)) {
 		return nil
 	}
@@ -234,10 +233,12 @@ func getFilesToCleanUp(filePath string) []os.FileInfo {
 	regexCleanUp := regexDynamic.ReplaceAllString(fileName, `.{`+lengthOfDynamic+`}`)
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		// Ignore directories
 		if info.IsDir() {
 			return nil
 		}
 
+		//  If the file does not match, we should not clean it up
 		r := regexp.MustCompile(regexCleanUp)
 		if !r.Match([]byte(info.Name())) {
 			return nil
