@@ -29,7 +29,7 @@ func (r Syslog) Clear() {
 		return
 	}
 
-	files := getFilesByPath(r.Path)
+	files := getFilesToCleanUp(r.Path)
 
 	for i, file := range files {
 		if i >= r.MaxFiles {
@@ -216,18 +216,22 @@ func getDynamicFileName(rawFileName string) string {
 	return result["prefix"] + time.Now().Format(GoDateFormat.ConvertFormat(result["date_format"])) + result["suffix"]
 }
 
-func getFilesByPath(filePath string) []os.FileInfo {
+func getFilesToCleanUp(filePath string) []os.FileInfo {
 	var files []os.FileInfo
 
 	dir, fileName := filepath.Split(filePath)
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		// logic to check info.IsDir(), info.Name(), and written actual filename
 		if info.IsDir() {
 			return nil
 		}
 
 		re := regexp.MustCompile(`(\{.*\})`)
-		regexFilename := re.ReplaceAllString(fileName, ".*")
+		if !re.Match([]byte(fileName)) {
+			return nil
+		}
+		matches := re.FindStringSubmatch(fileName)
+		lengthOfDate := strconv.Itoa(len(matches[0]) - 2)
+		regexFilename := re.ReplaceAllString(fileName, `.{`+lengthOfDate+`}`)
 
 		r := regexp.MustCompile(regexFilename)
 		if !r.Match([]byte(info.Name())) {
