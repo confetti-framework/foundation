@@ -220,28 +220,35 @@ func getFilesToCleanUp(filePath string) []os.FileInfo {
 	var files []os.FileInfo
 
 	dir, fileName := filepath.Split(filePath)
+
+	regexDynamic := regexp.MustCompile(`(\{.*\})`)
+
+	// if no dynamic filename is present, don not delete old files
+	if !regexDynamic.Match([]byte(fileName)) {
+		return nil
+	}
+
+	// Determine a regex that tells us which files to clean up
+	dynamicPart := regexDynamic.FindStringSubmatch(fileName)
+	lengthOfDynamic := strconv.Itoa(len(dynamicPart[0]) - 2)
+	regexCleanUp := regexDynamic.ReplaceAllString(fileName, `.{`+lengthOfDynamic+`}`)
+
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
 
-		re := regexp.MustCompile(`(\{.*\})`)
-		if !re.Match([]byte(fileName)) {
-			return nil
-		}
-		matches := re.FindStringSubmatch(fileName)
-		lengthOfDate := strconv.Itoa(len(matches[0]) - 2)
-		regexFilename := re.ReplaceAllString(fileName, `.{`+lengthOfDate+`}`)
-
-		r := regexp.MustCompile(regexFilename)
+		r := regexp.MustCompile(regexCleanUp)
 		if !r.Match([]byte(info.Name())) {
 			return nil
 		}
+
 		files = append(files, info)
 		return nil
 	})
 	if err != nil {
 		panic(err)
 	}
+
 	return files
 }
