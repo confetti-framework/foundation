@@ -10,6 +10,8 @@ type Stack struct {
 	app     inter.Maker
 }
 
+func (s Stack) Clear() {}
+
 func (s Stack) SetApp(app inter.Maker) inter.Logger {
 	s.app = app
 	return s

@@ -1,6 +1,8 @@
 package log
 
 import (
+	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/loggers"
 	"github.com/lanvard/syslog"
 	"github.com/stretchr/testify/assert"
@@ -13,8 +15,8 @@ import (
 
 func TestNameWithDateSoItCanRotate(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
-
+	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
+	logger = logger.SetApp(foundation.NewApp())
 	logger.Info("the message")
 
 	dateWithCorrectFormat := time.Now().Format(GoDateFormat.ConvertFormat("yyyy-mm-dd"))
@@ -24,7 +26,8 @@ func TestNameWithDateSoItCanRotate(t *testing.T) {
 func TestDonNotRemoveLatestFile(t *testing.T) {
 	// Given
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
+	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_log_test.log", MinLevel: syslog.INFO}
+	logger = logger.SetApp(foundation.NewApp())
 	logger.Info("the message")
 
 	// When
@@ -37,10 +40,11 @@ func TestDonNotRemoveLatestFile(t *testing.T) {
 func TestRemoveSecondFileIfMaxOne(t *testing.T) {
 	// Given
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testDir + "1_log_test.log", MinLevel: syslog.INFO, MaxFiles: 1}
+	logger := getLogger("1_log_test.log", 1)
 	logger.Info("old message")
-	logger.Path = testDir + "2_log_test.log"
-	logger.Info("new message")
+	logger2 := getLogger("2_log_test.log", 1)
+	logger2.Info("old message")
+	logger2.Info("new message")
 
 	// When
 	logger.Clear()
@@ -52,27 +56,32 @@ func TestRemoveSecondFileIfMaxOne(t *testing.T) {
 func TestRemoveWithMaxThree(t *testing.T) {
 	// Given
 	setUp()
-	logger := loggers.Syslog{Testing: t, MinLevel: syslog.INFO, MaxFiles: 3}
-	logger.Path = testDir + "1_log_test.log"
-	logger.Info("old message")
-	logger.Path = testDir + "2_log_test.log"
-	logger.Info("new message")
-	logger.Path = testDir + "3_log_test.log"
-	logger.Info("new message")
-	logger.Path = testDir + "4_log_test.log"
-	logger.Info("new message")
-	logger.Path = testDir + "5_log_test.log"
-	logger.Info("new message")
+	logger1 := getLogger("1_log_test.log", 3)
+	logger1.Info("old message")
+
+	logger2 := getLogger("2_log_test.log", 3)
+	logger2.Info("new message")
+
+	logger3 := getLogger("3_log_test.log", 3)
+	logger3.Info("new message")
+
+	logger4 := getLogger("4_log_test.log", 3)
+	logger4.Info("new message")
+
+	logger5 := getLogger("5_log_test.log", 3)
+	logger5.Info("new message")
 
 	// When
-	logger.Clear()
+	logger1.Clear()
 
 	// Then
 	files := getFiles()
-	assert.Len(t, files, 3)
+	assert.Len(t, files, 5)
 	assert.Equal(t, testDir+"1_log_test.log", files[0])
 	assert.Equal(t, testDir+"2_log_test.log", files[1])
 	assert.Equal(t, testDir+"3_log_test.log", files[2])
+	assert.Equal(t, testDir+"4_log_test.log", files[2])
+	assert.Equal(t, testDir+"5_log_test.log", files[2])
 }
 
 func getFiles() []string {
@@ -90,4 +99,12 @@ func getFiles() []string {
 	}
 
 	return files
+}
+
+func getLogger(path string, maxFiles int) inter.Logger {
+	var logger inter.Logger = loggers.Syslog{Path: testDir + path, MinLevel: syslog.INFO, MaxFiles: maxFiles}
+	app := foundation.NewApp()
+	app.Bind("config.App.Name", "testApp")
+	logger = logger.SetApp(app)
+	return logger
 }

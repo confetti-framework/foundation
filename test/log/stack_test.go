@@ -28,8 +28,8 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 }
 
 func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
-	first := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.INFO}
-	second := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.INFO}
+	first := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
+	second := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
 	allLoggers := map[string]inter.Logger{"first": first, "second": second}
 	logger := setUpStack(allLoggers, "first", "second")
 
@@ -212,7 +212,7 @@ func TestStackDebugWithData(t *testing.T) {
 }
 
 func getStackWithSingleLogger(t *testing.T) inter.Logger {
-	single := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	single := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 	allLoggers := map[string]inter.Logger{"single": single}
 	logger := setUpStack(allLoggers, "single")
 	return logger

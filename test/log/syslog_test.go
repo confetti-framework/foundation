@@ -23,7 +23,7 @@ var structMock = struct{ FirstLevel interface{} }{
 
 func TestCreateLogFileIfNotExists(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "some content")
 
@@ -32,7 +32,7 @@ func TestCreateLogFileIfNotExists(t *testing.T) {
 
 func TestCreateDirIfDirNotExists(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testDir + "external/log_test.log", MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testDir + "external/log_test.log", MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "some content")
 
@@ -41,7 +41,7 @@ func TestCreateDirIfDirNotExists(t *testing.T) {
 
 func TestGetAddOneErrorLine(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "error line 1")
 
@@ -50,7 +50,7 @@ func TestGetAddOneErrorLine(t *testing.T) {
 
 func TestGetAddTwoErrorLines(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "error line 1")
 	logger.Log(syslog.INFO, "error line 2")
@@ -60,7 +60,7 @@ func TestGetAddTwoErrorLines(t *testing.T) {
 
 func TestLogWithLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "message")
 
@@ -70,7 +70,7 @@ func TestLogWithLevel(t *testing.T) {
 
 func TestContentOfError(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Log(syslog.INFO, "error line 1")
 	logger.Log(syslog.INFO, "error line 2")
@@ -82,7 +82,7 @@ func TestContentOfError(t *testing.T) {
 
 func TestLogWithString(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.LogWith(syslog.INFO, "the message", "string data")
 
@@ -92,7 +92,7 @@ func TestLogWithString(t *testing.T) {
 
 func TestLogWithMap(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.LogWith(syslog.INFO, "the message", map[string]string{"key": "value"})
 
@@ -102,7 +102,7 @@ func TestLogWithMap(t *testing.T) {
 
 func TestLogWithStruct(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
@@ -112,7 +112,7 @@ func TestLogWithStruct(t *testing.T) {
 
 func TestLogLevels(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
@@ -122,7 +122,7 @@ func TestLogLevels(t *testing.T) {
 
 func TestLogWithStructuredData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 	data := syslog.StructuredData{
 		"firstLevel": {"secondLevel": "the value"},
 	}
@@ -136,7 +136,7 @@ func TestLogWithStructuredData(t *testing.T) {
 
 func TestLogEmergency(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Emergency("the message")
 
@@ -146,7 +146,7 @@ func TestLogEmergency(t *testing.T) {
 
 func TestLogEmergencyWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.EmergencyWith("the message", map[string]string{"key": "value"})
 
@@ -156,7 +156,7 @@ func TestLogEmergencyWithData(t *testing.T) {
 
 func TestLogAlert(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Alert("the message")
 
@@ -166,7 +166,7 @@ func TestLogAlert(t *testing.T) {
 
 func TestLogAlertWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.AlertWith("the message", map[string]string{"key": "value"})
 
@@ -176,7 +176,7 @@ func TestLogAlertWithData(t *testing.T) {
 
 func TestLogCritical(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Critical("the message")
 
@@ -186,7 +186,7 @@ func TestLogCritical(t *testing.T) {
 
 func TestLogCriticalWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.CriticalWith("the message", map[string]string{"key": "value"})
 
@@ -196,7 +196,7 @@ func TestLogCriticalWithData(t *testing.T) {
 
 func TestLogError(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Error("the message")
 
@@ -206,7 +206,7 @@ func TestLogError(t *testing.T) {
 
 func TestLogErrorWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.ErrorWith("the message", map[string]string{"key": "value"})
 
@@ -216,7 +216,7 @@ func TestLogErrorWithData(t *testing.T) {
 
 func TestLogWarning(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Warning("the message")
 
@@ -226,7 +226,7 @@ func TestLogWarning(t *testing.T) {
 
 func TestLogWarningWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.WarningWith("the message", map[string]string{"key": "value"})
 
@@ -236,7 +236,7 @@ func TestLogWarningWithData(t *testing.T) {
 
 func TestLogNotice(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Notice("the message")
 
@@ -246,7 +246,7 @@ func TestLogNotice(t *testing.T) {
 
 func TestLogNoticeWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.NoticeWith("the message", map[string]string{"key": "value"})
 
@@ -256,7 +256,7 @@ func TestLogNoticeWithData(t *testing.T) {
 
 func TestLogInfo(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Info("the message")
 
@@ -266,7 +266,7 @@ func TestLogInfo(t *testing.T) {
 
 func TestLogInfoWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.InfoWith("the message", map[string]string{"key": "value"})
 
@@ -276,7 +276,7 @@ func TestLogInfoWithData(t *testing.T) {
 
 func TestLogDebug(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.Debug("the message")
 
@@ -286,7 +286,7 @@ func TestLogDebug(t *testing.T) {
 
 func TestLogDebugWithData(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.DEBUG}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
 
 	logger.DebugWith("the message", map[string]string{"key": "value"})
 
@@ -296,7 +296,7 @@ func TestLogDebugWithData(t *testing.T) {
 
 func TestLogWithMinLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.INFO}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
 
 	logger.Debug("the message")
 
@@ -306,7 +306,7 @@ func TestLogWithMinLevel(t *testing.T) {
 
 func TestLogSameLevelAsMinLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Testing: t, Path: testFile, MinLevel: syslog.INFO}
+	logger := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
 
 	logger.Info("the message")
 

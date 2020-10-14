@@ -15,6 +15,8 @@ type Slack struct {
 	MinLevel   inter.Severity
 }
 
+func (s Slack) Clear() {}
+
 func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 	return s
 }

@@ -24,16 +24,19 @@ type Syslog struct {
 	app        inter.Maker
 }
 
-func (r Syslog) init() syslog.Logger {
-	hostname, _ := os.Hostname()
-	if r.Writer == nil {
-		r.Writer = fileWriter(r)
+func (r Syslog) Clear() {
+	// No files will be deleted when MaxFiles is 0
+	if r.MaxFiles == 0 {
+		return
 	}
 
-	appName := r.app.Make("config.App.Name").(string)
-	procid := strconv.Itoa(os.Getpid())
-
-	return syslog.NewLogger(r.Writer, r.Facility, hostname, appName, procid)
+	dir := filepath.Dir(r.Path)
+	files, _ := ioutil.ReadDir(dir)
+	for i, file := range files {
+		if i >= r.MaxFiles {
+			_ = os.Remove(dir + string(os.PathSeparator) + file.Name())
+		}
+	}
 }
 
 func (r Syslog) SetApp(app inter.Maker) inter.Logger {
@@ -157,19 +160,16 @@ func (r Syslog) DebugWith(message string, context interface{}) {
 	r.LogWith(syslog.DEBUG, message, context)
 }
 
-func (r Syslog) Clear() {
-	// No files will be deleted when MaxFiles is 0
-	if r.MaxFiles == 0 {
-		return
+func (r Syslog) init() syslog.Logger {
+	hostname, _ := os.Hostname()
+	if r.Writer == nil {
+		r.Writer = fileWriter(r)
 	}
 
-	dir := filepath.Dir(r.Path)
-	files, _ := ioutil.ReadDir(dir)
-	for i, file := range files {
-		if i >= r.MaxFiles {
-			_ = os.Remove(dir + string(os.PathSeparator) + file.Name())
-		}
-	}
+	appName := r.app.Make("config.App.Name").(string)
+	procid := strconv.Itoa(os.Getpid())
+
+	return syslog.NewLogger(r.Writer, r.Facility, hostname, appName, procid)
 }
 
 func fileWriter(r Syslog) *os.File {
