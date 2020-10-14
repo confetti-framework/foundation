@@ -65,6 +65,7 @@ func (s Stack) CriticalWith(message string, context interface{}) {
 
 func (s Stack) Error(message string) {
 	for _, logger := range s.getLoggers() {
+		logger = logger.SetApp(s.app)
 		logger.Error(message)
 	}
 }
@@ -125,7 +126,7 @@ func (s Stack) DebugWith(message string, context interface{}) {
 
 func (s Stack) getLoggers() []inter.Logger {
 	var loggers []inter.Logger
-	allLoggers := s.app.Make("config.Logging.Loggers").(map[string]interface{})
+	allLoggers := s.app.Make("config.Logging.Channels").(map[string]interface{})
 
 	for _, loggerName := range s.Loggers {
 		logger, ok := allLoggers[loggerName]

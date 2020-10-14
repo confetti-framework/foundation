@@ -10,20 +10,18 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"testing"
+	"strconv"
 	"time"
 )
 
 type Syslog struct {
-	Path     string
-	FileMode os.FileMode
-	MinLevel inter.Severity
-	MaxFiles int
-	Testing  *testing.T
-	Facility inter.Facility
-	AppName  string
-	Procid   string
-	Writer   io.Writer
+	Path       string
+	Facility   inter.Facility
+	Writer     io.Writer
+	Permission os.FileMode
+	MinLevel   inter.Severity
+	MaxFiles   int
+	app        inter.Maker
 }
 
 func (r Syslog) init() syslog.Logger {
@@ -32,10 +30,14 @@ func (r Syslog) init() syslog.Logger {
 		r.Writer = fileWriter(r)
 	}
 
-	return syslog.NewLogger(r.Writer, r.Facility, hostname, r.AppName, "")
+	appName := r.app.Make("config.App.Name").(string)
+	procid := strconv.Itoa(os.Getpid())
+
+	return syslog.NewLogger(r.Writer, r.Facility, hostname, appName, procid)
 }
 
-func (r Syslog) SetApp(_ inter.Maker) inter.Logger {
+func (r Syslog) SetApp(app inter.Maker) inter.Logger {
+	r.app = app
 	return r
 }
 
@@ -48,7 +50,7 @@ func (r Syslog) LogWith(severity inter.Severity, message string, context interfa
 		return
 	}
 
-	var structuredData syslog.StructuredData
+	structuredData := syslog.StructuredData{}
 	var rawData string
 
 	switch context := context.(type) {
@@ -61,9 +63,11 @@ func (r Syslog) LogWith(severity inter.Severity, message string, context interfa
 		rawData = string(rawDataBytes)
 	}
 
+	structuredData["level"] = syslog.SDElement{"severity": syslog.KeyBySeverity(severity)}
+
 	r.init().Log(
 		severity,
-		syslog.KeyBySeverity(severity)+": "+message,
+		message,
 		structuredData,
 		rawData,
 	)
@@ -169,8 +173,8 @@ func (r Syslog) Clear() {
 }
 
 func fileWriter(r Syslog) *os.File {
-	if r.FileMode == 0 {
-		r.FileMode = 0744
+	if r.Permission == 0 {
+		r.Permission = 0644
 	}
 
 	// We overwrite the default value of 0.
@@ -179,13 +183,13 @@ func fileWriter(r Syslog) *os.File {
 	}
 
 	// create extra dir if needed
-	err := os.MkdirAll(filepath.Dir(r.Path), r.FileMode)
+	err := os.MkdirAll(filepath.Dir(r.Path), r.Permission)
 	if err != nil {
 		panic(err)
 	}
 	fileName := getDynamicFileName(r.Path)
 
-	writer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.FileMode)
+	writer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, r.Permission)
 	if err != nil {
 		panic(err)
 	}

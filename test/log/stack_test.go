@@ -221,7 +221,7 @@ func getStackWithSingleLogger(t *testing.T) inter.Logger {
 func setUpStack(allLoggers map[string]inter.Logger, loggersInStack ...string) inter.Logger {
 	setUp()
 	app := foundation.NewApp()
-	app.Bind("config.Logging.Loggers", allLoggers)
+	app.Bind("config.Logging.Channels", allLoggers)
 	logger := loggers.Stack{Loggers: loggersInStack}
 	logger.SetApp(app)
 	return logger
