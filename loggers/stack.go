@@ -6,8 +6,8 @@ import (
 )
 
 type Stack struct {
-	Loggers []string
-	app     inter.Maker
+	Channels []string
+	app      inter.Maker
 }
 
 func (s Stack) Clear() {}
@@ -130,7 +130,7 @@ func (s Stack) getLoggers() []inter.Logger {
 	var loggers []inter.Logger
 	allLoggers := s.app.Make("config.Logging.Channels").(map[string]inter.Logger)
 
-	for _, loggerName := range s.Loggers {
+	for _, loggerName := range s.Channels {
 		logger, ok := allLoggers[loggerName]
 		if !ok {
 			panic(errors.New("no logger found by: " + loggerName))

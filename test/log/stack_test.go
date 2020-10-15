@@ -221,6 +221,6 @@ func setUpStack(allLoggers map[string]inter.Logger, loggersInStack ...string) in
 	setUp()
 	app := newTestApp()
 	app.Bind("config.Logging.Channels", allLoggers)
-	logger := loggers.Stack{Loggers: loggersInStack}
+	logger := loggers.Stack{Channels: loggersInStack}
 	return logger.SetApp(app)
 }
