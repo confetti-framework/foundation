@@ -13,7 +13,8 @@ import (
 )
 
 const testDir = "/tmp/error_tests/"
-const testFile = testDir + "log_test.log"
+const testFile = testDir + "log_first.log"
+const testFileSecond = testDir + "log_second.log"
 
 var structMock = struct{ FirstLevel interface{} }{
 	struct{ SecondLevel string }{

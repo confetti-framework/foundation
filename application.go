@@ -1,8 +1,10 @@
 package foundation
 
 import (
+	"errors"
 	"fmt"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation/loggers"
 )
 
 type Application struct {
@@ -65,11 +67,30 @@ func (a *Application) IsEnvironment(environments ...string) bool {
 	return false
 }
 
-func (a *Application) Log() inter.Logger {
-	key := a.Make("config.Logging.Default").(string)
-	logger := a.Make("config.Logging.Channels").(map[string]interface{})[key].(inter.Logger)
+func (a *Application) Log(channels ...string) inter.Logger {
+	var logger inter.Logger
 
-	logger = logger.SetApp(a)
+	// If no channels are specified, take the default
+	if len(channels) == 0 {
+		channels = []string{a.Make("config.Logging.Default").(string)}
+	}
 
-	return logger
+	//  If multiple loggers are present, wrap them in a stack
+	if len(channels) > 1 {
+		logger = loggers.Stack{Channels: channels}
+	} else {
+		logger = a.getLoggerByChannel(channels[0])
+	}
+
+	return logger.SetApp(a)
+}
+
+func (a *Application) getLoggerByChannel(channel string) inter.Logger {
+	all := a.Make("config.Logging.Channels").(map[string]interface{})
+	rawLogger, ok := all[channel]
+	if !ok {
+		panic(errors.New("can not log to channel. Channel '" + channel + "' does not exist"))
+	}
+
+	return rawLogger.(inter.Logger)
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestStackWithEmptySlice(t *testing.T) {
-	var allLoggers map[string]inter.Logger
+	var allLoggers map[string]interface{}
 	logger := setUpStack(allLoggers)
 	logger.Log(syslog.INFO, "the message")
 
@@ -29,7 +29,7 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
 	first := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
 	second := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
-	allLoggers := map[string]inter.Logger{"first": first, "second": second}
+	allLoggers := map[string]interface{}{"first": first, "second": second}
 	logger := setUpStack(allLoggers, "first", "second")
 
 	logger.Log(syslog.INFO, "the message")
@@ -212,12 +212,12 @@ func TestStackDebugWithData(t *testing.T) {
 
 func getStackWithSingleLogger() inter.Logger {
 	single := loggers.Syslog{Path: testFile, MinLevel: syslog.DEBUG}
-	allLoggers := map[string]inter.Logger{"single": single}
+	allLoggers := map[string]interface{}{"single": single}
 	logger := setUpStack(allLoggers, "single")
 	return logger
 }
 
-func setUpStack(allLoggers map[string]inter.Logger, loggersInStack ...string) inter.Logger {
+func setUpStack(allLoggers map[string]interface{}, loggersInStack ...string) inter.Logger {
 	setUp()
 	app := newTestApp()
 	app.Bind("config.Logging.Channels", allLoggers)

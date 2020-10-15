@@ -128,13 +128,14 @@ func (s Stack) DebugWith(message string, context interface{}) {
 
 func (s Stack) getLoggers() []inter.Logger {
 	var loggers []inter.Logger
-	allLoggers := s.app.Make("config.Logging.Channels").(map[string]inter.Logger)
+	allLoggers := s.app.Make("config.Logging.Channels").(map[string]interface{})
 
 	for _, loggerName := range s.Channels {
-		logger, ok := allLoggers[loggerName]
+		rawLogger, ok := allLoggers[loggerName]
 		if !ok {
-			panic(errors.New("no logger found by: " + loggerName))
+			panic(errors.New("can not log to one of the channels. Channel '" + loggerName + "' does not exist"))
 		}
+		logger := rawLogger.(inter.Logger)
 		logger = logger.SetApp(s.app)
 		loggers = append(loggers, logger)
 	}
