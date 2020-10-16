@@ -17,6 +17,7 @@ import (
 type Syslog struct {
 	Path       string
 	Facility   inter.Facility
+	Type       string // MSGID intended for filtering
 	Writer     io.Writer
 	Permission os.FileMode
 	MinLevel   inter.Severity
@@ -73,7 +74,7 @@ func (r Syslog) LogWith(severity inter.Severity, message string, context interfa
 
 	r.init().Log(
 		severity,
-		"",
+		r.Type,
 		structuredData,
 		message+" %s",
 		rawData,

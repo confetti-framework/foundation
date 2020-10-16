@@ -109,7 +109,7 @@ func TestLogWithStruct(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], `- [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogLevels(t *testing.T) {
@@ -119,7 +119,17 @@ func TestLogLevels(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], `- [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+}
+
+func TestLogType(t *testing.T) {
+	setUp()
+	logger := getLoggerWithType(testFile, "external")
+
+	logger.LogWith(syslog.INFO, "the message", structMock)
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], ` external [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogWithStructuredData(t *testing.T) {
