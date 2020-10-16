@@ -40,7 +40,7 @@ func (s Slack) LogWith(severity inter.Severity, message string, data interface{}
 
 // Log that the system is unusable
 func (s Slack) Emergency(message string, arguments ...interface{}) {
-	s.Log(syslog.EMERG, message)
+	s.Log(syslog.EMERG, message, arguments...)
 }
 
 // Log that the system is unusable
