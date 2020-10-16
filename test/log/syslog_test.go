@@ -68,8 +68,18 @@ func TestContentOfError(t *testing.T) {
 	logger.Log(syslog.INFO, "error line 2")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* error line 1 \[level severity="info"\]`, lines[0][0])
-	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* error line 2 \[level severity="info"\]`, lines[1][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* \[level severity="info"\] error line 1`, lines[0][0])
+	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* \[level severity="info"\] error line 2`, lines[1][0])
+}
+
+func TestLogArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Log(syslog.INFO, "name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogWithString(t *testing.T) {
@@ -79,7 +89,7 @@ func TestLogWithString(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", "string data")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, ` the message \[level severity="info"\] string data$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="info"\] the message string data$`, lines[0][0])
 }
 
 func TestLogWithMap(t *testing.T) {
@@ -89,7 +99,7 @@ func TestLogWithMap(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"key":"value"}`)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"key":"value"}`)
 }
 
 func TestLogWithStruct(t *testing.T) {
@@ -99,7 +109,7 @@ func TestLogWithStruct(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogLevels(t *testing.T) {
@@ -109,7 +119,7 @@ func TestLogLevels(t *testing.T) {
 	logger.LogWith(syslog.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], `the message [level severity="info"] {"FirstLevel":{"SecondLevel":"ceiling"}}`)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
 }
 
 func TestLogWithStructuredData(t *testing.T) {
@@ -123,7 +133,7 @@ func TestLogWithStructuredData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 
-	assert.Contains(t, lines[0][0], `the message [firstLevel secondLevel="the value"][level severity="info"]`)
+	assert.Contains(t, lines[0][0], ` [firstLevel secondLevel="the value"][level severity="info"] the message`)
 }
 
 func TestLogEmergency(t *testing.T) {
@@ -133,7 +143,17 @@ func TestLogEmergency(t *testing.T) {
 	logger.Emergency("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="emerg"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="emerg"\] the message $`, lines[0][0])
+}
+
+func TestLogEmergencyArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Emergency("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogEmergencyWithData(t *testing.T) {
@@ -143,7 +163,7 @@ func TestLogEmergencyWithData(t *testing.T) {
 	logger.EmergencyWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="emerg"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="emerg"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogAlert(t *testing.T) {
@@ -153,7 +173,17 @@ func TestLogAlert(t *testing.T) {
 	logger.Alert("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="alert"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="alert"\] the message $`, lines[0][0])
+}
+
+func TestLogAlertArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Alert("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogAlertWithData(t *testing.T) {
@@ -163,7 +193,7 @@ func TestLogAlertWithData(t *testing.T) {
 	logger.AlertWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="alert"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="alert"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogCritical(t *testing.T) {
@@ -173,7 +203,17 @@ func TestLogCritical(t *testing.T) {
 	logger.Critical("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="crit"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="crit"\] the message $`, lines[0][0])
+}
+
+func TestLogCriticalArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Critical("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogCriticalWithData(t *testing.T) {
@@ -183,7 +223,7 @@ func TestLogCriticalWithData(t *testing.T) {
 	logger.CriticalWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="crit"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="crit"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogError(t *testing.T) {
@@ -193,7 +233,17 @@ func TestLogError(t *testing.T) {
 	logger.Error("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="err"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="err"\] the message $`, lines[0][0])
+}
+
+func TestLogErrorArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Error("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogErrorWithData(t *testing.T) {
@@ -203,7 +253,7 @@ func TestLogErrorWithData(t *testing.T) {
 	logger.ErrorWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="err"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="err"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogWarning(t *testing.T) {
@@ -213,7 +263,17 @@ func TestLogWarning(t *testing.T) {
 	logger.Warning("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="warning"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="warning"\] the message $`, lines[0][0])
+}
+
+func TestLogWarningArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Warning("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogWarningWithData(t *testing.T) {
@@ -223,7 +283,7 @@ func TestLogWarningWithData(t *testing.T) {
 	logger.WarningWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="warning"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="warning"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogNotice(t *testing.T) {
@@ -233,7 +293,17 @@ func TestLogNotice(t *testing.T) {
 	logger.Notice("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="notice"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="notice"\] the message $`, lines[0][0])
+}
+
+func TestLogNoticeArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Notice("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogNoticeWithData(t *testing.T) {
@@ -243,7 +313,7 @@ func TestLogNoticeWithData(t *testing.T) {
 	logger.NoticeWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="notice"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="notice"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogInfo(t *testing.T) {
@@ -253,7 +323,17 @@ func TestLogInfo(t *testing.T) {
 	logger.Info("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="info"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="info"\] the message $`, lines[0][0])
+}
+
+func TestLogInfoArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Info("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogInfoWithData(t *testing.T) {
@@ -263,7 +343,7 @@ func TestLogInfoWithData(t *testing.T) {
 	logger.InfoWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="info"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="info"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogDebug(t *testing.T) {
@@ -273,7 +353,17 @@ func TestLogDebug(t *testing.T) {
 	logger.Debug("the message")
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="debug"\] $`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="debug"\] the message $`, lines[0][0])
+}
+
+func TestLogDebugArguments(t *testing.T) {
+	setUp()
+	logger := getLogger(testFile, 1)
+
+	logger.Debug("name=%s", "Ron")
+
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], "name=Ron")
 }
 
 func TestLogDebugWithData(t *testing.T) {
@@ -283,7 +373,7 @@ func TestLogDebugWithData(t *testing.T) {
 	logger.DebugWith("the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `the message \[level severity="debug"\] {"key":"value"}$`, lines[0][0])
+	assert.Regexp(t, ` \[level severity="debug"\] the message {"key":"value"}$`, lines[0][0])
 }
 
 func TestLogWithMinLevel(t *testing.T) {

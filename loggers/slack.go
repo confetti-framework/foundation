@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
 	"net/http"
@@ -21,8 +22,8 @@ func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 	return s
 }
 
-func (s Slack) Log(severity inter.Severity, message string) {
-	s.LogWith(severity, message, "")
+func (s Slack) Log(severity inter.Severity, message string, arguments ...interface{}) {
+	s.LogWith(severity, fmt.Sprintf(message, arguments...), "")
 }
 
 func (s Slack) LogWith(severity inter.Severity, message string, data interface{}) {
@@ -38,7 +39,7 @@ func (s Slack) LogWith(severity inter.Severity, message string, data interface{}
 }
 
 // Log that the system is unusable
-func (s Slack) Emergency(message string) {
+func (s Slack) Emergency(message string, arguments ...interface{}) {
 	s.Log(syslog.EMERG, message)
 }
 
@@ -48,8 +49,8 @@ func (s Slack) EmergencyWith(message string, context interface{}) {
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase.
-func (s Slack) Alert(message string) {
-	s.Log(syslog.ALERT, message)
+func (s Slack) Alert(message string, arguments ...interface{}) {
+	s.Log(syslog.ALERT, message, arguments...)
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase. w
@@ -58,8 +59,8 @@ func (s Slack) AlertWith(message string, context interface{}) {
 }
 
 // Critical conditions
-func (s Slack) Critical(message string) {
-	s.Log(syslog.CRIT, message)
+func (s Slack) Critical(message string, arguments ...interface{}) {
+	s.Log(syslog.CRIT, message, arguments...)
 }
 
 // Critical conditions
@@ -68,8 +69,8 @@ func (s Slack) CriticalWith(message string, context interface{}) {
 }
 
 // Error conditions
-func (s Slack) Error(message string) {
-	s.Log(syslog.ERR, message)
+func (s Slack) Error(message string, arguments ...interface{}) {
+	s.Log(syslog.ERR, message, arguments...)
 }
 
 // Error conditions
@@ -78,8 +79,8 @@ func (s Slack) ErrorWith(message string, context interface{}) {
 }
 
 // Warning conditions
-func (s Slack) Warning(message string) {
-	s.Log(syslog.WARNING, message)
+func (s Slack) Warning(message string, arguments ...interface{}) {
+	s.Log(syslog.WARNING, message, arguments...)
 }
 
 // Warning conditions
@@ -89,8 +90,8 @@ func (s Slack) WarningWith(message string, context interface{}) {
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
-func (s Slack) Notice(message string) {
-	s.Log(syslog.NOTICE, message)
+func (s Slack) Notice(message string, arguments ...interface{}) {
+	s.Log(syslog.NOTICE, message, arguments...)
 }
 
 // Normal but significant conditions
@@ -100,8 +101,8 @@ func (s Slack) NoticeWith(message string, context interface{}) {
 }
 
 // Informational messages
-func (s Slack) Info(message string) {
-	s.Log(syslog.INFO, message)
+func (s Slack) Info(message string, arguments ...interface{}) {
+	s.Log(syslog.INFO, message, arguments...)
 }
 
 // Informational messages
@@ -111,8 +112,8 @@ func (s Slack) InfoWith(message string, context interface{}) {
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
-func (s Slack) Debug(message string) {
-	s.Log(syslog.DEBUG, message)
+func (s Slack) Debug(message string, arguments ...interface{}) {
+	s.Log(syslog.DEBUG, message, arguments...)
 }
 
 // Debug-level messages

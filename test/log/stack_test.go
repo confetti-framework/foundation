@@ -23,7 +23,7 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="info"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message`)
 }
 
 func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
@@ -36,8 +36,8 @@ func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 2)
-	assert.Contains(t, lines[0][0], ` the message [level severity="info"] `)
-	assert.Contains(t, lines[1][0], ` the message [level severity="info"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message`)
+	assert.Contains(t, lines[1][0], ` [level severity="info"] the message`)
 }
 
 func TestStackWithData(t *testing.T) {
@@ -47,7 +47,7 @@ func TestStackWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="info"] {"key":"value"}`)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"key":"value"}`)
 }
 
 func TestStackEmergency(t *testing.T) {
@@ -57,7 +57,7 @@ func TestStackEmergency(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="emerg"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="emerg"] the message`)
 }
 
 func TestStackEmergencyWithData(t *testing.T) {
@@ -67,7 +67,7 @@ func TestStackEmergencyWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="emerg"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="emerg"] the message {"key":12}`)
 }
 
 func TestStackAlert(t *testing.T) {
@@ -77,7 +77,7 @@ func TestStackAlert(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="alert"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="alert"] the message`)
 }
 
 func TestStackAlertWithData(t *testing.T) {
@@ -87,7 +87,7 @@ func TestStackAlertWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="alert"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="alert"] the message {"key":12}`)
 }
 
 func TestStackCritical(t *testing.T) {
@@ -97,7 +97,7 @@ func TestStackCritical(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="crit"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="crit"] the message`)
 }
 
 func TestStackCriticalWithData(t *testing.T) {
@@ -107,7 +107,7 @@ func TestStackCriticalWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="crit"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="crit"] the message {"key":12}`)
 }
 
 func TestStackError(t *testing.T) {
@@ -117,7 +117,7 @@ func TestStackError(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="err"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="err"] the message`)
 }
 
 func TestStackErrorWithData(t *testing.T) {
@@ -127,7 +127,7 @@ func TestStackErrorWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="err"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="err"] the message {"key":12}`)
 }
 
 func TestStackWarning(t *testing.T) {
@@ -137,7 +137,7 @@ func TestStackWarning(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="warning"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="warning"] the message`)
 }
 
 func TestStackWarningWithData(t *testing.T) {
@@ -147,7 +147,7 @@ func TestStackWarningWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="warning"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="warning"] the message {"key":12}`)
 }
 
 func TestStackNotice(t *testing.T) {
@@ -157,7 +157,7 @@ func TestStackNotice(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="notice"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="notice"] the message`)
 }
 
 func TestStackNoticeWithData(t *testing.T) {
@@ -167,7 +167,7 @@ func TestStackNoticeWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="notice"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="notice"] the message {"key":12}`)
 }
 
 func TestStackInfo(t *testing.T) {
@@ -177,7 +177,7 @@ func TestStackInfo(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="info"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message`)
 }
 
 func TestStackInfoWithData(t *testing.T) {
@@ -187,7 +187,7 @@ func TestStackInfoWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="info"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"key":12}`)
 }
 
 func TestStackDebug(t *testing.T) {
@@ -197,7 +197,7 @@ func TestStackDebug(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="debug"] `)
+	assert.Contains(t, lines[0][0], ` [level severity="debug"] the message`)
 }
 
 func TestStackDebugWithData(t *testing.T) {
@@ -207,7 +207,7 @@ func TestStackDebugWithData(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
-	assert.Contains(t, lines[0][0], ` the message [level severity="debug"] {"key":12}`)
+	assert.Contains(t, lines[0][0], ` [level severity="debug"] the message {"key":12}`)
 }
 
 func getStackWithSingleLogger() inter.Logger {
