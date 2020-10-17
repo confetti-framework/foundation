@@ -1,4 +1,4 @@
-package error
+package response
 
 import (
 	"github.com/lanvard/contract/inter"

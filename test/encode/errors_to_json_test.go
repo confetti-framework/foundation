@@ -3,10 +3,7 @@ package encode
 import (
 	"errors"
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/http"
-	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -56,26 +53,9 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 		"this is a long error message, this is a long error message, this is a long error message, this is a long error message, this is a long error message, this is a long error message\"}]}", result)
 }
 
-func TestRequestWithoutContentType(t *testing.T) {
-	// Given
-	request := http.NewRequest(http.Options{
-		App: foundation.NewApp(),
-	})
-
-	// When
-	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
-		value := request.Body("data.foo.0.bar.1.bar")
-		return outcome.Html(value.Error().Error())
-	})
-	response.SetApp(request.App())
-
-	// Then
-	assert.Equal(t, "no request body decoder found", response.Content())
-}
-
 func TestSystemErrorConvertToJson(t *testing.T) {
 	result, err := encoder.EncodeThrough("", []inter.Encoder{})
 
-	assert.Equal(t, "No encoder found to handle error: no encoder found to encode response body with type string", result)
-	assert.EqualError(t, err, "No encoder found to handle error: no encoder found to encode response body with type string")
+	assert.Equal(t, "no encoder found to handle error: no encoder found to encode response body with type string", result)
+	assert.EqualError(t, err, "no encoder found to handle error: no encoder found to encode response body with type string")
 }

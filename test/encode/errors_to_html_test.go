@@ -37,6 +37,6 @@ func TestOneErrorToHtml(t *testing.T) {
 func TestSystemErrorConvertToHtml(t *testing.T) {
 	result, err := encoder.EncodeThrough(errors.New("bad request"), []inter.Encoder{encoder.InterfaceToHtml{}})
 
-	assert.Equal(t, "No encoder found to handle error: bad request", result)
-	assert.EqualError(t, err, "No encoder found to handle error: bad request")
+	assert.Equal(t, "no encoder found to handle error: bad request", result)
+	assert.EqualError(t, err, "no encoder found to handle error: bad request")
 }
