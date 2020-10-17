@@ -16,11 +16,11 @@ type Slack struct {
 	MinLevel   inter.Severity
 }
 
-func (s Slack) Clear() {}
-
 func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 	return s
 }
+
+func (s Slack) Clear() {}
 
 func (s Slack) Log(severity inter.Severity, message string, arguments ...interface{}) {
 	s.LogWith(severity, fmt.Sprintf(message, arguments...), "")

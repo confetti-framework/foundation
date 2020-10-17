@@ -6,17 +6,17 @@ import (
 	"reflect"
 )
 
-type HtmlReaderToJson struct{}
+type HtmlReaderToHtml struct{}
 
-func (h HtmlReaderToJson) IsAble(object interface{}) bool {
+func (h HtmlReaderToHtml) IsAble(object interface{}) bool {
 	_, ok := object.(inter.HtmlReader)
 	return ok
 }
 
-func (h HtmlReaderToJson) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+func (h HtmlReaderToHtml) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
 	result, ok := object.(inter.HtmlReader)
 	if !ok {
 		return "", errors.New("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
 	}
-	return result.Html(), nil
+	return result.String(), nil
 }

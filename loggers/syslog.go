@@ -25,6 +25,11 @@ type Syslog struct {
 	app        inter.Maker
 }
 
+func (r Syslog) SetApp(app inter.Maker) inter.Logger {
+	r.app = app
+	return r
+}
+
 func (r Syslog) Clear() {
 	// No files will be deleted when MaxFiles is 0
 	if r.MaxFiles == 0 {
@@ -41,11 +46,6 @@ func (r Syslog) Clear() {
 			}
 		}
 	}
-}
-
-func (r Syslog) SetApp(app inter.Maker) inter.Logger {
-	r.app = app
-	return r
 }
 
 func (r Syslog) Log(severity inter.Severity, message string, arguments ...interface{}) {

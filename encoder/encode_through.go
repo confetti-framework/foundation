@@ -14,7 +14,7 @@ func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error)
 	}
 
 	if err, ok := object.(error); ok {
-		err := errors.New("No encoder found to handle error: " + err.Error())
+		err := errors.New("no encoder found to handle error: " + err.Error())
 		return err.Error(), err
 	}
 
