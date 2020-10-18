@@ -49,7 +49,6 @@ func (p Pipeline) Then(destination inter.Next) inter.Response {
 	nextCallback := 0
 	pipes := p.Pipes
 
-	pipes = append(pipes, AppendAppMiddleware{})
 	pipes = reverse(pipes)
 
 	for i, pipe := range pipes {
