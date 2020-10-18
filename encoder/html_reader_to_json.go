@@ -13,7 +13,7 @@ func (h HtmlReaderToHtml) IsAble(object interface{}) bool {
 	return ok
 }
 
-func (h HtmlReaderToHtml) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+func (h HtmlReaderToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	result, ok := object.(inter.HtmlReader)
 	if !ok {
 		return "", errors.New("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())

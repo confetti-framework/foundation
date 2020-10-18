@@ -11,7 +11,7 @@ func (j InterfaceToJson) IsAble(_ interface{}) bool {
 	return true
 }
 
-func (j InterfaceToJson) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+func (j InterfaceToJson) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	if object == nil {
 		return "", nil
 	}

@@ -15,13 +15,15 @@ func TestHtmlReaderToHtmlWithEmptyHtmlReaderCanEncode(t *testing.T) {
 }
 
 func TestHtmlReaderToHmlWithString(t *testing.T) {
-	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough("foo", nil)
+	app := setUp()
+	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(app, "foo", nil)
 	assert.Equal(t, "", result)
 	assert.EqualError(t, err, "can not encode to html with an unsupported type string")
 }
 
 func TestHtmlReaderToHtmlWithValidHtmlReader(t *testing.T) {
-	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(htmlReader{}, nil)
+	app := setUp()
+	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(app, htmlReader{}, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", result)
 }

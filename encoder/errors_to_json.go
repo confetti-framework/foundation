@@ -20,7 +20,7 @@ func (e ErrorToJson) IsAble(object interface{}) bool {
 	return ok
 }
 
-func (e ErrorToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
+func (e ErrorToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	err, ok := object.(error)
 	if !ok {
 		return "", errors.New("can't convert object to json in error format")
@@ -31,5 +31,5 @@ func (e ErrorToJson) EncodeThrough(object interface{}, encoders []inter.Encoder)
 		Title: str.UpperFirst(err.Error()),
 	})
 
-	return EncodeThrough(e, encoders)
+	return EncodeThrough(app, e, encoders)
 }

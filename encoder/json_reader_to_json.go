@@ -13,7 +13,7 @@ func (j JsonReaderToJson) IsAble(object interface{}) bool {
 	return ok && InterfaceToJson{}.IsAble(jsonReader.Json())
 }
 
-func (j JsonReaderToJson) EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
+func (j JsonReaderToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	jsonReader, ok := object.(inter.JsonReader)
 	if !ok {
 		return "", errors.New("can not encode to json with an unsupported type " + reflect.TypeOf(object).String())
@@ -26,5 +26,5 @@ func (j JsonReaderToJson) EncodeThrough(object interface{}, encoders []inter.Enc
 		return "null", nil
 	}
 
-	return EncodeThrough(result, encoders)
+	return EncodeThrough(app, result, encoders)
 }

@@ -15,6 +15,6 @@ func (j JsonToJson) IsAble(object interface{}) bool {
 	return ok && json.Unmarshal([]byte(result), &js) == nil
 }
 
-func (j JsonToJson) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+func (j JsonToJson) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	return object.(string), nil
 }

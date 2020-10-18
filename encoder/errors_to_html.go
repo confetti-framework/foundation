@@ -15,7 +15,7 @@ func (e ErrorToHtml) IsAble(object interface{}) bool {
 	return ok
 }
 
-func (e ErrorToHtml) EncodeThrough(object interface{}, _ []inter.Encoder) (string, error) {
+func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	err, ok := object.(error)
 	if !ok {
 		return "", errors.New("can't convert object to html in error format")

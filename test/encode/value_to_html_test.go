@@ -17,13 +17,15 @@ func TestValueToHtmlCanEncode(t *testing.T) {
 }
 
 func TestValueToHmlWithString(t *testing.T) {
-	result, err := encoder.RawToHtml{}.EncodeThrough("foo", nil)
+	app := setUp()
+	result, err := encoder.RawToHtml{}.EncodeThrough(app, "foo", nil)
 	assert.Equal(t, "", result)
 	assert.EqualError(t, err, "can not encode to html with an unsupported type string")
 }
 
 func TestValueToHtmlWithValidValue(t *testing.T) {
-	result, err := encoder.RawToHtml{}.EncodeThrough(support.NewValue("foo"), outcome.HtmlEncoders)
+	app := setUp()
+	result, err := encoder.RawToHtml{}.EncodeThrough(app, support.NewValue("foo"), outcome.HtmlEncoders)
 	assert.Nil(t, err)
 	assert.Equal(t, "foo", result)
 }

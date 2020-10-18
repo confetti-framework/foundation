@@ -47,21 +47,24 @@ func TestEmptyStructCanTransformToJson(t *testing.T) {
 }
 
 func TestTransformStructWithIntToJson(t *testing.T) {
+	app := setUp()
 	object := foo{12}
-	result, err := encoder.InterfaceToJson{}.EncodeThrough(object, nil)
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"height\":12}", result)
 }
 
 func TestTransformStructWithFloat(t *testing.T) {
+	app := setUp()
 	object := foo{12.34}
-	result, err := encoder.InterfaceToJson{}.EncodeThrough(object, nil)
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "{\"height\":12.34}", result)
 }
 
 func TestTransformNilToJson(t *testing.T) {
-	result, err := encoder.InterfaceToJson{}.EncodeThrough(nil, nil)
+	app := setUp()
+	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, nil, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "", result)
 }

@@ -6,10 +6,10 @@ import (
 	"reflect"
 )
 
-func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error) {
+func EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	for _, encoder := range encoders {
 		if encoder.IsAble(object) {
-			return encoder.EncodeThrough(object, encoders)
+			return encoder.EncodeThrough(app, object, encoders)
 		}
 	}
 
@@ -19,5 +19,5 @@ func EncodeThrough(object interface{}, encoders []inter.Encoder) (string, error)
 	}
 
 	err := errors.New("no encoder found to encode response body with type " + reflect.TypeOf(object).String())
-	return EncodeThrough(err, encoders)
+	return EncodeThrough(app, err, encoders)
 }

@@ -26,13 +26,15 @@ func TestEmptyStructCanTransformToHtml(t *testing.T) {
 }
 
 func TestEncodeNilToHtml(t *testing.T) {
-	result, err := encoder.InterfaceToHtml{}.EncodeThrough(nil, nil)
+	app := setUp()
+	result, err := encoder.InterfaceToHtml{}.EncodeThrough(app, nil, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "", result)
 }
 
 func TestEncodeStringToHtml(t *testing.T) {
-	result, err := encoder.InterfaceToHtml{}.EncodeThrough(nil, nil)
+	app := setUp()
+	result, err := encoder.InterfaceToHtml{}.EncodeThrough(app, nil, nil)
 	assert.Nil(t, err)
 	assert.Equal(t, "", result)
 }
