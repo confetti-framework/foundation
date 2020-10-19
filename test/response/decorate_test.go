@@ -10,7 +10,7 @@ import (
 	"testing"
 )
 
-func TestSystemErrorHiddenForProduction(t *testing.T) {
+func TestSystemErrorFilterForProduction(t *testing.T) {
 	app := setUp()
 
 	// Given
@@ -23,7 +23,23 @@ func TestSystemErrorHiddenForProduction(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"A error has occurred.\"}]}", response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.Body())
+}
+
+func TestSystemErrorShowForDevelopment(t *testing.T) {
+	app := setUp()
+
+	// Given
+	app.Bind("config.App.Debug", true)
+	response := newTestResponse(app, errors.New("incorrect database credentials"))
+	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveData{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	response = bootstrapDecorator.Decorate(response)
+
+	// Then
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.Body())
 }
 
 func TestErrorIsLogged(t *testing.T) {
