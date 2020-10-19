@@ -2,7 +2,6 @@ package response
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/routing/outcome"
@@ -12,7 +11,8 @@ import (
 
 func TestErrorToJson(t *testing.T) {
 	// Given
-	request := http.NewRequest(http.Options{App: foundation.NewApp()})
+	app := setUp()
+	request := http.NewRequest(http.Options{App: app})
 
 	// When
 	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
@@ -29,7 +29,8 @@ func TestErrorToJson(t *testing.T) {
 
 func TestStringToJson(t *testing.T) {
 	// Given
-	request := http.NewRequest(http.Options{App: foundation.NewApp()})
+	app := setUp()
+	request := http.NewRequest(http.Options{App: app})
 
 	// When
 	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
@@ -46,7 +47,8 @@ func TestStringToJson(t *testing.T) {
 
 func TestUnknownToJson(t *testing.T) {
 	// Given
-	request := http.NewRequest(http.Options{App: foundation.NewApp()})
+	app := setUp()
+	request := http.NewRequest(http.Options{App: app})
 
 	// When
 	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
