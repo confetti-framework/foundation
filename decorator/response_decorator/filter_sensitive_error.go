@@ -12,7 +12,7 @@ func (c FilterSensitiveError) Decorate(response inter.Response) inter.Response {
 		return response
 	}
 
-	// For security reasons system exceptions should not be exposed
+	// For security reasons system errors should not be exposed
 	content := response.Content()
 	if _, ok := content.(error); ok {
 		content = errors.New("an error has occurred")
