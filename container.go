@@ -90,7 +90,11 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 		// If struct cannot be found, we simply have to use the struct itself.
 		concrete = abstract
 	} else if support.Type(abstract) == reflect.String {
-		instances := support.NewMap(c.bindings)
+		var instances support.Map
+		instances, err = support.NewMapE(c.bindings)
+		if err != nil {
+			return instances, err
+		}
 		if c.bootContainer != nil {
 			instances.Merge(support.NewMap(c.bootContainer.Bindings()))
 		}

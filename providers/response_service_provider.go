@@ -2,6 +2,7 @@ package providers
 
 import (
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/routing/outcome"
 )
 
@@ -11,6 +12,7 @@ func (c ResponseServiceProvider) Register(container inter.Container) inter.Conta
 	// Response decorators are responsible for modifying the response object.
 	// All these decorators will be used to customize the response object.
 	// Extent the decorators to further customize the response object
+	container.Bind("response_decorators", response_decorator.ResponseDecorators)
 	container.Extend("response_decorators", func(service interface{}) interface{} {
 		decorators := service.([]inter.ResponseDecorator)
 		decorators = append(

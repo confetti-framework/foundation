@@ -42,18 +42,6 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.Body())
 }
 
-func TestErrorIsLogged(t *testing.T) {
-	// Given
-	// When
-	// Then
-}
-
-func TestErrorCode(t *testing.T) {
-	// Given
-	// When
-	// Then
-}
-
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("outcome_json_encoders", outcome.JsonEncoders)

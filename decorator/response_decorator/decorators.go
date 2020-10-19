@@ -5,5 +5,6 @@ import (
 )
 
 var ResponseDecorators = []inter.ResponseDecorator{
+	LogError{},
 	FilterSensitiveError{},
 }

@@ -13,12 +13,10 @@ func (c FilterSensitiveError) Decorate(response inter.Response) inter.Response {
 	}
 
 	// For security reasons system errors should not be exposed
-	content := response.Content()
-	if _, ok := content.(error); ok {
-		content = errors.New("an error has occurred")
+	if err, ok := response.Content().(error); ok {
+		err = errors.New("an error has occurred")
+		response.SetContent(err)
 	}
-
-	response.SetContent(content)
 
 	return response
 }

@@ -77,7 +77,11 @@ func (a *Application) Log(channels ...string) inter.Logger {
 
 	// If no channels are specified, take the default
 	if len(channels) == 0 {
-		channels = []string{a.Make("config.Logging.Default").(string)}
+		defaultLogger, err := a.MakeE("config.Logging.Default")
+		if err != nil {
+			panic("no default logger found in config.Logging.Default")
+		}
+		channels = []string{defaultLogger.(string)}
 	}
 
 	//  If multiple loggers are present, wrap them in a stack
