@@ -18,11 +18,11 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 
 	response.SetApp(request.App())
 
-	_, err := response.ContentE()
+	_, err := response.BodyE()
 	assert.NotNil(t, err)
 	assert.Equal(
 		t,
-		"no response encoder found",
+		"can't transform response object to string. No response encoder alias defined in outcome.Response",
 		err.Error(),
 	)
 }

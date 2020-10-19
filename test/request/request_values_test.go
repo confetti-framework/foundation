@@ -95,19 +95,19 @@ func Test_all_values(t *testing.T) {
 			"second":   support.NewValue(support.NewCollection("bob", "tom")),
 			"language": support.NewValue(support.NewCollection("Go")),
 			"name":     support.NewValue(support.NewCollection("gopher")),
-		}, request.Body().Source())
+		}, request.Content().Source())
 }
 
 func Test_form_values(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	assert.Equal(t, 1234, request.Parameter("user_id").Number())
-	assert.Equal(t, "Go", request.Body("language").String())
-	assert.Equal(t, "bob", request.Body("second").String())
-	assert.Equal(t, "bob", request.Body("second").Collection().First().String())
-	assert.Equal(t, support.NewCollection("bob", "tom"), request.Body("second").Collection())
-	assert.Equal(t, "tom", request.Body("second.1").String())
-	assert.Equal(t, "tom", request.Body("").Map()["second"].Collection()[1].String())
+	assert.Equal(t, "Go", request.Content("language").String())
+	assert.Equal(t, "bob", request.Content("second").String())
+	assert.Equal(t, "bob", request.Content("second").Collection().First().String())
+	assert.Equal(t, support.NewCollection("bob", "tom"), request.Content("second").Collection())
+	assert.Equal(t, "tom", request.Content("second.1").String())
+	assert.Equal(t, "tom", request.Content("").Map()["second"].Collection()[1].String())
 }
 
 func Test_form_value_not_found(t *testing.T) {
@@ -122,13 +122,13 @@ func Test_form_value_not_found(t *testing.T) {
 func Test_value_or(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	assert.Equal(t, "Sally", request.BodyOr("fake", "Sally").String())
-	assert.Equal(t, "Go", request.BodyOr("language", "PHP").String())
-	assert.Equal(t, "Go", request.BodyOr("language.0", "PHP").String())
+	assert.Equal(t, "Sally", request.ContentOr("fake", "Sally").String())
+	assert.Equal(t, "Go", request.ContentOr("language", "PHP").String())
+	assert.Equal(t, "Go", request.ContentOr("language.0", "PHP").String())
 
-	assert.Equal(t, 12, request.BodyOr("fake", 12).Number())
-	assert.Equal(t, 10, request.BodyOr("age", 12).Number())
-	assert.Equal(t, 10, request.BodyOr("age.0", 12).Number())
+	assert.Equal(t, 12, request.ContentOr("fake", 12).Number())
+	assert.Equal(t, 10, request.ContentOr("age", 12).Number())
+	assert.Equal(t, 10, request.ContentOr("age.0", 12).Number())
 }
 
 func Test_request_content_type_json(t *testing.T) {
@@ -137,13 +137,13 @@ func Test_request_content_type_json(t *testing.T) {
 
 	// When
 	response := middleware.RequestBodyDecoder{}.Handle(request, func(request inter.Request) inter.Response {
-		value := request.Body("data.foo.0.bar.1.bar")
+		value := request.Content("data.foo.0.bar.1.bar")
 		return outcome.Html(value)
 	})
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, "A02", response.Content())
+	assert.Equal(t, "A02", response.Body())
 }
 
 func fakeRequestWithForm() inter.Request {
@@ -162,8 +162,11 @@ func fakeRequestWithForm() inter.Request {
 }
 
 func fakeRequestWithJsonBody() inter.Request {
+	app := foundation.NewApp()
+	app.Bind("outcome_html_encoders", outcome.HtmlEncoders)
+
 	return http.NewRequest(http.Options{
-		App:    foundation.NewApp(),
+		App:    app,
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
 		Url:    "/user/2432?comment_id=1234",

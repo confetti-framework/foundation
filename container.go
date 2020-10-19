@@ -1,6 +1,7 @@
 package foundation
 
 import (
+	"errors"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/support"
 	"reflect"
@@ -58,19 +59,24 @@ func (c *Container) Bindings() inter.Bindings {
 	return c.bindings
 }
 
-// Resolve the given type from the container.
+// MakeE the given type from the container.
 func (c *Container) Make(abstract interface{}) interface{} {
-	return c.resolve(abstract)
+	concrete, err := c.MakeE(abstract)
+	if nil != err {
+		panic(err)
+	}
+	return concrete
 }
 
-// Resolve the given type from the container.
-func (c *Container) resolve(abstract interface{}) interface{} {
+// MakeE the given type from the container.
+func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 	var concrete interface{}
+	var err error = nil
 	var abstractName = support.Name(abstract)
 
 	if support.Type(abstract) == reflect.Ptr && abstract == nil {
-		panic("Can't resolve interface. To resolve an interface, use the following syntax: (*interface)(nil), " +
-			"use a string or use the struct itself.")
+		return nil, errors.New("can't resolve interface. To resolve an interface, " +
+			"use the following syntax: (*interface)(nil), use a string or use the struct itself")
 	}
 
 	if object, present := c.bindings[abstractName]; present {
@@ -78,7 +84,7 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 
 	} else if c.bootContainer != nil && c.bootContainer.Bound(abstractName) {
 		// Check the container that was created at boot time
-		concrete = c.bootContainer.Make(abstract)
+		concrete, err = c.bootContainer.MakeE(abstract)
 
 	} else if support.Type(abstract) == reflect.Struct {
 		// If struct cannot be found, we simply have to use the struct itself.
@@ -88,10 +94,10 @@ func (c *Container) resolve(abstract interface{}) interface{} {
 		if c.bootContainer != nil {
 			instances.Merge(support.NewMap(c.bootContainer.Bindings()))
 		}
-		concrete = instances.Get(abstract.(string)).Raw()
+		concrete, err = instances.Get(abstract.(string)).RawE()
 	}
 
-	return concrete
+	return concrete, err
 }
 
 func (c *Container) getConcreteBinding(concrete interface{}, object interface{}, abstractName string) interface{} {
@@ -112,7 +118,7 @@ func (c *Container) getConcreteBinding(concrete interface{}, object interface{},
 
 // "Extend" an abstract type in the container.
 func (c *Container) Extend(abstract interface{}, function func(service interface{}) interface{}) {
-	concrete := c.resolve(abstract)
+	concrete := c.Make(abstract)
 
 	newConcrete := function(concrete)
 

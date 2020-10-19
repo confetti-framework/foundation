@@ -4,7 +4,6 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/providers"
-	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -16,7 +15,7 @@ func TestGetEmptyStructByEmptyKey(t *testing.T) {
 
 	assert.Equal(
 		t,
-		support.NewMap(support.NewMap()),
+		map[string]interface{}{},
 		container.Make("config."),
 	)
 }
@@ -34,7 +33,9 @@ func TestGetByNotExistingKey(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Nil(t, container.Make("config.age"))
+	result, err := container.MakeE("config.age")
+	assert.Nil(t, result)
+	assert.EqualError(t, err, "no value found with key 'age'")
 }
 
 func TestGetByExistingKey(t *testing.T) {

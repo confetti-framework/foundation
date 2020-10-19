@@ -36,9 +36,14 @@ func (a *Application) Singleton(abstract interface{}, concrete interface{}) {
 	(*a.container).Singleton(abstract, concrete)
 }
 
-// Resolve the given type from the container.
+// Make the given type from the container.
 func (a *Application) Make(abstract interface{}) interface{} {
 	return (*a.container).Make(abstract)
+}
+
+// Make or give an error by the given type from the container.
+func (a *Application) MakeE(abstract interface{}) (interface{}, error) {
+	return (*a.container).MakeE(abstract)
 }
 
 func (a *Application) Bind(abstract interface{}, concrete interface{}) {

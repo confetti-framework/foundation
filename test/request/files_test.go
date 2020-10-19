@@ -25,14 +25,14 @@ func TestFileNotFoundInRequest(t *testing.T) {
 	assert.EqualError(t, err, "file not found by key: book")
 }
 
-func TestOneFileFoundWithContent(t *testing.T) {
+func TestOneFileFoundWithBody(t *testing.T) {
 	request := requestByFiles("--xxx\n" +
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	file, err := request.FileE("photo")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_file", file.Content())
+	assert.Equal(t, "content_of_file", file.Body())
 }
 
 func TestTwoFilesGivenReceiveOneFile(t *testing.T) {
@@ -44,7 +44,7 @@ func TestTwoFilesGivenReceiveOneFile(t *testing.T) {
 
 	file, err := request.FileE("photo")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_first_file", file.Content())
+	assert.Equal(t, "content_of_first_file", file.Body())
 }
 
 func TestTwoFilesDifferentKeyGiven(t *testing.T) {
@@ -56,11 +56,11 @@ func TestTwoFilesDifferentKeyGiven(t *testing.T) {
 
 	file, err := request.FileE("photo2")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_second_file", file.Content())
+	assert.Equal(t, "content_of_second_file", file.Body())
 
 	file, err = request.FileE("photo1")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_first_file", file.Content())
+	assert.Equal(t, "content_of_first_file", file.Body())
 }
 
 func TestFileNotFoundShouldPanic(t *testing.T) {
@@ -73,12 +73,12 @@ func TestFileNotFoundShouldPanic(t *testing.T) {
 	})
 }
 
-func TestFileGetContent(t *testing.T) {
+func TestFileGetBody(t *testing.T) {
 	request := requestByFiles("--xxx\n" +
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
-	assert.Equal(t, "content_of_file", request.File("photo").Content())
+	assert.Equal(t, "content_of_file", request.File("photo").Body())
 }
 
 func TestFilesNoContentTypeInRequest(t *testing.T) {
@@ -97,17 +97,17 @@ func TestFilesNotFoundInRequest(t *testing.T) {
 	assert.EqualError(t, err, "file not found by key: book")
 }
 
-func TestFilesOneFoundWithContent(t *testing.T) {
+func TestFilesOneFoundWithBody(t *testing.T) {
 	request := requestByFiles("--xxx\n" +
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_file", files[0].Content())
+	assert.Equal(t, "content_of_file", files[0].Body())
 }
 
-func TestFilesMultipleFoundWithContent(t *testing.T) {
+func TestFilesMultipleFoundWithBody(t *testing.T) {
 	request := requestByFiles("--xxx\n" +
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file1.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_first_file\n--xxx\n" +
@@ -116,8 +116,8 @@ func TestFilesMultipleFoundWithContent(t *testing.T) {
 
 	files, err := request.FilesE("photo")
 	assert.Nil(t, err)
-	assert.Equal(t, "content_of_first_file", files[0].Content())
-	assert.Equal(t, "content_of_second_file", files[1].Content())
+	assert.Equal(t, "content_of_first_file", files[0].Body())
+	assert.Equal(t, "content_of_second_file", files[1].Body())
 }
 
 func TestGetFileHeaderFromSecondFile(t *testing.T) {
@@ -149,7 +149,7 @@ func TestFilesWithoutError(t *testing.T) {
 		"Content-Disposition: form-data; name=\"photo\"; filename=\"file2.txt\"\n" +
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
-	assert.Equal(t, "content_of_second_file", request.Files("photo")[1].Content())
+	assert.Equal(t, "content_of_second_file", request.Files("photo")[1].Body())
 }
 
 func TestFileNameNotPresent(t *testing.T) {

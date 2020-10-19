@@ -13,7 +13,7 @@ import (
 func TestMiddlewareWithAppFromRequest(t *testing.T) {
 	options := http.Options{App: foundation.NewApp()}
 	request := http.NewRequest(options)
-	middlewares := []inter.HttpMiddleware{checkAppRequiredInMiddleware{}}
+	middlewares := []inter.HttpMiddleware{checkAppRequiredInMiddleware{}, middleware.AppendAppMiddleware{}}
 
 	response := middleware.NewPipeline(request.App()).
 		Send(request).

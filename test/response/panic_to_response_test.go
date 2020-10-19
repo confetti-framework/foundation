@@ -24,7 +24,7 @@ func TestErrorToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Content())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Body())
 }
 
 func TestStringToJson(t *testing.T) {
@@ -41,7 +41,7 @@ func TestStringToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Content())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Body())
 }
 
 func TestUnknownToJson(t *testing.T) {
@@ -58,7 +58,7 @@ func TestUnknownToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.Content())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.Body())
 }
 
 type simpleError struct{}

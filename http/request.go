@@ -24,7 +24,7 @@ type Request struct {
 	app       inter.App
 	source    http.Request
 	urlValues support.Map
-	body      support.Value
+	content   support.Value
 }
 
 type Options struct {
@@ -131,7 +131,7 @@ func (r Request) FullUrl() string {
 	return r.source.URL.Scheme + r.source.Host + r.source.RequestURI
 }
 
-func (r Request) Content() string {
+func (r Request) Body() string {
 	body, err := ioutil.ReadAll(r.source.Body)
 	if err == io.EOF {
 		return ""
@@ -140,18 +140,18 @@ func (r Request) Content() string {
 	return string(body)
 }
 
-func (r *Request) SetContent(content string) inter.Request {
+func (r *Request) SetBody(body string) inter.Request {
 	// Update source body
-	r.source.Body = ioutil.NopCloser(strings.NewReader(content))
+	r.source.Body = ioutil.NopCloser(strings.NewReader(body))
 
-	// Invalidate Lanvard body. Rebuild this body when requested.
-	r.body = support.NewValue(nil)
+	// Invalidate Lanvard body. Rebuild content when requested.
+	r.content = support.NewValue(nil)
 
 	return r
 }
 
-func (r *Request) Body(keyInput ...string) support.Value {
-	// Let key be a default parameter
+func (r *Request) Content(keyInput ...string) support.Value {
+	// Let keyInput be a optional parameter
 	var key string
 	if len(keyInput) > 0 {
 		key = keyInput[0]
@@ -162,13 +162,13 @@ func (r *Request) Body(keyInput ...string) support.Value {
 		return formMap.Get(key)
 	}
 
-	r.body = r.generateBodyFromRawContent()
+	r.content = r.generateContentFromBody()
 
-	return r.body.Get(key)
+	return r.content.Get(key)
 }
 
-func (r Request) BodyOr(key string, defaultValue interface{}) support.Value {
-	value := r.Body(key)
+func (r Request) ContentOr(key string, defaultValue interface{}) support.Value {
+	value := r.Content(key)
 	if value.Error() == nil {
 		return value
 	}
@@ -289,9 +289,9 @@ func (r Request) parameters() support.Map {
 	return support.NewMap().Merge(urlMap, queryMap)
 }
 
-func (r Request) generateBodyFromRawContent() support.Value {
-	if r.body.Filled() {
-		return r.body
+func (r Request) generateContentFromBody() support.Value {
+	if r.content.Filled() {
+		return r.content
 	}
 
 	rawBody, err := ioutil.ReadAll(r.source.Body)
