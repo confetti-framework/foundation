@@ -5,9 +5,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-type FilterSensitiveData struct{}
+type FilterSensitiveError struct{}
 
-func (c FilterSensitiveData) Decorate(response inter.Response) inter.Response {
+func (c FilterSensitiveError) Decorate(response inter.Response) inter.Response {
 	if response.App().Make("config.App.Debug").(bool) {
 		return response
 	}

@@ -5,5 +5,5 @@ import (
 )
 
 var ResponseDecorators = []inter.ResponseDecorator{
-	FilterSensitiveData{},
+	FilterSensitiveError{},
 }

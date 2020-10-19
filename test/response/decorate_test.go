@@ -16,7 +16,7 @@ func TestSystemErrorFilterForProduction(t *testing.T) {
 	// Given
 	app.Bind("config.App.Debug", false)
 	response := newTestResponse(app, errors.New("incorrect database credentials"))
-	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveData{}}
+	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
 	// When
@@ -32,7 +32,7 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 	// Given
 	app.Bind("config.App.Debug", true)
 	response := newTestResponse(app, errors.New("incorrect database credentials"))
-	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveData{}}
+	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
 	// When
