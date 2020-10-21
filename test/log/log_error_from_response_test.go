@@ -33,7 +33,7 @@ func TestErrorIsLogged(t *testing.T) {
 func TestErrorTrace(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, errors.New("incorrect database credentials"))
+	responseBefore := newTestResponse(app, support.NewError("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -44,14 +44,14 @@ func TestErrorTrace(t *testing.T) {
 	lines := openAndReadFile(testFile)
 	assert.Greater(t, len(lines), 3)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
-	assert.Regexp(t, `log.TestErrorTrace$`, lines[1][0])
-	assert.Regexp(t, `log_error_from_response_test.go:[0-9]+$`, lines[2][0])
+	assert.Regexp(t, `support.NewError$`, lines[1][0])
+	assert.Regexp(t, `support/error.go:[0-9]+$`, lines[2][0])
 }
 
 func TestLogDebugLevelFromError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, support.NewError("User not found").Level(level.DEBUG))
+	responseBefore := newTestResponse(app, support.NewError("user not found").Level(level.DEBUG))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -61,6 +61,21 @@ func TestLogDebugLevelFromError(t *testing.T) {
 	// Then
 	lines := openAndReadFile(testFile)
 	assert.Regexp(t, `level severity="debug"`, lines[0][0])
+}
+
+func TestWrapError(t *testing.T) {
+	// Given
+	app := setUpAppWithDefaultLogger(true)
+	responseBefore := newTestResponse(app, support.Wrap(errors.New("user id not found"), "validation error"))
+	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	bootstrapDecorator.Decorate(responseBefore)
+
+	// Then
+	lines := openAndReadFile(testFile)
+	assert.Contains(t, lines[0][0], `validation error: user id not found`)
 }
 
 func TestErrorHttpStatus(t *testing.T) {
