@@ -3,6 +3,7 @@ package loggers
 import (
 	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/syslog/level"
 )
 
 type Stack struct {
@@ -17,13 +18,13 @@ func (s Stack) SetApp(app inter.Maker) inter.Logger {
 	return s
 }
 
-func (s Stack) Log(severity inter.Severity, message string, arguments ...interface{}) {
+func (s Stack) Log(severity level.Level, message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
 		logger.Log(severity, message, arguments...)
 	}
 }
 
-func (s Stack) LogWith(severity inter.Severity, message string, context interface{}) {
+func (s Stack) LogWith(severity level.Level, message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
 		logger.LogWith(severity, message, context)
 	}

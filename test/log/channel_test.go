@@ -3,7 +3,7 @@ package log
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/loggers"
-	"github.com/lanvard/syslog"
+	"github.com/lanvard/syslog/level"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -57,8 +57,8 @@ func TestLogToMultipleChannels(t *testing.T) {
 }
 
 func getAppWithChannels() inter.App {
-	first := loggers.Syslog{Path: testFile, MinLevel: syslog.INFO}
-	second := loggers.Syslog{Path: testFileSecond, MinLevel: syslog.INFO}
+	first := loggers.Syslog{Path: testFile, MinLevel: level.INFO}
+	second := loggers.Syslog{Path: testFileSecond, MinLevel: level.INFO}
 	allLoggers := map[string]interface{}{"first": first, "second": second}
 
 	app := newTestApp()

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/syslog"
+	"github.com/lanvard/syslog/level"
+	"github.com/pkg/errors"
 	"github.com/vigneshuvi/GoDateFormat"
 	"io"
 	"os"
@@ -16,11 +18,11 @@ import (
 
 type Syslog struct {
 	Path       string
-	Facility   inter.Facility
+	Facility   syslog.Facility
 	Type       string // MSGID intended for filtering
 	Writer     io.Writer
 	Permission os.FileMode
-	MinLevel   inter.Severity
+	MinLevel   level.Level
 	MaxFiles   int
 	app        inter.Maker
 }
@@ -48,11 +50,11 @@ func (r Syslog) Clear() {
 	}
 }
 
-func (r Syslog) Log(severity inter.Severity, message string, arguments ...interface{}) {
+func (r Syslog) Log(severity level.Level, message string, arguments ...interface{}) {
 	r.LogWith(severity, fmt.Sprintf(message, arguments...), "")
 }
 
-func (r Syslog) LogWith(severity inter.Severity, message string, context interface{}) {
+func (r Syslog) LogWith(severity level.Level, message string, rawContext interface{}) {
 	if r.MinLevel < severity {
 		return
 	}
@@ -60,9 +62,14 @@ func (r Syslog) LogWith(severity inter.Severity, message string, context interfa
 	structuredData := syslog.StructuredData{}
 	var rawData string
 
-	switch context := context.(type) {
+	switch context := rawContext.(type) {
 	case syslog.StructuredData:
 		structuredData = context
+	case interface{ StackTrace() errors.StackTrace }:
+		rawData = fmt.Sprintf("%+v", context.StackTrace()[0:])
+	case error:
+		// If error not implement the StackTrace method,
+		// don't we don't have a stack trace
 	case string:
 		rawData = context
 	default:
@@ -83,86 +90,86 @@ func (r Syslog) LogWith(severity inter.Severity, message string, context interfa
 
 // Log that the system is unusable
 func (r Syslog) Emergency(message string, arguments ...interface{}) {
-	r.Log(syslog.EMERG, message, arguments...)
+	r.Log(level.EMERGENCY, message, arguments...)
 }
 
 // Log that the system is unusable
 func (r Syslog) EmergencyWith(message string, context interface{}) {
-	r.LogWith(syslog.EMERG, message, context)
+	r.LogWith(level.EMERGENCY, message, context)
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase.
 func (r Syslog) Alert(message string, arguments ...interface{}) {
-	r.Log(syslog.ALERT, message, arguments...)
+	r.Log(level.ALERT, message, arguments...)
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase. w
 func (r Syslog) AlertWith(message string, context interface{}) {
-	r.LogWith(syslog.ALERT, message, context)
+	r.LogWith(level.ALERT, message, context)
 }
 
 // Critical conditions
 func (r Syslog) Critical(message string, arguments ...interface{}) {
-	r.Log(syslog.CRIT, message, arguments...)
+	r.Log(level.CRITICAL, message, arguments...)
 }
 
 // Critical conditions
 func (r Syslog) CriticalWith(message string, context interface{}) {
-	r.LogWith(syslog.CRIT, message, context)
+	r.LogWith(level.CRITICAL, message, context)
 }
 
 // Error conditions
 func (r Syslog) Error(message string, arguments ...interface{}) {
-	r.Log(syslog.ERR, message, arguments...)
+	r.Log(level.ERROR, message, arguments...)
 }
 
 // Error conditions
 func (r Syslog) ErrorWith(message string, context interface{}) {
-	r.LogWith(syslog.ERR, message, context)
+	r.LogWith(level.ERROR, message, context)
 }
 
 // Warning conditions
 func (r Syslog) Warning(message string, arguments ...interface{}) {
-	r.Log(syslog.WARNING, message, arguments...)
+	r.Log(level.WARNING, message, arguments...)
 }
 
 // Warning conditions
 func (r Syslog) WarningWith(message string, context interface{}) {
-	r.LogWith(syslog.WARNING, message, context)
+	r.LogWith(level.WARNING, message, context)
 }
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
 func (r Syslog) Notice(message string, arguments ...interface{}) {
-	r.Log(syslog.NOTICE, message, arguments...)
+	r.Log(level.NOTICE, message, arguments...)
 }
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
 func (r Syslog) NoticeWith(message string, context interface{}) {
-	r.LogWith(syslog.NOTICE, message, context)
+	r.LogWith(level.NOTICE, message, context)
 }
 
 // Informational messages
 func (r Syslog) Info(message string, arguments ...interface{}) {
-	r.Log(syslog.INFO, message, arguments...)
+	r.Log(level.INFO, message, arguments...)
 }
 
 // Informational messages
 func (r Syslog) InfoWith(message string, context interface{}) {
-	r.LogWith(syslog.INFO, message, context)
+	r.LogWith(level.INFO, message, context)
 }
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
 func (r Syslog) Debug(message string, arguments ...interface{}) {
-	r.Log(syslog.DEBUG, message, arguments...)
+	r.Log(level.DEBUG, message, arguments...)
 }
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
 func (r Syslog) DebugWith(message string, context interface{}) {
-	r.LogWith(syslog.DEBUG, message, context)
+	r.LogWith(level.DEBUG, message, context)
 }
 
 func (r Syslog) init() syslog.Logger {
