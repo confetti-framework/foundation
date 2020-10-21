@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/routing/outcome"
 )
 
 type PanicToResponse struct {
@@ -22,7 +23,8 @@ func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (respons
 			default:
 				err = errors.New("can't convert panic to response. Error or string required")
 			}
-			response = p.Outcome(err)
+
+			response = outcome.Json(err)
 		}
 	}()
 

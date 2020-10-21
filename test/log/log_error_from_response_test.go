@@ -78,18 +78,6 @@ func TestWrapError(t *testing.T) {
 	assert.Contains(t, lines[0][0], `validation error: user id not found`)
 }
 
-func TestErrorHttpStatus(t *testing.T) {
-	// Given
-	// When
-	// Then
-}
-
-func TestErrorCode(t *testing.T) {
-	// Given
-	// When
-	// Then
-}
-
 func newTestResponse(app inter.App, content error) inter.Response {
 	app.Bind("outcome_json_encoders", outcome.JsonEncoders)
 

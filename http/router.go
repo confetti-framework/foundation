@@ -27,10 +27,12 @@ func (r Router) DispatchToRoute(request inter.Request) inter.Response {
 
 	// Framework middlewares should be placed at the end
 	// so that they are executed first when a response is returned
+	//
 	middlewares = append(
 		middlewares,
 		middleware.DecorateResponse{},
 		middleware.AppendAppMiddleware{},
+		middleware.PanicToResponse{},
 	)
 
 	return middleware.NewPipeline(request.App()).
