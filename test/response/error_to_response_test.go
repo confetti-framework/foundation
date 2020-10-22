@@ -7,10 +7,13 @@ import (
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/routing/outcome"
+	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
 	"testing"
 )
+
+var userNotFound = support.NewError("user not found")
 
 func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 	// Given
@@ -22,7 +25,7 @@ func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 		middleware.PanicToResponse{}.Handle(
 			request,
 			func(request inter.Request) inter.Response {
-				panic(simpleError{})
+				panic(userNotFound)
 			},
 		)
 	}
@@ -41,13 +44,13 @@ func TestPanicErrorToJson(t *testing.T) {
 	response := middleware.PanicToResponse{}.Handle(
 		request,
 		func(request inter.Request) inter.Response {
-			panic(simpleError{})
+			panic(userNotFound)
 		},
 	)
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.Body())
 }
 
 func TestPanicStringToJson(t *testing.T) {
@@ -60,13 +63,13 @@ func TestPanicStringToJson(t *testing.T) {
 	response := middleware.PanicToResponse{}.Handle(
 		request,
 		func(request inter.Request) inter.Response {
-			panic("no user found")
+			panic(userNotFound)
 		},
 	)
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"No user found"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.Body())
 }
 
 func TestPanicUnknownToJson(t *testing.T) {
@@ -88,6 +91,25 @@ func TestPanicUnknownToJson(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.Body())
 }
 
+func TestPanicWithErrorToHtml(t *testing.T) {
+	// Given
+	app := setUp()
+	app.Bind("response_encoder", outcome.Html)
+	request := http.NewRequest(http.Options{App: app})
+
+	// When
+	response := middleware.PanicToResponse{}.Handle(
+		request,
+		func(request inter.Request) inter.Response {
+			panic(userNotFound)
+		},
+	)
+	response.SetApp(request.App())
+
+	// Then
+	assert.Equal(t, `User not found`, response.Body())
+}
+
 func TestHttpStatusToResponse(t *testing.T) {
 	// Given
 	app := setUp()
@@ -100,12 +122,6 @@ func TestHttpStatusToResponse(t *testing.T) {
 
 	// Then
 	assert.Equal(t, net.StatusInternalServerError, response.Status())
-}
-
-type simpleError struct{}
-
-func (s simpleError) Error() string {
-	return "no user found"
 }
 
 type invalidError struct{}

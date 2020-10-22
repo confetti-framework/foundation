@@ -45,6 +45,7 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("outcome_json_encoders", outcome.JsonEncoders)
+	app.Bind("outcome_html_encoders", outcome.HtmlEncoders)
 	return app
 }
 
