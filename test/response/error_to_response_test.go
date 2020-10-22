@@ -12,13 +12,33 @@ import (
 	"testing"
 )
 
-func TestPanicErrorToJson(t *testing.T) {
+func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 	// Given
 	app := setUp()
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
-	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
+	when := func() {
+		middleware.PanicToResponse{}.Handle(
+			request,
+			func(request inter.Request) inter.Response {
+				panic(simpleError{})
+			},
+		)
+	}
+
+	// Then
+	assert.Panics(t, when)
+}
+
+func TestPanicErrorToJson(t *testing.T) {
+	// Given
+	app := setUp()
+	app.Bind("response_encoder", outcome.Json)
+	request := http.NewRequest(http.Options{App: app})
+
+	// When
+	response := middleware.PanicToResponse{}.Handle(
 		request,
 		func(request inter.Request) inter.Response {
 			panic(simpleError{})
@@ -33,10 +53,11 @@ func TestPanicErrorToJson(t *testing.T) {
 func TestPanicStringToJson(t *testing.T) {
 	// Given
 	app := setUp()
+	app.Bind("response_encoder", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
-	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
+	response := middleware.PanicToResponse{}.Handle(
 		request,
 		func(request inter.Request) inter.Response {
 			panic("no user found")
@@ -51,10 +72,11 @@ func TestPanicStringToJson(t *testing.T) {
 func TestPanicUnknownToJson(t *testing.T) {
 	// Given
 	app := setUp()
+	app.Bind("response_encoder", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
-	response := middleware.PanicToResponse{Outcome: outcome.Json}.Handle(
+	response := middleware.PanicToResponse{}.Handle(
 		request,
 		func(request inter.Request) inter.Response {
 			panic(invalidError{})
