@@ -74,7 +74,8 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 	var err error = nil
 	var abstractName = support.Name(abstract)
 
-	if support.Type(abstract) == reflect.Ptr && abstract == nil {
+	kind := support.Type(abstract)
+	if kind == reflect.Ptr && abstract == nil {
 		return nil, errors.New("can't resolve interface. To resolve an interface, " +
 			"use the following syntax: (*interface)(nil), use a string or use the struct itself")
 	}
@@ -86,17 +87,22 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 		// Check the container that was created at boot time
 		concrete, err = c.bootContainer.MakeE(abstract)
 
-	} else if support.Type(abstract) == reflect.Struct {
+	} else if kind == reflect.Struct {
 		// If struct cannot be found, we simply have to use the struct itself.
 		concrete = abstract
-	} else if support.Type(abstract) == reflect.String {
+	} else if kind == reflect.String {
 		var instances support.Map
 		instances, err = support.NewMapE(c.bindings)
 		if err != nil {
-			return instances, err
+			return nil, err
 		}
 		if c.bootContainer != nil {
-			instances.Merge(support.NewMap(c.bootContainer.Bindings()))
+			bootBindings := c.bootContainer.Bindings()
+			bootInstances, err := support.NewMapE(bootBindings)
+			if err != nil {
+				return nil, err
+			}
+			instances.Merge(bootInstances)
 		}
 		concrete, err = instances.Get(abstract.(string)).RawE()
 	}
