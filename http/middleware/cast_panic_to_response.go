@@ -1,9 +1,8 @@
 package middleware
 
 import (
-	"errors"
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/support"
+	"github.com/lanvard/errors"
 )
 
 type PanicToResponse struct{}
@@ -13,9 +12,9 @@ func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (respons
 
 	defer func() {
 		if r := recover(); r != nil {
-			instance, err := request.App().MakeE("response_encoder")
+			instance, err := request.App().MakeE("default_response_encoder")
 			if err != nil {
-				panic(support.Wrap(err, "please bind a encoder"))
+				panic(errors.Wrap(err, "please bind a encoder"))
 			}
 			switch x := r.(type) {
 			case string:

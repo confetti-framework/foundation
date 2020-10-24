@@ -3,9 +3,9 @@ package loggers
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/syslog"
 	"github.com/lanvard/syslog/level"
 	"net/http"

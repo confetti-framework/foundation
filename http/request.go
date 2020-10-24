@@ -2,9 +2,9 @@ package http
 
 import (
 	"bytes"
-	"errors"
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/support"
 	"io"

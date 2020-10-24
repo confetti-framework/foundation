@@ -3,12 +3,12 @@ package log
 import (
 	standardErrors "errors"
 	"github.com/lanvard/contract/inter"
+	supportErrors "github.com/lanvard/errors"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/loggers"
 	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/support"
 	"github.com/lanvard/syslog/level"
-	"github.com/pkg/errors"
+	pkgErrors "github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -33,7 +33,7 @@ func TestErrorIsLogged(t *testing.T) {
 func TestErrorTrace(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, support.NewError("incorrect database credentials"))
+	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -44,14 +44,14 @@ func TestErrorTrace(t *testing.T) {
 	lines := openAndReadFile(testFile)
 	assert.Greater(t, len(lines), 3)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
-	assert.Regexp(t, `support.NewError$`, lines[1][0])
-	assert.Regexp(t, `support/error.go:[0-9]+$`, lines[2][0])
+	assert.Regexp(t, `errors.New$`, lines[1][0])
+	assert.Regexp(t, `errors/error.go:[0-9]+$`, lines[2][0])
 }
 
 func TestLogDebugLevelFromError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, support.NewError("user not found").Level(level.DEBUG))
+	responseBefore := newTestResponse(app, supportErrors.New("user not found").Level(level.DEBUG))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -66,7 +66,7 @@ func TestLogDebugLevelFromError(t *testing.T) {
 func TestWrapError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, support.Wrap(errors.New("user id not found"), "validation error"))
+	responseBefore := newTestResponse(app, supportErrors.Wrap(pkgErrors.New("user id not found"), "validation error"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 

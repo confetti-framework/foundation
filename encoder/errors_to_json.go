@@ -1,8 +1,8 @@
 package encoder
 
 import (
-	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/support/str"
 )
 

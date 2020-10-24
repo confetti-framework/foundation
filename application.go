@@ -1,9 +1,9 @@
 package foundation
 
 import (
-	"errors"
 	"fmt"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/loggers"
 )
 

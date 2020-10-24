@@ -1,8 +1,8 @@
 package encode
 
 import (
-	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"

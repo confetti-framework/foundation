@@ -1,8 +1,8 @@
 package response
 
 import (
-	"errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/routing/outcome"

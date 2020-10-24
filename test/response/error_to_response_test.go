@@ -1,19 +1,19 @@
 package response
 
 import (
-	standardErrors "errors"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
+	errors2 "github.com/lanvard/errors"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
 	"testing"
 )
 
-var userNotFound = support.NewError("user not found")
+var userNotFound = errors2.New("user not found")
 
 func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 	// Given
@@ -37,7 +37,7 @@ func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 func TestPanicErrorToJson(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("response_encoder", outcome.Json)
+	app.Bind("default_response_encoder", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -56,7 +56,7 @@ func TestPanicErrorToJson(t *testing.T) {
 func TestPanicStringToJson(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("response_encoder", outcome.Json)
+	app.Bind("default_response_encoder", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -75,7 +75,7 @@ func TestPanicStringToJson(t *testing.T) {
 func TestPanicUnknownToJson(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("response_encoder", outcome.Json)
+	app.Bind("default_response_encoder", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -94,7 +94,7 @@ func TestPanicUnknownToJson(t *testing.T) {
 func TestPanicWithErrorToHtml(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("response_encoder", outcome.Html)
+	app.Bind("default_response_encoder", outcome.Html)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -113,7 +113,7 @@ func TestPanicWithErrorToHtml(t *testing.T) {
 func TestHttpStatusToResponse(t *testing.T) {
 	// Given
 	app := setUp()
-	responseBefore := newTestResponse(app, standardErrors.New("incorrect database credentials"))
+	responseBefore := newTestResponse(app, errors.New("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.HttpStatus{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
