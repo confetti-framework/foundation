@@ -7,14 +7,14 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
 	"github.com/lanvard/syslog"
-	"github.com/lanvard/syslog/level"
+	"github.com/lanvard/syslog/log_level"
 	"net/http"
 	"time"
 )
 
 type Slack struct {
 	WebhookUrl string
-	MinLevel   level.Level
+	MinLevel   log_level.Level
 }
 
 func (s Slack) SetApp(_ inter.Maker) inter.Logger {
@@ -23,11 +23,11 @@ func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 
 func (s Slack) Clear() {}
 
-func (s Slack) Log(severity level.Level, message string, arguments ...interface{}) {
+func (s Slack) Log(severity log_level.Level, message string, arguments ...interface{}) {
 	s.LogWith(severity, fmt.Sprintf(message, arguments...), "")
 }
 
-func (s Slack) LogWith(severity level.Level, message string, data interface{}) {
+func (s Slack) LogWith(severity log_level.Level, message string, data interface{}) {
 	if s.MinLevel < severity {
 		return
 	}
@@ -41,86 +41,86 @@ func (s Slack) LogWith(severity level.Level, message string, data interface{}) {
 
 // Log that the system is unusable
 func (s Slack) Emergency(message string, arguments ...interface{}) {
-	s.Log(level.EMERGENCY, message, arguments...)
+	s.Log(log_level.EMERGENCY, message, arguments...)
 }
 
 // Log that the system is unusable
 func (s Slack) EmergencyWith(message string, context interface{}) {
-	s.LogWith(level.EMERGENCY, message, context)
+	s.LogWith(log_level.EMERGENCY, message, context)
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase.
 func (s Slack) Alert(message string, arguments ...interface{}) {
-	s.Log(level.ALERT, message, arguments...)
+	s.Log(log_level.ALERT, message, arguments...)
 }
 
 // A condition that should be corrected immediately, such as a corrupted system contextbase. w
 func (s Slack) AlertWith(message string, context interface{}) {
-	s.LogWith(level.ALERT, message, context)
+	s.LogWith(log_level.ALERT, message, context)
 }
 
 // Critical conditions
 func (s Slack) Critical(message string, arguments ...interface{}) {
-	s.Log(level.CRITICAL, message, arguments...)
+	s.Log(log_level.CRITICAL, message, arguments...)
 }
 
 // Critical conditions
 func (s Slack) CriticalWith(message string, context interface{}) {
-	s.LogWith(level.CRITICAL, message, context)
+	s.LogWith(log_level.CRITICAL, message, context)
 }
 
 // Error conditions
 func (s Slack) Error(message string, arguments ...interface{}) {
-	s.Log(level.ERROR, message, arguments...)
+	s.Log(log_level.ERROR, message, arguments...)
 }
 
 // Error conditions
 func (s Slack) ErrorWith(message string, context interface{}) {
-	s.LogWith(level.ERROR, message, context)
+	s.LogWith(log_level.ERROR, message, context)
 }
 
 // Warning conditions
 func (s Slack) Warning(message string, arguments ...interface{}) {
-	s.Log(level.WARNING, message, arguments...)
+	s.Log(log_level.WARNING, message, arguments...)
 }
 
 // Warning conditions
 func (s Slack) WarningWith(message string, context interface{}) {
-	s.LogWith(level.WARNING, message, context)
+	s.LogWith(log_level.WARNING, message, context)
 }
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
 func (s Slack) Notice(message string, arguments ...interface{}) {
-	s.Log(level.NOTICE, message, arguments...)
+	s.Log(log_level.NOTICE, message, arguments...)
 }
 
 // Normal but significant conditions
 // Conditions that are not error conditions, but that may require special handling.
 func (s Slack) NoticeWith(message string, context interface{}) {
-	s.LogWith(level.NOTICE, message, context)
+	s.LogWith(log_level.NOTICE, message, context)
 }
 
 // Informational messages
 func (s Slack) Info(message string, arguments ...interface{}) {
-	s.Log(level.INFO, message, arguments...)
+	s.Log(log_level.INFO, message, arguments...)
 }
 
 // Informational messages
 func (s Slack) InfoWith(message string, context interface{}) {
-	s.LogWith(level.INFO, message, context)
+	s.LogWith(log_level.INFO, message, context)
 }
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
 func (s Slack) Debug(message string, arguments ...interface{}) {
-	s.Log(level.DEBUG, message, arguments...)
+	s.Log(log_level.DEBUG, message, arguments...)
 }
 
 // Debug-level messages
 // Messages containing information that is normally only useful when debugging a program.
 func (s Slack) DebugWith(message string, context interface{}) {
-	s.LogWith(level.DEBUG, message, context)
+	s.LogWith(log_level.DEBUG, message, context)
 }
 
 type SlackRequestBody struct {

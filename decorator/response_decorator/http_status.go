@@ -2,15 +2,20 @@ package response_decorator
 
 import (
 	"github.com/lanvard/contract/inter"
-	net "net/http"
+	"github.com/lanvard/errors"
 )
 
-type HttpStatus struct{}
+type HttpStatus struct {
+	ErrorDefault int
+}
 
 func (h HttpStatus) Decorate(response inter.Response) inter.Response {
-	if _, ok := response.Content().(error); ok {
-		httpStatus := net.StatusInternalServerError
-		response.SetStatus(httpStatus)
+	if err, ok := response.Content().(error); ok {
+		status, ok := errors.FindStatus(err)
+		if !ok && h.ErrorDefault != 0 {
+			status = h.ErrorDefault
+		}
+		response.SetStatus(status)
 	}
 
 	return response

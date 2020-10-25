@@ -3,7 +3,7 @@ package log
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/loggers"
-	"github.com/lanvard/syslog/level"
+	"github.com/lanvard/syslog/log_level"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -11,7 +11,7 @@ import (
 func TestStackWithEmptySlice(t *testing.T) {
 	var allLoggers map[string]interface{}
 	logger := setUpStack(allLoggers)
-	logger.Log(level.INFO, "the message")
+	logger.Log(log_level.INFO, "the message")
 
 	assert.NoFileExists(t, testFile)
 }
@@ -19,7 +19,7 @@ func TestStackWithEmptySlice(t *testing.T) {
 func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Log(level.INFO, "the message")
+	logger.Log(log_level.INFO, "the message")
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
@@ -27,12 +27,12 @@ func TestStackWithOneLoggerMustWriteOneLine(t *testing.T) {
 }
 
 func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
-	first := loggers.Syslog{Path: testFile, MinLevel: level.INFO}
-	second := loggers.Syslog{Path: testFile, MinLevel: level.INFO}
+	first := loggers.Syslog{Path: testFile, MinLevel: log_level.INFO}
+	second := loggers.Syslog{Path: testFile, MinLevel: log_level.INFO}
 	allLoggers := map[string]interface{}{"first": first, "second": second}
 	logger := setUpStack(allLoggers, "first", "second")
 
-	logger.Log(level.INFO, "the message")
+	logger.Log(log_level.INFO, "the message")
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 2)
@@ -43,7 +43,7 @@ func TestStackWithMultipleLoggersMustWriteMultipleLogs(t *testing.T) {
 func TestStackWithData(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.LogWith(level.INFO, "the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
@@ -211,7 +211,7 @@ func TestStackDebugWithData(t *testing.T) {
 }
 
 func getStackWithSingleLogger() inter.Logger {
-	single := loggers.Syslog{Path: testFile, MinLevel: level.DEBUG}
+	single := loggers.Syslog{Path: testFile, MinLevel: log_level.DEBUG}
 	allLoggers := map[string]interface{}{"single": single}
 	logger := setUpStack(allLoggers, "single")
 	return logger

@@ -7,7 +7,7 @@ import (
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/loggers"
 	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/syslog/level"
+	"github.com/lanvard/syslog/log_level"
 	pkgErrors "github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -44,14 +44,14 @@ func TestErrorTrace(t *testing.T) {
 	lines := openAndReadFile(testFile)
 	assert.Greater(t, len(lines), 3)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
-	assert.Regexp(t, `errors.New$`, lines[1][0])
-	assert.Regexp(t, `errors/error.go:[0-9]+$`, lines[2][0])
+	assert.Regexp(t, `log.TestErrorTrace`, lines[1][0])
+	assert.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
 }
 
 func TestLogDebugLevelFromError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, supportErrors.New("user not found").Level(level.DEBUG))
+	responseBefore := newTestResponse(app, supportErrors.New("user not found").Level(log_level.DEBUG))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -92,7 +92,7 @@ func newTestResponse(app inter.App, content error) inter.Response {
 func setUpAppWithDefaultLogger(stackTrace bool) inter.App {
 	setUp()
 
-	single := loggers.Syslog{Path: testFile, MinLevel: level.DEBUG}
+	single := loggers.Syslog{Path: testFile, MinLevel: log_level.DEBUG}
 	allLoggers := map[string]interface{}{"single": single}
 
 	app := newTestApp()

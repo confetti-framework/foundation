@@ -19,5 +19,6 @@ replace (
 	github.com/lanvard/contract v0.0.0 => ../contract
 	github.com/lanvard/routing v0.2.0 => ../routing
 	github.com/lanvard/support v0.1.0 => ../support
+	github.com/lanvard/errors v0.9.1 => ../errors
 	github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8 => ../syslog
 )

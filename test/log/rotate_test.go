@@ -4,7 +4,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/loggers"
-	"github.com/lanvard/syslog/level"
+	"github.com/lanvard/syslog/log_level"
 	"github.com/stretchr/testify/assert"
 	"github.com/vigneshuvi/GoDateFormat"
 	"os"
@@ -15,7 +15,7 @@ import (
 
 func TestNameWithDateSoItCanRotate(t *testing.T) {
 	setUp()
-	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: level.INFO}
+	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
 	logger = logger.SetApp(newTestApp())
 	logger.Info("the message")
 
@@ -26,7 +26,7 @@ func TestNameWithDateSoItCanRotate(t *testing.T) {
 func TestDonNotRemoveLatestFile(t *testing.T) {
 	// Given
 	setUp()
-	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: level.INFO}
+	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
 	logger = logger.SetApp(newTestApp())
 	logger.Info("the message")
 
@@ -112,13 +112,13 @@ func getFiles() []string {
 }
 
 func getLogger(file string, maxFiles int) inter.Logger {
-	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: level.DEBUG, MaxFiles: maxFiles}
+	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: log_level.DEBUG, MaxFiles: maxFiles}
 	logger = logger.SetApp(newTestApp())
 	return logger
 }
 
 func getLoggerWithType(file string, messageType string) inter.Logger {
-	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: level.DEBUG, Type: messageType}
+	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: log_level.DEBUG, Type: messageType}
 	logger = logger.SetApp(newTestApp())
 	return logger
 }

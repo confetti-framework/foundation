@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/lanvard/foundation/loggers"
 	"github.com/lanvard/syslog"
-	"github.com/lanvard/syslog/level"
+	"github.com/lanvard/syslog/log_level"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"log"
@@ -27,7 +27,7 @@ func TestCreateLogFileIfNotExists(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "some content")
+	logger.Log(log_level.INFO, "some content")
 
 	assert.FileExists(t, testFile)
 }
@@ -36,7 +36,7 @@ func TestGetAddOneErrorLine(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "error line 1")
+	logger.Log(log_level.INFO, "error line 1")
 
 	assert.Len(t, openAndReadFile(testFile), 1)
 }
@@ -45,8 +45,8 @@ func TestGetAddTwoErrorLines(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "error line 1")
-	logger.Log(level.INFO, "error line 2")
+	logger.Log(log_level.INFO, "error line 1")
+	logger.Log(log_level.INFO, "error line 2")
 
 	assert.Len(t, openAndReadFile(testFile), 2)
 }
@@ -55,7 +55,7 @@ func TestLogWithLevel(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "message")
+	logger.Log(log_level.INFO, "message")
 
 	lines := openAndReadFile(testFile)
 	assert.Regexp(t, "^<6.*\"info\"", lines[0][0])
@@ -65,8 +65,8 @@ func TestContentOfError(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "error line 1")
-	logger.Log(level.INFO, "error line 2")
+	logger.Log(log_level.INFO, "error line 1")
+	logger.Log(log_level.INFO, "error line 2")
 
 	lines := openAndReadFile(testFile)
 	assert.Regexp(t, `^<6>1 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.* \[level severity="info"\] error line 1`, lines[0][0])
@@ -77,7 +77,7 @@ func TestLogArguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Log(level.INFO, "name=%s", "Ron")
+	logger.Log(log_level.INFO, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], "name=Ron")
@@ -87,7 +87,7 @@ func TestLogWithString(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.LogWith(level.INFO, "the message", "string data")
+	logger.LogWith(log_level.INFO, "the message", "string data")
 
 	lines := openAndReadFile(testFile)
 	assert.Regexp(t, ` \[level severity="info"\] the message string data$`, lines[0][0])
@@ -97,7 +97,7 @@ func TestLogWithMap(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.LogWith(level.INFO, "the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], ` [level severity="info"] the message {"key":"value"}`)
@@ -107,7 +107,7 @@ func TestLogWithStruct(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.LogWith(level.INFO, "the message", structMock)
+	logger.LogWith(log_level.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], `- [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
@@ -117,7 +117,7 @@ func TestLogLevels(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.LogWith(level.INFO, "the message", structMock)
+	logger.LogWith(log_level.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], `- [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
@@ -127,7 +127,7 @@ func TestLogType(t *testing.T) {
 	setUp()
 	logger := getLoggerWithType(testFile, "external")
 
-	logger.LogWith(level.INFO, "the message", structMock)
+	logger.LogWith(log_level.INFO, "the message", structMock)
 
 	lines := openAndReadFile(testFile)
 	assert.Contains(t, lines[0][0], ` external [level severity="info"] the message {"FirstLevel":{"SecondLevel":"ceiling"}}`)
@@ -140,7 +140,7 @@ func TestLogWithStructuredData(t *testing.T) {
 		"firstLevel": {"secondLevel": "the value"},
 	}
 
-	logger.LogWith(level.INFO, "the message", data)
+	logger.LogWith(log_level.INFO, "the message", data)
 
 	lines := openAndReadFile(testFile)
 
@@ -389,7 +389,7 @@ func TestLogDebugWithData(t *testing.T) {
 
 func TestLogWithMinLevel(t *testing.T) {
 	setUp()
-	logger := loggers.Syslog{Path: testFile, MinLevel: level.INFO}
+	logger := loggers.Syslog{Path: testFile, MinLevel: log_level.INFO}
 
 	logger.Debug("the message")
 

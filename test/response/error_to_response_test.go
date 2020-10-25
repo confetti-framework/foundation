@@ -124,4 +124,18 @@ func TestHttpStatusToResponse(t *testing.T) {
 	assert.Equal(t, net.StatusInternalServerError, response.Status())
 }
 
+func TestHttpStatusBadRequestToResponse(t *testing.T) {
+	// Given
+	app := setUp()
+	responseBefore := newTestResponse(app, errors.New("incorrect database credentials").Status(net.StatusBadRequest))
+	decorators := []inter.ResponseDecorator{response_decorator.HttpStatus{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	response := bootstrapDecorator.Decorate(responseBefore)
+
+	// Then
+	assert.Equal(t, net.StatusBadRequest, response.Status())
+}
+
 type invalidError struct{}
