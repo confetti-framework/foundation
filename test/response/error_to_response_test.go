@@ -3,7 +3,6 @@ package response
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
-	errors2 "github.com/lanvard/errors"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/middleware"
@@ -13,7 +12,7 @@ import (
 	"testing"
 )
 
-var userNotFound = errors2.New("user not found")
+var userNotFound = errors.New("user not found")
 
 func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 	// Given
