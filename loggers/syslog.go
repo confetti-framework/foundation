@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lanvard/contract/inter"
-	errors2 "github.com/lanvard/errors"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/syslog"
 	"github.com/lanvard/syslog/log_level"
-	"github.com/pkg/errors"
 	"github.com/vigneshuvi/GoDateFormat"
 	"io"
 	"os"
@@ -18,14 +17,15 @@ import (
 )
 
 type Syslog struct {
-	Path       string
-	Facility   syslog.Facility
-	Type       string // MSGID intended for filtering
-	Writer     io.Writer
-	Permission os.FileMode
-	MinLevel   log_level.Level
-	MaxFiles   int
-	app        inter.Maker
+	Path           string
+	Facility       syslog.Facility
+	Type           string // MSGID intended for filtering
+	Writer         io.Writer
+	Permission     os.FileMode
+	MinLevel       log_level.Level
+	MaxFiles       int
+	app            inter.Maker
+	HideStackTrace bool
 }
 
 func (r Syslog) SetApp(app inter.Maker) inter.Logger {
@@ -66,12 +66,15 @@ func (r Syslog) LogWith(severity log_level.Level, message string, rawContext int
 	switch context := rawContext.(type) {
 	case syslog.StructuredData:
 		structuredData = context
-	case interface{ StackTrace() errors.StackTrace }:
 	case error:
-		stack, ok := errors2.FindStack(context)
-		if ok {
-			rawData = fmt.Sprintf("%+v", stack)
+		if r.HideStackTrace {
+			break
 		}
+		stack, ok := errors.FindStack(context)
+		if ok {
+			break
+		}
+		rawData = fmt.Sprintf("%+v", stack)
 	case string:
 		rawData = context
 	default:

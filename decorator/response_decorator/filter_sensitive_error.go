@@ -2,7 +2,7 @@ package response_decorator
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/pkg/errors"
+	"github.com/lanvard/errors"
 )
 
 type FilterSensitiveError struct{}

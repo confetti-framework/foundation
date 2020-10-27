@@ -13,7 +13,7 @@ import (
 	"testing"
 )
 
-func TestErrorIsLogged(t *testing.T) {
+func TestErrorIsLoggedWithStandardError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(false)
 	responseBefore := newTestResponse(app, standardErrors.New("incorrect database credentials"))
@@ -25,6 +25,22 @@ func TestErrorIsLogged(t *testing.T) {
 
 	// Then
 	assert.Same(t, responseBefore, response)
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 1)
+	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
+}
+
+func TestErrorWithoutTrace(t *testing.T) {
+	// Given
+	app := setUpAppWithDefaultLogger(false)
+	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
+	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	bootstrapDecorator.Decorate(responseBefore)
+
+	// Then
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
@@ -44,8 +60,10 @@ func TestErrorTrace(t *testing.T) {
 	lines := openAndReadFile(testFile)
 	assert.Greater(t, len(lines), 3)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
-	assert.Regexp(t, `log.TestErrorTrace`, lines[1][0])
-	assert.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
+	if len(lines) > 1 {
+		assert.Regexp(t, `log.TestErrorTrace`, lines[1][0])
+		assert.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
+	}
 }
 
 func TestLogDebugLevelFromError(t *testing.T) {
@@ -92,7 +110,7 @@ func newTestResponse(app inter.App, content error) inter.Response {
 func setUpAppWithDefaultLogger(stackTrace bool) inter.App {
 	setUp()
 
-	single := loggers.Syslog{Path: testFile, MinLevel: log_level.DEBUG}
+	single := loggers.Syslog{Path: testFile, MinLevel: log_level.DEBUG, HideStackTrace: stackTrace}
 	allLoggers := map[string]interface{}{"single": single}
 
 	app := newTestApp()
