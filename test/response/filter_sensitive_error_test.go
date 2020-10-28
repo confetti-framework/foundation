@@ -24,7 +24,7 @@ func TestSystemErrorFilterForProduction(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.GetBody())
 }
 
 func TestSystemErrorShowForDevelopment(t *testing.T) {
@@ -40,7 +40,7 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.GetBody())
 }
 
 func TestShowUserError(t *testing.T) {
@@ -56,7 +56,7 @@ func TestShowUserError(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Invalid user id"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Invalid user id"}]}`, response.GetBody())
 }
 
 func setUp() *foundation.Application {

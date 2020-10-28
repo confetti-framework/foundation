@@ -18,7 +18,7 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 
 	response.SetApp(request.App())
 
-	_, err := response.BodyE()
+	_, err := response.GetBodyE()
 	assert.NotNil(t, err)
 	assert.Equal(
 		t,

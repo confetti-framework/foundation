@@ -143,7 +143,7 @@ func Test_request_content_type_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, "A02", response.Body())
+	assert.Equal(t, "A02", response.GetBody())
 }
 
 func fakeRequestWithForm() inter.Request {

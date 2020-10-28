@@ -131,7 +131,7 @@ func (r Request) FullUrl() string {
 	return r.source.URL.Scheme + r.source.Host + r.source.RequestURI
 }
 
-func (r Request) Body() string {
+func (r Request) GetBody() string {
 	body, err := ioutil.ReadAll(r.source.Body)
 	if err == io.EOF {
 		return ""

@@ -49,7 +49,7 @@ func TestPanicErrorToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
 func TestPanicStringToJson(t *testing.T) {
@@ -68,7 +68,7 @@ func TestPanicStringToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
 func TestPanicUnknownToJson(t *testing.T) {
@@ -87,7 +87,7 @@ func TestPanicUnknownToJson(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.Body())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.GetBody())
 }
 
 func TestPanicWithErrorToHtml(t *testing.T) {
@@ -106,7 +106,7 @@ func TestPanicWithErrorToHtml(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `User not found`, response.Body())
+	assert.Equal(t, `User not found`, response.GetBody())
 }
 
 func TestHttpStatusToResponse(t *testing.T) {
