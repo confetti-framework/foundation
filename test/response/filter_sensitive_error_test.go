@@ -7,6 +7,7 @@ import (
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
+	net "net/http"
 	"testing"
 )
 
@@ -40,6 +41,22 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 
 	// Then
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.Body())
+}
+
+func TestShowUserError(t *testing.T) {
+	app := setUp()
+
+	// Given
+	app.Bind("config.App.Debug", true)
+	response := newTestResponse(app, errors.New("invalid user id").Status(net.StatusNotFound))
+	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveError{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	response = bootstrapDecorator.Decorate(response)
+
+	// Then
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Invalid user id"}]}`, response.Body())
 }
 
 func setUp() *foundation.Application {

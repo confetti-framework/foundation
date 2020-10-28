@@ -8,7 +8,7 @@ import (
 type LogError struct{}
 
 func (l LogError) Decorate(response inter.Response) inter.Response {
-	if err, ok := response.Content().(error); ok {
+	if err, ok := response.GetContent().(error); ok {
 		level, _ := errors.FindLevel(err)
 		response.App().Log().LogWith(level, err.Error(), err)
 	}

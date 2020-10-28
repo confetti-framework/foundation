@@ -13,7 +13,7 @@ func (j InterfaceToHtml) IsAble(object interface{}) bool {
 	return ok || object == nil
 }
 
-func (j InterfaceToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
+func (j InterfaceToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	if object == nil {
 		return "", nil
 	}

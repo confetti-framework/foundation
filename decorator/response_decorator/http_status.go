@@ -10,12 +10,12 @@ type HttpStatus struct {
 }
 
 func (h HttpStatus) Decorate(response inter.Response) inter.Response {
-	if err, ok := response.Content().(error); ok {
+	if err, ok := response.GetContent().(error); ok {
 		status, ok := errors.FindStatus(err)
 		if !ok && h.ErrorDefault != 0 {
 			status = h.ErrorDefault
 		}
-		response.SetStatus(status)
+		response.Status(status)
 	}
 
 	return response

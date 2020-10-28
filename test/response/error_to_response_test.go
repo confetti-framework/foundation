@@ -120,7 +120,7 @@ func TestHttpStatusToResponse(t *testing.T) {
 	response := bootstrapDecorator.Decorate(responseBefore)
 
 	// Then
-	assert.Equal(t, net.StatusInternalServerError, response.Status())
+	assert.Equal(t, net.StatusInternalServerError, response.GetStatus())
 }
 
 func TestHttpStatusBadRequestToResponse(t *testing.T) {
@@ -134,7 +134,7 @@ func TestHttpStatusBadRequestToResponse(t *testing.T) {
 	response := bootstrapDecorator.Decorate(responseBefore)
 
 	// Then
-	assert.Equal(t, net.StatusBadRequest, response.Status())
+	assert.Equal(t, net.StatusBadRequest, response.GetStatus())
 }
 
 type invalidError struct{}
