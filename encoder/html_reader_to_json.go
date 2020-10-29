@@ -1,20 +1,21 @@
 package encoder
 
 import (
+	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
 	"reflect"
 )
 
-type HtmlReaderToHtml struct{}
+type StringerToHtml struct{}
 
-func (h HtmlReaderToHtml) IsAble(object interface{}) bool {
-	_, ok := object.(inter.HtmlReader)
+func (h StringerToHtml) IsAble(object interface{}) bool {
+	_, ok := object.(fmt.Stringer)
 	return ok
 }
 
-func (h HtmlReaderToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
-	result, ok := object.(inter.HtmlReader)
+func (h StringerToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
+	result, ok := object.(fmt.Stringer)
 	if !ok {
 		return "", errors.New("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
 	}

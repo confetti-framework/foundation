@@ -31,14 +31,30 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 		view := ErrorView{
 			Message:      errorMessage,
 			Status:       status,
-			AppName:      app.Make("config.App.Name").(string),
-			Locale:       app.Make("config.App.Locale").(language.Tag).String(),
+			AppName:      e.appName(app),
+			Locale:       e.locale(app),
 			templatePath: e.TemplateFile,
 		}
 
 		return contentByView(view)
 	}
 	return errorMessage, nil
+}
+
+func (e ErrorToHtml) appName(app inter.App) string {
+	name, err := app.MakeE("config.App.Name")
+	if err != nil {
+		return ""
+	}
+	return name.(string)
+}
+
+func (e ErrorToHtml) locale(app inter.App) string {
+	lang, err := app.MakeE("config.App.Locale")
+	if err != nil {
+		return ""
+	}
+	return lang.(language.Tag).String()
 }
 
 func contentByView(view interface{ Template() string }) (string, error) {

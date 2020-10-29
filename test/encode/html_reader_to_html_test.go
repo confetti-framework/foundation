@@ -6,30 +6,30 @@ import (
 	"testing"
 )
 
-func TestHtmlReaderToHtmlWithStringCanNotEncode(t *testing.T) {
-	assert.False(t, encoder.HtmlReaderToHtml{}.IsAble(""))
+func TestStringerToHtmlWithStringCanNotEncode(t *testing.T) {
+	assert.False(t, encoder.StringerToHtml{}.IsAble(""))
 }
 
-func TestHtmlReaderToHtmlWithEmptyHtmlReaderCanEncode(t *testing.T) {
-	assert.True(t, encoder.HtmlReaderToHtml{}.IsAble(htmlReader{}))
+func TestStringerToHtmlWithEmptyStringerCanEncode(t *testing.T) {
+	assert.True(t, encoder.StringerToHtml{}.IsAble(content{}))
 }
 
-func TestHtmlReaderToHmlWithString(t *testing.T) {
+func TestStringerToHmlWithString(t *testing.T) {
 	app := setUp()
-	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(app, "foo", nil)
+	result, err := encoder.StringerToHtml{}.EncodeThrough(app, "foo", nil)
 	assert.Equal(t, "", result)
 	assert.EqualError(t, err, "can not encode to html with an unsupported type string")
 }
 
-func TestHtmlReaderToHtmlWithValidHtmlReader(t *testing.T) {
+func TestStringerToHtmlWithValidStringer(t *testing.T) {
 	app := setUp()
-	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(app, htmlReader{}, nil)
+	result, err := encoder.StringerToHtml{}.EncodeThrough(app, content{}, nil)
 	assert.NoError(t, err)
 	assert.Equal(t, "foo", result)
 }
 
-type htmlReader struct{}
+type content struct{}
 
-func (h htmlReader) String() string {
+func (h content) String() string {
 	return "foo"
 }
