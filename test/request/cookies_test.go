@@ -32,7 +32,7 @@ func TestRequestCookieEGetFirst(t *testing.T) {
 	request := requestByCookies([]string{"latest_page=home"})
 
 	value, err := request.CookieE("latest_page")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "home", value)
 }
 
@@ -40,7 +40,7 @@ func TestRequestCookieEGetSecond(t *testing.T) {
 	request := requestByCookies([]string{"latest_page=home;navigated=landing_page"})
 
 	value, err := request.CookieE("navigated")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "landing_page", value)
 }
 

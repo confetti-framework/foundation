@@ -27,7 +27,7 @@ func TestTransformJsonReaderWithStringToJson(t *testing.T) {
 	data := jsonReader{map[string]string{"Unit": "gigatonne"}}
 	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, data, outcome.JsonEncoders)
 
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"Unit\":\"gigatonne\"}", result)
 }
 
@@ -37,7 +37,7 @@ func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 
 	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{value}, outcome.JsonEncoders)
 
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"Unit\":\"megatonne\"}", result)
 }
 
@@ -45,7 +45,7 @@ func TestJsonReaderWithNilToJson(t *testing.T) {
 	app := setUp()
 	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{nil}, outcome.JsonEncoders)
 
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "null", result)
 }
 

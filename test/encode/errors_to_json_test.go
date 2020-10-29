@@ -33,7 +33,7 @@ func TestOneErrorToJson(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ErrorToJson{}.EncodeThrough(app, errors.New("entity not found"), outcome.JsonEncoders)
 
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Entity not found\"}]}", result)
 }
 
@@ -53,7 +53,7 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 		outcome.JsonEncoders,
 	)
 
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"This is a long error message, "+
 		"this is a long error message, this is a long error message, this is a long error message, this is a long "+
 		"error message, this is a long error message, this is a long error message\"}]}", result)

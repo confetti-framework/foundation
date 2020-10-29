@@ -36,6 +36,19 @@ func TestOneErrorToHtml(t *testing.T) {
 	assert.Equal(t, "Entity not found", result)
 }
 
+//goland:noinspection GoNilness
+func TestTemplateErrorToHtml(t *testing.T) {
+	app := setUp()
+	result, err := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}.
+		EncodeThrough(
+			app,
+			errors.New("entity not found"), outcome.HtmlEncoders,
+		)
+
+	assert.NoError(t, err)
+	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>", result)
+}
+
 func TestSystemErrorConvertToHtml(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, errors.New("bad request"), []inter.Encoder{encoder.InterfaceToHtml{}})

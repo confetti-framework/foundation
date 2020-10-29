@@ -31,7 +31,7 @@ func TestOneFileFoundWithBody(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	file, err := request.FileE("photo")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_file", file.Body())
 }
 
@@ -43,7 +43,7 @@ func TestTwoFilesGivenReceiveOneFile(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	file, err := request.FileE("photo")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_first_file", file.Body())
 }
 
@@ -55,11 +55,11 @@ func TestTwoFilesDifferentKeyGiven(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	file, err := request.FileE("photo2")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_second_file", file.Body())
 
 	file, err = request.FileE("photo1")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_first_file", file.Body())
 }
 
@@ -103,7 +103,7 @@ func TestFilesOneFoundWithBody(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_file", files[0].Body())
 }
 
@@ -115,7 +115,7 @@ func TestFilesMultipleFoundWithBody(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "content_of_first_file", files[0].Body())
 	assert.Equal(t, "content_of_second_file", files[1].Body())
 }
@@ -128,7 +128,7 @@ func TestGetFileHeaderFromSecondFile(t *testing.T) {
 		"Content-Type: text/plain\n\ncontent_of_second_file\n--xxx--")
 
 	files, err := request.FilesE("photo")
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "file2.txt", files[1].Header().Filename)
 }
 

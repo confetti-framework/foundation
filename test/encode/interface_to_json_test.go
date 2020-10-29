@@ -50,7 +50,7 @@ func TestTransformStructWithIntToJson(t *testing.T) {
 	app := setUp()
 	object := foo{12}
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"height\":12}", result)
 }
 
@@ -58,14 +58,14 @@ func TestTransformStructWithFloat(t *testing.T) {
 	app := setUp()
 	object := foo{12.34}
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "{\"height\":12.34}", result)
 }
 
 func TestTransformNilToJson(t *testing.T) {
 	app := setUp()
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, nil, nil)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "", result)
 }
 

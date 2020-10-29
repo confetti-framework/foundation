@@ -26,6 +26,6 @@ func TestValueToHmlWithString(t *testing.T) {
 func TestValueToHtmlWithValidValue(t *testing.T) {
 	app := setUp()
 	result, err := encoder.RawToHtml{}.EncodeThrough(app, support.NewValue("foo"), outcome.HtmlEncoders)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "foo", result)
 }

@@ -24,7 +24,7 @@ func TestHtmlReaderToHmlWithString(t *testing.T) {
 func TestHtmlReaderToHtmlWithValidHtmlReader(t *testing.T) {
 	app := setUp()
 	result, err := encoder.HtmlReaderToHtml{}.EncodeThrough(app, htmlReader{}, nil)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 	assert.Equal(t, "foo", result)
 }
 
