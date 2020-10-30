@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/support/caller"
+	"sort"
 )
 
 type Pipe interface {
@@ -46,6 +47,9 @@ func (p Pipeline) Through(pipes []inter.HttpMiddleware) Pipeline {
 func (p Pipeline) Then(destination inter.Next) inter.Response {
 
 	var callbacks []func(data inter.Request) inter.Response
+	sort.SliceStable(callbacks, func(i, j int) bool {
+		return true
+	})
 	nextCallback := 0
 	pipes := p.Pipes
 

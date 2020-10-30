@@ -22,18 +22,46 @@ func TestOneErrorCanConvertToHtml(t *testing.T) {
 func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
 	app := setUp()
 	encoders := []inter.Encoder{encoder.ErrorToHtml{}}
-	result, err := encoder.ErrorToHtml{}.EncodeThrough(app, "foo", encoders)
+	encoder := encoder.ErrorToHtml{}
+	result, err := encoder.EncodeThrough(app, "foo", encoders)
 
 	assert.Equal(t, "", result)
 	assert.EqualError(t, err, "can't convert object to html in error format")
 }
 
-func TestOneErrorToHtml(t *testing.T) {
+func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToHtml{}.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+	app.Bind("config.App.Debug", false)
+	encoder := encoder.ErrorToHtml{}
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "Entity not found", result)
+	assert.NotContains(t, result, "<p>")
+	assert.NotContains(t, result, "errors_to_html.go")
+}
+
+func TestOneErrorToHtmlOnProduction(t *testing.T) {
+	app := setUp()
+	app.Bind("config.App.Debug", false)
+	encoder := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n\n", result)
+	assert.NotContains(t, result, "<p>")
+	assert.NotContains(t, result, "errors_to_html.go")
+}
+
+func TestOneErrorToHtmlOnDevelopment(t *testing.T) {
+	app := setUp()
+	app.Bind("config.App.Debug", true)
+	encoder := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+
+	assert.Nil(t, err)
+	assert.Contains(t, result, "Entity not found")
+	assert.Contains(t, result, "errors_to_html_test.go")
 }
 
 //goland:noinspection GoNilness

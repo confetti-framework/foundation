@@ -1,3 +1,6 @@
 {{- /*gotype: github.com/lanvard/foundation/encoder.ErrorView*/ -}}
 <h1>{{.Status}}</h1>
 <h2>{{.Message}}</h2>
+{{if .StackTrace }}
+    <p>{{.StackTrace}}</p>
+{{end}}

@@ -2,12 +2,14 @@ package encoder
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
 	"github.com/lanvard/support/str"
 	"golang.org/x/text/language"
 	"html/template"
 	"io/ioutil"
+	"strings"
 )
 
 type ErrorToHtml struct {
@@ -25,11 +27,13 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 		return "", errors.New("can't convert object to html in error format")
 	}
 
-	errorMessage := str.UpperFirst(err.Error())
+	errorMessage := str.UpperFirst(fmt.Sprintf("%v", err))
+
 	if e.TemplateFile != "" {
 		status, _ := errors.FindStatus(err)
 		view := ErrorView{
 			Message:      errorMessage,
+			StackTrace:   stackTraceFromError(app, err),
 			Status:       status,
 			AppName:      e.appName(app),
 			Locale:       e.locale(app),
@@ -39,6 +43,16 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 		return contentByView(view)
 	}
 	return errorMessage, nil
+}
+
+func stackTraceFromError(app inter.App, err error) string {
+	if !app.Make("config.App.Debug").(bool) {
+		return ""
+	}
+	stackTrace, _ := errors.FindStack(err)
+	result := fmt.Sprintf("%+v", stackTrace)
+	result = strings.TrimLeft(result, "\n")
+	return result
 }
 
 func (e ErrorToHtml) appName(app inter.App) string {
@@ -74,6 +88,7 @@ func contentByView(view interface{ Template() string }) (string, error) {
 
 type ErrorView struct {
 	Message      string
+	StackTrace   string
 	Status       int
 	AppName      string
 	Locale       string
