@@ -10,8 +10,8 @@ type LogError struct{}
 func (l LogError) Decorate(response inter.Response) inter.Response {
 	if err, ok := response.GetContent().(error); ok {
 		app := response.App()
-		errorsToIgnore := app.Make("config.Errors.NoLogging").([]error)
-		if errors.Is(err, errorsToIgnore...) {
+
+		if l.ignore(app, err) {
 			return response
 		}
 
@@ -20,4 +20,14 @@ func (l LogError) Decorate(response inter.Response) inter.Response {
 	}
 
 	return response
+}
+
+func (l LogError) ignore(app inter.App, err error) bool {
+	toIgnoreRaw := app.Make("config.Errors.NoLogging").([]interface{})
+	var toIgnore []error
+	for _, rawErr := range toIgnoreRaw {
+		toIgnore = append(toIgnore, rawErr.(error))
+	}
+
+	return errors.Is(err, toIgnore...)
 }
