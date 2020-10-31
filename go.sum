@@ -8,6 +8,7 @@ github.com/lanvard/errors v0.9.1/go.mod h1:dmkl+K5ltsuM06o4qpfWoSW7lbNY7Mp0IvIsZ
 github.com/lanvard/foundation v0.2.2/go.mod h1:mYbtvzdGzw0ZNP2gI3lZHGxUVZXhcp1x77Fet9+DbjE=
 github.com/lanvard/routing v0.0.0/go.mod h1:N1lg0rW6JKCFqjKHfXSHqStCzUDt4x8farCPWMYOj+A=
 github.com/lanvard/support v0.0.0/go.mod h1:g670WUDk2/AV0VIBL/saQaCFP0XZ8iE5NNituXsjdF4=
+github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=

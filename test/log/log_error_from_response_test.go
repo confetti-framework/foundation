@@ -66,6 +66,22 @@ func TestErrorTrace(t *testing.T) {
 	}
 }
 
+func TestDonNotLogIgnoredLogs(t *testing.T) {
+	// Given
+	app := setUpAppWithDefaultLogger(true)
+	app.Bind("config.Errors.NoLogging", []error{validationError})
+	responseBefore := newTestResponse(app, validationError)
+	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
+	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
+
+	// When
+	bootstrapDecorator.Decorate(responseBefore)
+
+	// Then
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 0)
+}
+
 func TestLogDebugLevelFromError(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
@@ -119,3 +135,5 @@ func setUpAppWithDefaultLogger(stackTrace bool) inter.App {
 
 	return app
 }
+
+var validationError = supportErrors.New("validation error")
