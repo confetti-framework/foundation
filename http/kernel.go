@@ -2,13 +2,10 @@ package http
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/http/middleware"
 )
 
 type Kernel struct {
 	App *inter.App
-	// The application's middleware stack.
-	Middleware []inter.HttpMiddleware
 }
 
 // Handle an incoming HTTP request.
@@ -21,14 +18,5 @@ func (k Kernel) Handle(request inter.Request) inter.Response {
 func (k Kernel) sendRequestThroughRouter(request inter.Request) inter.Response {
 	request.App().Bind("request", request)
 
-	return middleware.NewPipeline(request.App()).
-		Send(request).
-		Through(k.Middleware).
-		Then(k.dispatchToRouter())
-}
-
-func (k Kernel) dispatchToRouter() inter.Next {
-	return func(request inter.Request) inter.Response {
-		return NewRouter(request.App()).DispatchToRoute(request)
-	}
+	return NewRouter(request.App()).DispatchToRoute(request)
 }
