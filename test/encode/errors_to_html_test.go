@@ -48,7 +48,7 @@ func TestOneErrorToHtmlOnProduction(t *testing.T) {
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
 
 	assert.Nil(t, err)
-	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n\n", result)
+	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
 	assert.NotContains(t, result, "<p>")
 	assert.NotContains(t, result, "errors_to_html.go")
 }
@@ -74,7 +74,7 @@ func TestTemplateErrorToHtml(t *testing.T) {
 		)
 
 	assert.NoError(t, err)
-	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>", result)
+	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
 }
 
 func TestSystemErrorConvertToHtml(t *testing.T) {

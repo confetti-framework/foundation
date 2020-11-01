@@ -76,7 +76,7 @@ func (r Syslog) LogWith(severity log_level.Level, message string, rawContext int
 			break
 		}
 		stack, ok := errors.FindStack(context)
-		if ok {
+		if !ok {
 			break
 		}
 		rawData = fmt.Sprintf("%+v", stack)

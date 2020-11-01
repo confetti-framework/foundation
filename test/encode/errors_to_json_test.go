@@ -69,6 +69,6 @@ func TestSystemErrorConvertToJson(t *testing.T) {
 
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
-	app.Bind("config.App.Debug", true)
+	app.Bind("config.App.Debug", false)
 	return app
 }

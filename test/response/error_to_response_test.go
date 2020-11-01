@@ -106,7 +106,7 @@ func TestPanicWithErrorToHtml(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `User not found`, response.GetBody())
+	assert.Equal(t, "<h1>500</h1>\n<h2>User not found</h2>\n", response.GetBody())
 }
 
 func TestHttpStatusToResponse(t *testing.T) {

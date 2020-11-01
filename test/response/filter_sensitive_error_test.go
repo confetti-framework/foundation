@@ -18,7 +18,7 @@ func TestSystemErrorFilterForProduction(t *testing.T) {
 	// Given
 	app.Bind("config.App.Debug", false)
 	response := newTestResponse(app, errors.New("incorrect database credentials"))
-	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveError{}}
+	decorators := []inter.ResponseDecorator{response_decorator.HttpStatus{}, response_decorator.FilterSensitiveError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
 	// When
@@ -62,10 +62,11 @@ func TestShowUserError(t *testing.T) {
 
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
+	app.Bind("config.App.Debug", false)
 	app.Bind("outcome_json_encoders", outcome.JsonEncoders)
 	app.Bind("outcome_html_encoders", append(
 		outcome.HtmlEncoders,
-		encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"},
+		encoder.ErrorToHtml{TemplateFile: "../encode/error_template.gohtml"},
 	))
 
 	return app
