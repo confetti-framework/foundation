@@ -19,7 +19,7 @@ import (
 type Syslog struct {
 	Path           string
 	Facility       syslog.Facility
-	Type           string // MSGID intended for filtering
+	group          string // MSGID intended for filtering
 	Writer         io.Writer
 	Permission     os.FileMode
 	MinLevel       log_level.Level
@@ -30,6 +30,11 @@ type Syslog struct {
 
 func (r Syslog) SetApp(app inter.Maker) inter.Logger {
 	r.app = app
+	return r
+}
+
+func (r Syslog) Group(group string) inter.Logger {
+	r.group = group
 	return r
 }
 
@@ -86,7 +91,7 @@ func (r Syslog) LogWith(severity log_level.Level, message string, rawContext int
 
 	r.init().Log(
 		severity,
-		r.Type,
+		r.group,
 		structuredData,
 		message+" %s",
 		rawData,

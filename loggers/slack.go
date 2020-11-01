@@ -21,6 +21,11 @@ func (s Slack) SetApp(_ inter.Maker) inter.Logger {
 	return s
 }
 
+func (s Slack) Group(_ string) inter.Logger {
+	// For Slack we don't use the group for anything
+	return s
+}
+
 func (s Slack) Clear() {}
 
 func (s Slack) Log(severity log_level.Level, message string, arguments ...interface{}) {

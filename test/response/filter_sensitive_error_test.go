@@ -5,6 +5,7 @@ import (
 	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/decorator/response_decorator"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
@@ -62,7 +63,11 @@ func TestShowUserError(t *testing.T) {
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("outcome_json_encoders", outcome.JsonEncoders)
-	app.Bind("outcome_html_encoders", outcome.HtmlEncoders)
+	app.Bind("outcome_html_encoders", append(
+		outcome.HtmlEncoders,
+		encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"},
+	))
+
 	return app
 }
 

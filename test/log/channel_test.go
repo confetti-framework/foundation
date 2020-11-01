@@ -57,9 +57,11 @@ func TestLogToMultipleChannels(t *testing.T) {
 }
 
 func getAppWithChannels() inter.App {
-	first := loggers.Syslog{Path: testFile, MinLevel: log_level.INFO}
-	second := loggers.Syslog{Path: testFileSecond, MinLevel: log_level.INFO}
-	allLoggers := map[string]interface{}{"first": first, "second": second}
+	allLoggers := map[string]interface{}{
+		"stack":  loggers.Stack{Channels: []string{"first"}},
+		"first":  loggers.Syslog{Path: testFile, MinLevel: log_level.INFO},
+		"second": loggers.Syslog{Path: testFileSecond, MinLevel: log_level.INFO},
+	}
 
 	app := newTestApp()
 	app.Bind("config.Logging.Default", "second")

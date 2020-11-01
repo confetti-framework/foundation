@@ -15,7 +15,7 @@ import (
 
 func TestErrorIsLoggedWithStandardError(t *testing.T) {
 	// Given
-	app := setUpAppWithDefaultLogger(false)
+	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, standardErrors.New("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
@@ -32,7 +32,7 @@ func TestErrorIsLoggedWithStandardError(t *testing.T) {
 
 func TestErrorWithoutTrace(t *testing.T) {
 	// Given
-	app := setUpAppWithDefaultLogger(false)
+	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
@@ -48,7 +48,7 @@ func TestErrorWithoutTrace(t *testing.T) {
 
 func TestErrorTrace(t *testing.T) {
 	// Given
-	app := setUpAppWithDefaultLogger(true)
+	app := setUpAppWithDefaultLogger(false)
 	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
@@ -68,8 +68,8 @@ func TestErrorTrace(t *testing.T) {
 
 func TestDonNotLogIgnoredLogs(t *testing.T) {
 	// Given
-	app := setUpAppWithDefaultLogger(true)
-	app.Bind("config.Errors.NoLogging", []error{validationError})
+	app := setUpAppWithDefaultLogger(false)
+	app.Bind("config.Errors.NoLogging", []interface{}{validationError})
 	responseBefore := newTestResponse(app, validationError)
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
@@ -130,6 +130,7 @@ func setUpAppWithDefaultLogger(stackTrace bool) inter.App {
 	allLoggers := map[string]interface{}{"single": single}
 
 	app := newTestApp()
+	app.Bind("config.Errors.NoLogging", []interface{}{})
 	app.Bind("config.Logging.Channels", allLoggers)
 	app.Bind("config.Logging.Default", "single")
 

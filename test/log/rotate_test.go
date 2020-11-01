@@ -117,12 +117,6 @@ func getLogger(file string, maxFiles int) inter.Logger {
 	return logger
 }
 
-func getLoggerWithType(file string, messageType string) inter.Logger {
-	var logger inter.Logger = loggers.Syslog{Path: file, MinLevel: log_level.DEBUG, Type: messageType}
-	logger = logger.SetApp(newTestApp())
-	return logger
-}
-
 func newTestApp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("config.App.Name", "testApp")

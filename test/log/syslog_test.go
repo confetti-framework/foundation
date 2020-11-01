@@ -125,7 +125,7 @@ func TestLogLevels(t *testing.T) {
 
 func TestLogType(t *testing.T) {
 	setUp()
-	logger := getLoggerWithType(testFile, "external")
+	logger := getLogger(testFile, 1).Group("external")
 
 	logger.LogWith(log_level.INFO, "the message", structMock)
 
@@ -405,6 +405,29 @@ func TestLogSameLevelAsMinLevel(t *testing.T) {
 
 	lines := openAndReadFile(testFile)
 	assert.Len(t, lines, 1)
+}
+
+func TestLogWithEmptyGroup(t *testing.T) {
+	setUp()
+	app := getAppWithChannels()
+
+	app.Log().Group("").Info("response: ok")
+
+	lines := openAndReadFile(testFileSecond)
+	assert.Len(t, lines, 1)
+	assert.Regexp(t, ` - \[level severity="info"\] response: ok $`, lines[0][0])
+}
+
+func TestLogWithGroupOnStackLogger(t *testing.T) {
+	setUp()
+	app := getAppWithChannels()
+	app.Bind("config.Logging.Default", "stack")
+
+	app.Log().Group("external").Info("response: ok")
+
+	lines := openAndReadFile(testFile)
+	assert.Len(t, lines, 1)
+	assert.Regexp(t, ` external \[level severity="info"\] response: ok $`, lines[0][0])
 }
 
 func setUp() {

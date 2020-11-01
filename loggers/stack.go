@@ -9,120 +9,127 @@ import (
 type Stack struct {
 	Channels []string
 	app      inter.Maker
+	group    string
 }
-
-func (s Stack) Clear() {}
 
 func (s Stack) SetApp(app inter.Maker) inter.Logger {
 	s.app = app
 	return s
 }
 
+func (s Stack) Clear() {}
+
+func (s Stack) Group(group string) inter.Logger {
+	s.group = group
+
+	return s
+}
+
 func (s Stack) Log(severity log_level.Level, message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Log(severity, message, arguments...)
+		logger.Group(s.group).Log(severity, message, arguments...)
 	}
 }
 
 func (s Stack) LogWith(severity log_level.Level, message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.LogWith(severity, message, context)
+		logger.Group(s.group).LogWith(severity, message, context)
 	}
 }
 
 func (s Stack) Emergency(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Emergency(message, arguments...)
+		logger.Group(s.group).Emergency(message, arguments...)
 	}
 }
 
 func (s Stack) EmergencyWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.EmergencyWith(message, context)
+		logger.Group(s.group).EmergencyWith(message, context)
 	}
 }
 
 func (s Stack) Alert(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Alert(message, arguments...)
+		logger.Group(s.group).Alert(message, arguments...)
 	}
 }
 
 func (s Stack) AlertWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.AlertWith(message, context)
+		logger.Group(s.group).AlertWith(message, context)
 	}
 }
 
 func (s Stack) Critical(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Critical(message, arguments...)
+		logger.Group(s.group).Critical(message, arguments...)
 	}
 }
 
 func (s Stack) CriticalWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.CriticalWith(message, context)
+		logger.Group(s.group).CriticalWith(message, context)
 	}
 }
 
 func (s Stack) Error(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Error(message, arguments...)
+		logger.Group(s.group).Error(message, arguments...)
 	}
 }
 
 func (s Stack) ErrorWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.ErrorWith(message, context)
+		logger.Group(s.group).ErrorWith(message, context)
 	}
 }
 
 func (s Stack) Warning(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Warning(message, arguments...)
+		logger.Group(s.group).Warning(message, arguments...)
 	}
 }
 
 func (s Stack) WarningWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.WarningWith(message, context)
+		logger.Group(s.group).WarningWith(message, context)
 	}
 }
 
 func (s Stack) Notice(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Notice(message, arguments...)
+		logger.Group(s.group).Notice(message, arguments...)
 	}
 }
 
 func (s Stack) NoticeWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.NoticeWith(message, context)
+		logger.Group(s.group).NoticeWith(message, context)
 	}
 }
 
 func (s Stack) Info(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Info(message, arguments...)
+		logger.Group(s.group).Info(message, arguments...)
 	}
 }
 
 func (s Stack) InfoWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.InfoWith(message, context)
+		logger.Group(s.group).InfoWith(message, context)
 	}
 }
 
 func (s Stack) Debug(message string, arguments ...interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.Debug(message, arguments...)
+		logger.Group(s.group).Debug(message, arguments...)
 	}
 }
 
 func (s Stack) DebugWith(message string, context interface{}) {
 	for _, logger := range s.getLoggers() {
-		logger.DebugWith(message, context)
+		logger.Group(s.group).DebugWith(message, context)
 	}
 }
 
