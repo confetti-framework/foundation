@@ -8,8 +8,7 @@ import (
 )
 
 func ContentByView(view inter.View) (string, error) {
-	viewPath := view.App().Make("config.Path.Views").(string)
-	content, err := ioutil.ReadFile(viewPath + "/" + view.Template())
+	content, err := ioutil.ReadFile(view.Template())
 	buf := bytes.NewBufferString("")
 	if err != nil {
 		return "", err
