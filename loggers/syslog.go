@@ -24,11 +24,11 @@ type Syslog struct {
 	Permission     os.FileMode
 	MinLevel       log_level.Level
 	MaxFiles       int
-	app            inter.Maker
+	app            inter.AppReader
 	HideStackTrace bool
 }
 
-func (r Syslog) SetApp(app inter.Maker) inter.Logger {
+func (r Syslog) SetApp(app inter.AppReader) inter.Logger {
 	r.app = app
 	return r
 }

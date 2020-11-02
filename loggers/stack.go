@@ -8,11 +8,11 @@ import (
 
 type Stack struct {
 	Channels []string
-	app      inter.Maker
+	app      inter.AppReader
 	group    string
 }
 
-func (s Stack) SetApp(app inter.Maker) inter.Logger {
+func (s Stack) SetApp(app inter.AppReader) inter.Logger {
 	s.app = app
 	return s
 }

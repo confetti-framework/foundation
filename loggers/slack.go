@@ -17,7 +17,7 @@ type Slack struct {
 	MinLevel   log_level.Level
 }
 
-func (s Slack) SetApp(_ inter.Maker) inter.Logger {
+func (s Slack) SetApp(_ inter.AppReader) inter.Logger {
 	return s
 }
 
