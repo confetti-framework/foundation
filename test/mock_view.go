@@ -1,9 +1,14 @@
 package test
 
-type ViewMock struct {
-	TemplatePath string
-}
+import (
+	"path/filepath"
+	"runtime"
+)
+
+type ViewMock struct{}
 
 func (v ViewMock) Template() string {
-	return v.TemplatePath
+	_, file, _, _ := runtime.Caller(0)
+	currentDir := filepath.Dir(file)
+	return currentDir + "/mock_template.gohtml"
 }
