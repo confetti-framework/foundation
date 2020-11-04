@@ -8,6 +8,7 @@ import (
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
 	"github.com/lanvard/foundation/http/request_helper"
+	"github.com/lanvard/foundation/test"
 	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
@@ -163,7 +164,7 @@ func fakeRequestWithForm() inter.Request {
 
 func fakeRequestWithJsonBody() inter.Request {
 	app := foundation.NewApp()
-	app.Bind("outcome_html_encoders", outcome.HtmlEncoders)
+	app.Bind("outcome_html_encoders", test.HtmlEncoders)
 
 	return http.NewRequest(http.Options{
 		App:    app,

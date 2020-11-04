@@ -2,7 +2,7 @@ package encode
 
 import (
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/routing/outcome"
+	"github.com/lanvard/foundation/test"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -25,7 +25,7 @@ func TestTransformNormalStructToJson(t *testing.T) {
 func TestTransformJsonReaderWithStringToJson(t *testing.T) {
 	app := setUp()
 	data := jsonReader{map[string]string{"Unit": "gigatonne"}}
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, data, outcome.JsonEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, data, test.JsonEncoders)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"Unit\":\"gigatonne\"}", result)
@@ -35,7 +35,7 @@ func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 	app := setUp()
 	value := support.NewValue(map[string]interface{}{"Unit": "megatonne"})
 
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{value}, outcome.JsonEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{value}, test.JsonEncoders)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"Unit\":\"megatonne\"}", result)
@@ -43,7 +43,7 @@ func TestTransformJsonReaderWithValueToJson(t *testing.T) {
 
 func TestJsonReaderWithNilToJson(t *testing.T) {
 	app := setUp()
-	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{nil}, outcome.JsonEncoders)
+	result, err := encoder.JsonReaderToJson{}.EncodeThrough(app, jsonReader{nil}, test.JsonEncoders)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "null", result)

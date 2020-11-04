@@ -5,7 +5,7 @@ import (
 	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/routing/outcome"
+	"github.com/lanvard/foundation/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -31,7 +31,7 @@ func TestNotCorrectErrorCanNotConvertToJson(t *testing.T) {
 
 func TestOneErrorToJson(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToJson{}.EncodeThrough(app, errors.New("entity not found"), outcome.JsonEncoders)
+	result, err := encoder.ErrorToJson{}.EncodeThrough(app, errors.New("entity not found"), test.JsonEncoders)
 
 	assert.NoError(t, err)
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Entity not found\"}]}", result)
@@ -50,7 +50,7 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 				"this is a long error message, "+
 				"this is a long error message",
 		),
-		outcome.JsonEncoders,
+		test.JsonEncoders,
 	)
 
 	assert.NoError(t, err)

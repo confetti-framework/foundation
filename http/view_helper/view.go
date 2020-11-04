@@ -13,11 +13,11 @@ func ContentByView(view inter.View) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	t, err := template.New("error").Parse(string(content))
+	t, err := template.New(view.Template()).Parse(string(content))
 	if err != nil {
 		return "", err
 	}
 	err = t.Execute(buf, view)
 
-	return buf.String(), nil
+	return buf.String(), err
 }

@@ -4,7 +4,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/routing/outcome"
+	"github.com/lanvard/foundation/test"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -33,7 +33,7 @@ func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
 	encoder := encoder.ErrorToHtml{}
-	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), test.HtmlEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "Entity not found", result)
@@ -44,8 +44,8 @@ func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
 func TestOneErrorToHtmlOnProduction(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
-	encoder := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}
-	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+	encoder := encoder.ErrorToHtml{View: test.NewViewErrorMock}
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), test.HtmlEncoders)
 
 	assert.Nil(t, err)
 	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
@@ -53,11 +53,11 @@ func TestOneErrorToHtmlOnProduction(t *testing.T) {
 	assert.NotContains(t, result, "errors_to_html.go")
 }
 
-func TestOneErrorToHtmlOnDevelopment(t *testing.T) {
+func TestOneErrorToHtmlOnDevelopmentWithStackTrace(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", true)
-	encoder := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}
-	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), outcome.HtmlEncoders)
+	encoder := encoder.ErrorToHtml{View: test.NewViewErrorMock}
+	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), test.HtmlEncoders)
 
 	assert.Nil(t, err)
 	assert.Contains(t, result, "Entity not found")
@@ -67,10 +67,10 @@ func TestOneErrorToHtmlOnDevelopment(t *testing.T) {
 //goland:noinspection GoNilness
 func TestTemplateErrorToHtml(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToHtml{TemplateFile: "error_template.gohtml"}.
+	result, err := encoder.ErrorToHtml{View: test.NewViewErrorMock}.
 		EncodeThrough(
 			app,
-			errors.New("entity not found"), outcome.HtmlEncoders,
+			errors.New("entity not found"), test.HtmlEncoders,
 		)
 
 	assert.NoError(t, err)

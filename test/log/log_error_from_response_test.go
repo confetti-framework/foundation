@@ -6,6 +6,7 @@ import (
 	supportErrors "github.com/lanvard/errors"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/loggers"
+	"github.com/lanvard/foundation/test"
 	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/syslog/log_level"
 	pkgErrors "github.com/pkg/errors"
@@ -113,7 +114,7 @@ func TestWrapError(t *testing.T) {
 }
 
 func newTestResponse(app inter.App, content error) inter.Response {
-	app.Bind("outcome_json_encoders", outcome.JsonEncoders)
+	app.Bind("outcome_json_encoders", test.JsonEncoders)
 
 	var response inter.Response = outcome.NewResponse(outcome.Options{
 		App:      app,
