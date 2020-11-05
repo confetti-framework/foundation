@@ -6,6 +6,7 @@ import (
 	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/http/view_helper"
 	"github.com/lanvard/support/str"
+	"html/template"
 )
 
 type ErrorToHtml struct {
@@ -24,11 +25,8 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 	}
 
 	if e.View != nil {
-		templates, tErr := app.MakeE("defined_templates")
-		if tErr != nil {
-			templates = []string{}
-		}
-		return view_helper.ContentByView(e.View(app, err), templates.([]string))
+		decorator := app.Make("template_builder").(func(template *template.Template) (*template.Template, error))
+		return view_helper.ContentByView(e.View(app, err), decorator)
 	}
 
 	return str.UpperFirst(fmt.Sprintf("%v", err)), nil

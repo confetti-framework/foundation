@@ -7,6 +7,7 @@ import (
 	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/test/mock"
 	"github.com/stretchr/testify/assert"
+	"html/template"
 	"testing"
 )
 
@@ -70,5 +71,8 @@ func TestSystemErrorConvertToJson(t *testing.T) {
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("config.App.Debug", false)
+	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+		return template.ParseGlob(mock.TemplateByName("") + "/[^sub]*")
+	})
 	return app
 }

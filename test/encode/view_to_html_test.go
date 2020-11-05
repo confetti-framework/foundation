@@ -4,6 +4,7 @@ import (
 	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/test/mock"
 	"github.com/stretchr/testify/require"
+	"html/template"
 	"testing"
 )
 
@@ -24,8 +25,13 @@ func TestCanNotEncodeNonView(t *testing.T) {
 
 func TestConvertViewToHtml(t *testing.T) {
 	app := setUp()
+	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+		return template.ParseFiles(
+			mock.TemplateByName("simple_template.gohtml"),
+		)
+	})
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.SimpleViewMock{}, nil)
-	require.Nil(t, err)
+	require.NoError(t, err)
 	require.Equal(t, "ok", result)
 }
 
@@ -39,8 +45,14 @@ func TestViewWithUnknownTemplate(t *testing.T) {
 
 func TestViewWithFooterTemplate(t *testing.T) {
 	app := setUp()
+	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+		return template.ParseFiles(
+			mock.TemplateByName("page_with_footer_template.gohtml"),
+			mock.TemplateByName("sub/footer_template.gohtml"),
+		)
+	})
 	app.Singleton("defined_templates", []string{mock.TemplateByName("footer_template.gohtml")})
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.PageWithFooter{}, nil)
-	require.Nil(t, err)
-	require.Equal(t, "<p>body</p>\n<footer>contact information</footer>", result)
+	require.NoError(t, err)
+	require.Equal(t, "<p>body</p>\n\n<footer>contact information</footer>", result)
 }

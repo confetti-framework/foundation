@@ -7,15 +7,18 @@ import (
 	"path"
 )
 
-func ContentByView(view inter.View, templates []string) (string, error) {
-	main := path.Base(view.Template())
-
+func ContentByView(
+	view inter.View,
+	builder func(template *template.Template) (*template.Template, error),
+) (string, error) {
 	buf := bytes.NewBufferString("")
-	t, err := template.New(main).
-		ParseFiles(append(templates, view.Template())...)
+	t := template.New(path.Base(view.Template()))
+
+	t, err := builder(t)
 	if err != nil {
 		return "", err
 	}
+
 	err = t.Execute(buf, view)
 
 	return buf.String(), err

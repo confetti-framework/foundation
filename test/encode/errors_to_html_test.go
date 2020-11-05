@@ -5,18 +5,18 @@ import (
 	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/test/mock"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestCanNotConvertStringToHtmlError(t *testing.T) {
 	result := encoder.ErrorToHtml{}.IsAble("Foo")
-	assert.False(t, result)
+	require.False(t, result)
 }
 
 func TestOneErrorCanConvertToHtml(t *testing.T) {
 	result := encoder.ErrorToHtml{}.IsAble(errors.New("entity not found"))
-	assert.True(t, result)
+	require.True(t, result)
 }
 
 func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
@@ -25,8 +25,8 @@ func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
 	encoder := encoder.ErrorToHtml{}
 	result, err := encoder.EncodeThrough(app, "foo", encoders)
 
-	assert.Equal(t, "", result)
-	assert.EqualError(t, err, "can't convert object to html in error format")
+	require.Equal(t, "", result)
+	require.EqualError(t, err, "can't convert object to html in error format")
 }
 
 func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
@@ -35,10 +35,10 @@ func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
 	encoder := encoder.ErrorToHtml{}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
-	assert.Nil(t, err)
-	assert.Equal(t, "Entity not found", result)
-	assert.NotContains(t, result, "<p>")
-	assert.NotContains(t, result, "errors_to_html.go")
+	require.NoError(t, err)
+	require.Equal(t, "Entity not found", result)
+	require.NotContains(t, result, "<p>")
+	require.NotContains(t, result, "errors_to_html.go")
 }
 
 func TestOneErrorToHtmlOnProduction(t *testing.T) {
@@ -47,10 +47,10 @@ func TestOneErrorToHtmlOnProduction(t *testing.T) {
 	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
-	assert.Nil(t, err)
-	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
-	assert.NotContains(t, result, "<p>")
-	assert.NotContains(t, result, "errors_to_html.go")
+	require.NoError(t, err)
+	require.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
+	require.NotContains(t, result, "<p>")
+	require.NotContains(t, result, "errors_to_html.go")
 }
 
 func TestOneErrorToHtmlOnDevelopmentWithStackTrace(t *testing.T) {
@@ -59,9 +59,9 @@ func TestOneErrorToHtmlOnDevelopmentWithStackTrace(t *testing.T) {
 	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
-	assert.Nil(t, err)
-	assert.Contains(t, result, "Entity not found")
-	assert.Contains(t, result, "errors_to_html_test.go")
+	require.NoError(t, err)
+	require.Contains(t, result, "Entity not found")
+	require.Contains(t, result, "errors_to_html_test.go")
 }
 
 //goland:noinspection GoNilness
@@ -73,14 +73,14 @@ func TestTemplateErrorToHtml(t *testing.T) {
 			errors.New("entity not found"), mock.HtmlEncoders,
 		)
 
-	assert.NoError(t, err)
-	assert.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
+	require.NoError(t, err)
+	require.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
 }
 
 func TestSystemErrorConvertToHtml(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, errors.New("bad request"), []inter.Encoder{encoder.InterfaceToHtml{}})
 
-	assert.Equal(t, "no encoder found to handle error: bad request", result)
-	assert.EqualError(t, err, "no encoder found to handle error: bad request")
+	require.Equal(t, "no encoder found to handle error: bad request", result)
+	require.EqualError(t, err, "no encoder found to handle error: bad request")
 }
