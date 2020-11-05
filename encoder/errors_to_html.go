@@ -24,7 +24,11 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 	}
 
 	if e.View != nil {
-		return view_helper.ContentByView(e.View(app, err))
+		templates, tErr := app.MakeE("defined_templates")
+		if tErr != nil {
+			templates = []string{}
+		}
+		return view_helper.ContentByView(e.View(app, err), templates.([]string))
 	}
 
 	return str.UpperFirst(fmt.Sprintf("%v", err)), nil

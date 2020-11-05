@@ -13,11 +13,16 @@ func (v ViewToHtml) IsAble(object interface{}) bool {
 	return ok
 }
 
-func (v ViewToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
+func (v ViewToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	view, ok := object.(inter.View)
 	if !ok {
 		return "", errors.New("can't convert object to html in view format")
 	}
 
-	return view_helper.ContentByView(view)
+	templates, err := app.MakeE("defined_templates")
+	if err != nil {
+		templates = []string{}
+	}
+
+	return view_helper.ContentByView(view, templates.([]string))
 }

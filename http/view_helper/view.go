@@ -4,16 +4,15 @@ import (
 	"bytes"
 	"github.com/lanvard/contract/inter"
 	"html/template"
-	"io/ioutil"
+	"path"
 )
 
-func ContentByView(view inter.View) (string, error) {
-	content, err := ioutil.ReadFile(view.Template())
+func ContentByView(view inter.View, templates []string) (string, error) {
+	main := path.Base(view.Template())
+
 	buf := bytes.NewBufferString("")
-	if err != nil {
-		return "", err
-	}
-	t, err := template.New(view.Template()).Parse(string(content))
+	t, err := template.New(main).
+		ParseFiles(append(templates, view.Template())...)
 	if err != nil {
 		return "", err
 	}

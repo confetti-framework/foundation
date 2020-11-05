@@ -1,4 +1,4 @@
-package test
+package mock
 
 import (
 	"github.com/lanvard/contract/inter"

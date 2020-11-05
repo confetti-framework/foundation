@@ -1,4 +1,4 @@
-package test
+package lifecycle
 
 import (
 	"github.com/lanvard/contract/inter"

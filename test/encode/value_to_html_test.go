@@ -2,7 +2,7 @@ package encode
 
 import (
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/test"
+	"github.com/lanvard/foundation/test/mock"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -25,7 +25,7 @@ func TestValueToHmlWithString(t *testing.T) {
 
 func TestValueToHtmlWithValidValue(t *testing.T) {
 	app := setUp()
-	result, err := encoder.RawToHtml{}.EncodeThrough(app, support.NewValue("foo"), test.HtmlEncoders)
+	result, err := encoder.RawToHtml{}.EncodeThrough(app, support.NewValue("foo"), mock.HtmlEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "foo", result)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/decorator/response_decorator"
 	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/test"
+	"github.com/lanvard/foundation/test/mock"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
@@ -64,10 +64,10 @@ func TestShowUserError(t *testing.T) {
 func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("config.App.Debug", false)
-	app.Bind("outcome_json_encoders", test.JsonEncoders)
+	app.Bind("outcome_json_encoders", mock.JsonEncoders)
 	app.Bind("outcome_html_encoders", append(
-		test.HtmlEncoders,
-		encoder.ErrorToHtml{View: test.NewViewErrorMock},
+		mock.HtmlEncoders,
+		encoder.ErrorToHtml{View: mock.NewViewErrorMock},
 	))
 
 	return app

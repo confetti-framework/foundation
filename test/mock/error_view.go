@@ -1,4 +1,4 @@
-package test
+package mock
 
 import (
 	"fmt"
@@ -6,12 +6,10 @@ import (
 	"github.com/lanvard/errors"
 	"github.com/lanvard/support/str"
 	"golang.org/x/text/language"
-	"path/filepath"
-	"runtime"
 	"strings"
 )
 
-type viewErrorMock struct {
+type errorViewMock struct {
 	Message    string
 	StackTrace string
 	Status     int
@@ -22,7 +20,7 @@ type viewErrorMock struct {
 func NewViewErrorMock(app inter.App, err error) inter.View {
 	status, _ := errors.FindStatus(err)
 
-	return &viewErrorMock{
+	return &errorViewMock{
 		Message:    str.UpperFirst(fmt.Sprintf("%v", err)),
 		StackTrace: StackTrace(app, err),
 		Status:     status,
@@ -31,10 +29,8 @@ func NewViewErrorMock(app inter.App, err error) inter.View {
 	}
 }
 
-func (v viewErrorMock) Template() string {
-	_, file, _, _ := runtime.Caller(0)
-	currentDir := filepath.Dir(file)
-	return currentDir + "/mock_error_template.gohtml"
+func (_ errorViewMock) Template() string {
+	return TemplateByName("error_template.gohtml")
 }
 
 func AppName(app inter.App) string {
