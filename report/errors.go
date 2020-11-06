@@ -7,4 +7,4 @@ import (
 )
 
 var EncodeError = errors.New("").Status(net.StatusInternalServerError).Level(log_level.EMERGENCY)
-var NoSuchTemplate = EncodeError.Wrap("customize providers.ViewServiceProvider to load more templates")
+var NoSuchTemplate = EncodeError.Wrap("customize providers.ViewServiceProvider to load the correct templates")
