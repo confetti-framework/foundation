@@ -2,7 +2,7 @@ package encoder
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
+	"github.com/lanvard/foundation/report"
 	"reflect"
 )
 
@@ -16,7 +16,7 @@ func (v RawToJson) IsAble(object interface{}) bool {
 func (v RawToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	value, ok := object.(interface{ Raw() interface{} })
 	if !ok {
-		return "", errors.New("can not encode to json with an unsupported type " + reflect.TypeOf(object).String())
+		return "", report.EncodeError.Wrap("can not encode to json with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
 	result := value.Raw()

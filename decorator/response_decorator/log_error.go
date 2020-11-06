@@ -24,10 +24,11 @@ func (l LogError) Decorate(response inter.Response) inter.Response {
 
 func (l LogError) ignore(app inter.App, err error) bool {
 	toIgnoreRaw := app.Make("config.Errors.NoLogging").([]interface{})
-	var toIgnore []error
 	for _, rawErr := range toIgnoreRaw {
-		toIgnore = append(toIgnore, rawErr.(error))
+		if errors.Is(err, rawErr.(error)) {
+			return true
+		}
 	}
 
-	return errors.Is(err, toIgnore...)
+	return false
 }

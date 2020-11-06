@@ -9,6 +9,7 @@ import (
 	"github.com/lanvard/foundation/test/mock"
 	"github.com/lanvard/routing/outcome"
 	"github.com/stretchr/testify/assert"
+	"html/template"
 	net "net/http"
 	"testing"
 )
@@ -69,6 +70,9 @@ func setUp() *foundation.Application {
 		mock.HtmlEncoders,
 		encoder.ErrorToHtml{View: mock.NewViewErrorMock},
 	))
+	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+		return template.ParseGlob(mock.TemplateByName("") + "/[^sub]*")
+	})
 
 	return app
 }

@@ -3,13 +3,18 @@ package encoder
 import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/errors"
+	"github.com/lanvard/foundation/report"
 	"reflect"
 )
 
 func EncodeThrough(app inter.App, content interface{}, encoders []inter.Encoder) (string, error) {
 	for _, encoder := range encoders {
 		if encoder.IsAble(content) {
-			return encoder.EncodeThrough(app, content, encoders)
+			result, err := encoder.EncodeThrough(app, content, encoders)
+			if errors.Is(err, report.EncodeError) {
+				result, err = EncodeThrough(app, err, encoders)
+			}
+			return result, err
 		}
 	}
 
