@@ -4,7 +4,6 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/view_helper"
 	"github.com/lanvard/foundation/report"
-	"html/template"
 )
 
 type ViewToHtml struct{}
@@ -20,6 +19,6 @@ func (v ViewToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.E
 		return "", report.EncodeError.Wrap("can't convert object to html in view format")
 	}
 
-	builder := app.Make("template_builder").(func(template *template.Template) (*template.Template, error))
+	builder := app.Make("template_builder").(inter.TemplateBuilder)
 	return view_helper.ContentByView(view, builder)
 }
