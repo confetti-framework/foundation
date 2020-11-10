@@ -4,6 +4,7 @@ import (
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
+	net "net/http"
 	"testing"
 )
 
@@ -54,7 +55,7 @@ func TestRequestCookieENotFoundMustGiveAnError(t *testing.T) {
 
 func requestByCookies(cookies []string) inter.Request {
 	options := http.Options{
-		Header: http.Header{
+		Header: net.Header{
 			"Cookie": cookies,
 		},
 	}
