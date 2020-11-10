@@ -39,6 +39,6 @@ func (h headerContainer) Header(key string) string {
 	return h.headers.Get(key)
 }
 
-func (h headerContainer) Headers() http.Header {
+func (h headerContainer) GetHeaders() http.Header {
 	return h.headers
 }

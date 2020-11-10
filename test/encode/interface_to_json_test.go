@@ -22,7 +22,7 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(
 		t,
-		"can't transform response object to string. No response encoder alias defined in outcome.Response",
+		"no value found with key 'default_response_encoder'",
 		err.Error(),
 	)
 }
