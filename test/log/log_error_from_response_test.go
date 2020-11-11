@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestErrorIsLoggedWithStandardError(t *testing.T) {
+func Test_error_is_logged_with_standard_error(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, standardErrors.New("incorrect database credentials"))
@@ -31,7 +31,7 @@ func TestErrorIsLoggedWithStandardError(t *testing.T) {
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 }
 
-func TestErrorWithoutTrace(t *testing.T) {
+func Test_error_without_trace(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
@@ -47,7 +47,7 @@ func TestErrorWithoutTrace(t *testing.T) {
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 }
 
-func TestErrorTrace(t *testing.T) {
+func Test_error_trace(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(false)
 	responseBefore := newTestResponse(app, supportErrors.New("incorrect database credentials"))
@@ -62,12 +62,12 @@ func TestErrorTrace(t *testing.T) {
 	assert.Greater(t, len(lines), 3)
 	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 	if len(lines) > 1 {
-		assert.Regexp(t, `log.TestErrorTrace`, lines[1][0])
+		assert.Regexp(t, `log.Test_error_trace`, lines[1][0])
 		assert.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
 	}
 }
 
-func TestDonNotLogIgnoredLogs(t *testing.T) {
+func Test_don_not_log_ignored_logs(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(false)
 	app.Bind("config.Errors.NoLogging", []interface{}{validationError})
@@ -83,7 +83,7 @@ func TestDonNotLogIgnoredLogs(t *testing.T) {
 	assert.Len(t, lines, 0)
 }
 
-func TestLogDebugLevelFromError(t *testing.T) {
+func Test_log_debug_level_from_error(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, supportErrors.New("user not found").Level(log_level.DEBUG))
@@ -98,7 +98,7 @@ func TestLogDebugLevelFromError(t *testing.T) {
 	assert.Regexp(t, `level severity="debug"`, lines[0][0])
 }
 
-func TestWrapError(t *testing.T) {
+func Test_wrap_error(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
 	responseBefore := newTestResponse(app, supportErrors.Wrap(pkgErrors.New("user id not found"), "validation error"))

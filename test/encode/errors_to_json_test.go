@@ -11,17 +11,17 @@ import (
 	"testing"
 )
 
-func TestCanNotConvertStringToJsonError(t *testing.T) {
+func Test_can_not_convert_string_to_json_error(t *testing.T) {
 	result := encoder.ErrorToJson{}.IsAble("Foo")
 	assert.False(t, result)
 }
 
-func TestOneErrorCanConvertToJson(t *testing.T) {
+func Test_one_error_can_convert_to_json(t *testing.T) {
 	result := encoder.ErrorToJson{}.IsAble(errors.New("entity not found"))
 	assert.True(t, result)
 }
 
-func TestNotCorrectErrorCanNotConvertToJson(t *testing.T) {
+func Test_not_correct_error_can_not_convert_to_json(t *testing.T) {
 	app := setUp()
 	encoders := []inter.Encoder{encoder.ErrorToJson{}}
 	result, err := encoder.ErrorToJson{}.EncodeThrough(app, "foo", encoders)
@@ -30,7 +30,7 @@ func TestNotCorrectErrorCanNotConvertToJson(t *testing.T) {
 	assert.EqualError(t, err, "can't convert object to json in error format")
 }
 
-func TestOneErrorToJson(t *testing.T) {
+func Test_one_error_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ErrorToJson{}.EncodeThrough(app, errors.New("entity not found"), mock.JsonEncoders)
 
@@ -38,7 +38,7 @@ func TestOneErrorToJson(t *testing.T) {
 	assert.Equal(t, "{\"jsonapi\":{\"version\":\"1.0\"},\"errors\":[{\"title\":\"Entity not found\"}]}", result)
 }
 
-func TestOneErrorWithLongErrorMessage(t *testing.T) {
+func Test_one_error_with_long_error_message(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ErrorToJson{}.EncodeThrough(
 		app,
@@ -60,7 +60,7 @@ func TestOneErrorWithLongErrorMessage(t *testing.T) {
 		"error message, this is a long error message, this is a long error message\"}]}", result)
 }
 
-func TestSystemErrorConvertToJson(t *testing.T) {
+func Test_system_error_convert_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, "", []inter.Encoder{})
 

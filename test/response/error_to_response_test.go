@@ -14,7 +14,7 @@ import (
 
 var userNotFound = errors.New("user not found")
 
-func TestPanicWithoutValidEncoderDefined(t *testing.T) {
+func Test_panic_without_valid_encoder_defined(t *testing.T) {
 	// Given
 	app := setUp()
 	request := http.NewRequest(http.Options{App: app})
@@ -33,7 +33,7 @@ func TestPanicWithoutValidEncoderDefined(t *testing.T) {
 	assert.Panics(t, when)
 }
 
-func TestPanicErrorToJson(t *testing.T) {
+func Test_panic_error_to_json(t *testing.T) {
 	// Given
 	app := setUp()
 	app.Bind("default_response_encoder", outcome.Json)
@@ -52,7 +52,7 @@ func TestPanicErrorToJson(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
-func TestPanicStringToJson(t *testing.T) {
+func Test_panic_string_to_json(t *testing.T) {
 	// Given
 	app := setUp()
 	app.Bind("default_response_encoder", outcome.Json)
@@ -71,7 +71,7 @@ func TestPanicStringToJson(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
-func TestPanicUnknownToJson(t *testing.T) {
+func Test_panic_unknown_to_json(t *testing.T) {
 	// Given
 	app := setUp()
 	app.Bind("default_response_encoder", outcome.Json)
@@ -90,7 +90,7 @@ func TestPanicUnknownToJson(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.GetBody())
 }
 
-func TestPanicWithErrorToHtml(t *testing.T) {
+func Test_panic_with_error_to_html(t *testing.T) {
 	// Given
 	app := setUp()
 	app.Bind("default_response_encoder", outcome.Html)
@@ -109,7 +109,7 @@ func TestPanicWithErrorToHtml(t *testing.T) {
 	assert.Equal(t, "<h1>500</h1>\n<h2>User not found</h2>\n", response.GetBody())
 }
 
-func TestHttpStatusToResponse(t *testing.T) {
+func Test_http_status_to_response(t *testing.T) {
 	// Given
 	app := setUp()
 	responseBefore := newTestResponse(app, errors.New("incorrect database credentials"))
@@ -123,7 +123,7 @@ func TestHttpStatusToResponse(t *testing.T) {
 	assert.Equal(t, net.StatusInternalServerError, response.GetStatus())
 }
 
-func TestHttpStatusBadRequestToResponse(t *testing.T) {
+func Test_http_status_bad_request_to_response(t *testing.T) {
 	// Given
 	app := setUp()
 	responseBefore := newTestResponse(app, errors.New("incorrect database credentials").Status(net.StatusBadRequest))

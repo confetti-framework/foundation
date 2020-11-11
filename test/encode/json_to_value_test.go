@@ -6,13 +6,13 @@ import (
 	"testing"
 )
 
-func TestJsonToValue(t *testing.T) {
+func Test_json_to_value(t *testing.T) {
 	value := encoder.JsonToValue(`{"name":{"first":"Janet","last":"Prichard"},"age":47}`)
 
 	assert.Equal(t, "Janet", value.Get("name.first").String())
 }
 
-func TestDeepJsonToValue(t *testing.T) {
+func Test_deep_json_to_value(t *testing.T) {
 	value := encoder.JsonToValue(`{
   "data": {
     "tracktraces": [

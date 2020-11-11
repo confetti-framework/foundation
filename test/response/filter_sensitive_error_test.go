@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-func TestSystemErrorFilterForProduction(t *testing.T) {
+func Test_system_error_filter_for_production(t *testing.T) {
 	app := setUp()
 
 	// Given
@@ -30,7 +30,7 @@ func TestSystemErrorFilterForProduction(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.GetBody())
 }
 
-func TestSystemErrorShowForDevelopment(t *testing.T) {
+func Test_system_error_show_for_development(t *testing.T) {
 	app := setUp()
 
 	// Given
@@ -46,7 +46,7 @@ func TestSystemErrorShowForDevelopment(t *testing.T) {
 	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.GetBody())
 }
 
-func TestShowUserError(t *testing.T) {
+func Test_show_user_error(t *testing.T) {
 	app := setUp()
 
 	// Given

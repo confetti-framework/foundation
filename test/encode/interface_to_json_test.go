@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
+func Test_json_response_without_response_encoder(t *testing.T) {
 	options := http.Options{App: foundation.NewApp()}
 	request := http.NewRequest(options)
 	response := outcome.NewResponse(outcome.Options{
@@ -27,26 +27,26 @@ func TestJsonResponseWithoutResponseEncoder(t *testing.T) {
 	)
 }
 
-func TestNilCanTransformToJson(t *testing.T) {
+func Test_nil_can_transform_to_json(t *testing.T) {
 	assert.True(t, encoder.InterfaceToJson{}.IsAble(nil))
 }
 
-func TestStringCanTransformToJson(t *testing.T) {
+func Test_string_can_transform_to_json(t *testing.T) {
 	object := "foo"
 	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
-func TestIntCanTransformToJson(t *testing.T) {
+func Test_int_can_transform_to_json(t *testing.T) {
 	object := 12
 	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
-func TestEmptyStructCanTransformToJson(t *testing.T) {
+func Test_empty_struct_can_transform_to_json(t *testing.T) {
 	object := foo{}
 	assert.True(t, encoder.InterfaceToJson{}.IsAble(object))
 }
 
-func TestTransformStructWithIntToJson(t *testing.T) {
+func Test_transform_struct_with_int_to_json(t *testing.T) {
 	app := setUp()
 	object := foo{12}
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
@@ -54,7 +54,7 @@ func TestTransformStructWithIntToJson(t *testing.T) {
 	assert.Equal(t, "{\"height\":12}", result)
 }
 
-func TestTransformStructWithFloat(t *testing.T) {
+func Test_transform_struct_with_float(t *testing.T) {
 	app := setUp()
 	object := foo{12.34}
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, object, nil)
@@ -62,7 +62,7 @@ func TestTransformStructWithFloat(t *testing.T) {
 	assert.Equal(t, "{\"height\":12.34}", result)
 }
 
-func TestTransformNilToJson(t *testing.T) {
+func Test_transform_nil_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.InterfaceToJson{}.EncodeThrough(app, nil, nil)
 	assert.NoError(t, err)

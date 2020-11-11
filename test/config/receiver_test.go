@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestGetEmptyStructByEmptyKey(t *testing.T) {
+func Test_get_empty_struct_by_empty_key(t *testing.T) {
 	var index = map[string]interface{}{}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
@@ -20,7 +20,7 @@ func TestGetEmptyStructByEmptyKey(t *testing.T) {
 	)
 }
 
-func TestGetFilledStructByEmptyKey(t *testing.T) {
+func Test_get_filled_struct_by_empty_key(t *testing.T) {
 	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
@@ -28,7 +28,7 @@ func TestGetFilledStructByEmptyKey(t *testing.T) {
 	assert.Equal(t, map[string]interface{}{"firstConfig": firstConfig}, container.Make("config"))
 }
 
-func TestGetByNotExistingKey(t *testing.T) {
+func Test_get_by_not_existing_key(t *testing.T) {
 	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
@@ -38,7 +38,7 @@ func TestGetByNotExistingKey(t *testing.T) {
 	assert.EqualError(t, err, "no value found with key 'age'")
 }
 
-func TestGetByExistingKey(t *testing.T) {
+func Test_get_by_existing_key(t *testing.T) {
 	var index = map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
@@ -46,7 +46,7 @@ func TestGetByExistingKey(t *testing.T) {
 	assert.Equal(t, "The horse", container.Make("config.firstConfig.Title"))
 }
 
-func TestGetNestedFromStruct(t *testing.T) {
+func Test_get_nested_from_struct(t *testing.T) {
 	index := map[string]interface{}{"deepConfig": deepConfig{
 		Deep: map[string]interface{}{
 			"deeper": []string{
@@ -61,7 +61,7 @@ func TestGetNestedFromStruct(t *testing.T) {
 	assert.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
 }
 
-func TestGetFromBootedContainer(t *testing.T) {
+func Test_get_from_booted_container(t *testing.T) {
 	index := map[string]interface{}{"deepConfig": deepConfig{
 		Deep: map[string]interface{}{
 			"deeper": []string{
@@ -76,7 +76,7 @@ func TestGetFromBootedContainer(t *testing.T) {
 	assert.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
 }
 
-func TestGetByAsterisk(t *testing.T) {
+func Test_get_by_asterisk(t *testing.T) {
 	var index = map[string]interface{}{"firstConfig": firstConfig, "secondConfig": secondConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)

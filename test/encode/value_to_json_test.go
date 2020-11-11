@@ -8,99 +8,99 @@ import (
 	"testing"
 )
 
-func TestEmptyStringToJson(t *testing.T) {
+func Test_empty_string_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(""), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "\"\"", result)
 }
 
-func TestNilStringToJson(t *testing.T) {
+func Test_nil_string_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(nil), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "null", result)
 }
 
-func TestValueWithStringToJson(t *testing.T) {
+func Test_value_with_string_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue("foo"), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "\"foo\"", result)
 }
 
-func TestBoolTrueToJson(t *testing.T) {
+func Test_bool_true_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(true), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "true", result)
 }
 
-func TestBoolFalseToJson(t *testing.T) {
+func Test_bool_false_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(false), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "false", result)
 }
 
-func TestPositiveNumberToJson(t *testing.T) {
+func Test_positive_number_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(100), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "100", result)
 }
 
-func TestNegativeNumberToJson(t *testing.T) {
+func Test_negative_number_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(-100), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "-100", result)
 }
 
-func TestFloatToJson(t *testing.T) {
+func Test_float_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewValue(1.2), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "1.2", result)
 }
 
-func TestCollectionWithOneStringToJson(t *testing.T) {
+func Test_collection_with_one_string_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewCollection("foo"), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "[\"foo\"]", result)
 }
 
-func TestCollectionWithThoStringsToJson(t *testing.T) {
+func Test_collection_with_tho_strings_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewCollection("foo", "bar"), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "[\"foo\",\"bar\"]", result)
 }
 
-func TestCollectionWithThoNumbersToJson(t *testing.T) {
+func Test_collection_with_tho_numbers_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewCollection(12, 14), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "[12,14]", result)
 }
 
-func TestCollectionWithThoFloatToJson(t *testing.T) {
+func Test_collection_with_tho_float_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewCollection(1.5, 0.4), mock.JsonEncoders)
 	assert.NoError(t, err)
 	assert.Equal(t, "[1.5,0.4]", result)
 }
 
-func TestStringCanNotTransformValueExpected(t *testing.T) {
+func Test_string_can_not_transform_value_expected(t *testing.T) {
 	assert.False(t, encoder.RawToJson{}.IsAble("foo"))
 }
 
-func TestCanTransformValue(t *testing.T) {
+func Test_can_transform_value(t *testing.T) {
 	assert.True(t, encoder.RawToJson{}.IsAble(support.NewValue(foo{})))
 }
 
-func TestTransformStringValueExpected(t *testing.T) {
+func Test_transform_string_value_expected(t *testing.T) {
 	app := setUp()
 	_, err := encoder.RawToJson{}.EncodeThrough(app, "foo", nil)
 	assert.EqualError(t, err, "can not encode to json with an unsupported type string")

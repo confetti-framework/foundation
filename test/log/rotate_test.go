@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-func TestNameWithDateSoItCanRotate(t *testing.T) {
+func Test_name_with_date_so_it_can_rotate(t *testing.T) {
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
 	logger = logger.SetApp(newTestApp())
@@ -23,7 +23,7 @@ func TestNameWithDateSoItCanRotate(t *testing.T) {
 	assert.FileExists(t, testDir+dateWithCorrectFormat+"_test.log")
 }
 
-func TestDonNotRemoveLatestFile(t *testing.T) {
+func Test_don_not_remove_latest_file(t *testing.T) {
 	// Given
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
@@ -37,7 +37,7 @@ func TestDonNotRemoveLatestFile(t *testing.T) {
 	assert.Len(t, getFiles(), 1)
 }
 
-func TestDontRemoveOtherLogs(t *testing.T) {
+func Test_dont_remove_other_logs(t *testing.T) {
 	// Given
 	setUp()
 	logger1 := getLogger(testDir+"1_test.log", 2)
@@ -60,7 +60,7 @@ func TestDontRemoveOtherLogs(t *testing.T) {
 	assert.Equal(t, testDir+"3_test.log", files[2])
 }
 
-func TestRemoveSecondFileIfMaxOne(t *testing.T) {
+func Test_remove_second_file_if_max_one(t *testing.T) {
 	// Given
 	setUp()
 	aLogFileIsPresent(testDir + "2019-10-21_test.log")
@@ -74,7 +74,7 @@ func TestRemoveSecondFileIfMaxOne(t *testing.T) {
 	assert.Len(t, getFiles(), 1)
 }
 
-func TestOnlyRemoveCurrentChannelFiles(t *testing.T) {
+func Test_only_remove_current_channel_files(t *testing.T) {
 	// Given
 	setUp()
 	aLogFileIsPresent(testDir + "2019-10-21_channel1.log")

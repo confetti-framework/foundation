@@ -8,22 +8,22 @@ import (
 	"testing"
 )
 
-func TestViewIsAbleNil(t *testing.T) {
+func Test_view_is_able_nil(t *testing.T) {
 	require.False(t, encoder.ViewToHtml{}.IsAble(nil))
 }
 
-func TestViewIsAbleWithView(t *testing.T) {
+func Test_view_is_able_with_view(t *testing.T) {
 	require.True(t, encoder.ViewToHtml{}.IsAble(mock.SimpleViewMock{}))
 }
 
-func TestCanNotEncodeNonView(t *testing.T) {
+func Test_can_not_encode_non_view(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, nil, nil)
 	require.Error(t, err)
 	require.Equal(t, "", result)
 }
 
-func TestConvertViewToHtml(t *testing.T) {
+func Test_convert_view_to_html(t *testing.T) {
 	app := setUp()
 	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseFiles(
@@ -36,14 +36,14 @@ func TestConvertViewToHtml(t *testing.T) {
 }
 
 //goland:noinspection GoNilness
-func TestViewWithUnknownTemplate(t *testing.T) {
+func Test_view_with_unknown_template(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.PageWithFooter{}, nil)
 	require.Contains(t, err.Error(), `no such template "footer"`)
 	require.Equal(t, "", result)
 }
 
-func TestViewWithFooterTemplate(t *testing.T) {
+func Test_view_with_footer_template(t *testing.T) {
 	app := setUp()
 	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseFiles(

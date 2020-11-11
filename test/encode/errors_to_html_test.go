@@ -9,17 +9,17 @@ import (
 	"testing"
 )
 
-func TestCanNotConvertStringToHtmlError(t *testing.T) {
+func Test_can_not_convert_string_to_html_error(t *testing.T) {
 	result := encoder.ErrorToHtml{}.IsAble("Foo")
 	require.False(t, result)
 }
 
-func TestOneErrorCanConvertToHtml(t *testing.T) {
+func Test_one_error_can_convert_to_html(t *testing.T) {
 	result := encoder.ErrorToHtml{}.IsAble(errors.New("entity not found"))
 	require.True(t, result)
 }
 
-func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
+func Test_not_correct_error_can_not_convert_to_html(t *testing.T) {
 	app := setUp()
 	encoders := []inter.Encoder{encoder.ErrorToHtml{}}
 	encoder := encoder.ErrorToHtml{}
@@ -29,7 +29,7 @@ func TestNotCorrectErrorCanNotConvertToHtml(t *testing.T) {
 	require.EqualError(t, err, "can't convert object to html in error format")
 }
 
-func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
+func Test_one_error_to_html_without_template(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
 	encoder := encoder.ErrorToHtml{}
@@ -41,7 +41,7 @@ func TestOneErrorToHtmlWithoutTemplate(t *testing.T) {
 	require.NotContains(t, result, "errors_to_html.go")
 }
 
-func TestOneErrorToHtmlOnProduction(t *testing.T) {
+func Test_one_error_to_html_on_production(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
 	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
@@ -53,7 +53,7 @@ func TestOneErrorToHtmlOnProduction(t *testing.T) {
 	require.NotContains(t, result, "errors_to_html.go")
 }
 
-func TestOneErrorToHtmlOnDevelopmentWithStackTrace(t *testing.T) {
+func Test_one_error_to_html_on_development_with_stack_trace(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", true)
 	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
@@ -65,7 +65,7 @@ func TestOneErrorToHtmlOnDevelopmentWithStackTrace(t *testing.T) {
 }
 
 //goland:noinspection GoNilness
-func TestTemplateErrorToHtml(t *testing.T) {
+func Test_template_error_to_html(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
 		EncodeThrough(
@@ -77,7 +77,7 @@ func TestTemplateErrorToHtml(t *testing.T) {
 	require.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
 }
 
-func TestSystemErrorConvertToHtml(t *testing.T) {
+func Test_system_error_convert_to_html(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, errors.New("bad request"), []inter.Encoder{encoder.InterfaceToHtml{}})
 

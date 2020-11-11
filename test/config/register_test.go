@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestRegisterNilIndex(t *testing.T) {
+func Test_register_nil_index(t *testing.T) {
 	var index map[string]interface{}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
@@ -16,7 +16,7 @@ func TestRegisterNilIndex(t *testing.T) {
 	assert.Equal(t, map[string]interface{}(nil), container.Make("config"))
 }
 
-func TestRegisterStruct(t *testing.T) {
+func Test_register_struct(t *testing.T) {
 	index := map[string]interface{}{"firstConfig": firstConfig}
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)

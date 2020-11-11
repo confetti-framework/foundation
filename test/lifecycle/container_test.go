@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestOneBindingWithAnAlias(t *testing.T) {
+func Test_one_binding_with_an_alias(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
@@ -20,7 +20,7 @@ func TestOneBindingWithAnAlias(t *testing.T) {
 	assert.Equal(t, testStruct{}, kernel)
 }
 
-func TestMakeFromSingleton(t *testing.T) {
+func Test_make_from_singleton(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Singleton(
@@ -33,7 +33,7 @@ func TestMakeFromSingleton(t *testing.T) {
 	assert.Equal(t, testStruct{}, kernel)
 }
 
-func TestMakeFromSingletonWithCallback(t *testing.T) {
+func Test_make_from_singleton_with_callback(t *testing.T) {
 	app := foundation.NewApp()
 
 	app.Singleton(
@@ -48,7 +48,7 @@ func TestMakeFromSingletonWithCallback(t *testing.T) {
 	assert.Equal(t, testStruct{TestCount: 1}, newStruct)
 }
 
-func TestResolveAutomatically(t *testing.T) {
+func Test_resolve_automatically(t *testing.T) {
 	container := foundation.NewContainer()
 
 	resolvedStruct := container.Make(testStruct{})
@@ -56,7 +56,7 @@ func TestResolveAutomatically(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func TestBindingExistingObject(t *testing.T) {
+func Test_binding_existing_object(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
@@ -67,7 +67,7 @@ func TestBindingExistingObject(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func TestOneBindingWithContract(t *testing.T) {
+func Test_one_binding_with_contract(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Bind(
@@ -78,7 +78,7 @@ func TestOneBindingWithContract(t *testing.T) {
 	assert.Len(t, container.Bindings(), 1)
 }
 
-func TestMultipleBindingWithContract(t *testing.T) {
+func Test_multiple_binding_with_contract(t *testing.T) {
 	app := foundation.NewContainer()
 
 	app.Bind(
@@ -94,7 +94,7 @@ func TestMultipleBindingWithContract(t *testing.T) {
 	assert.Len(t, app.Bindings(), 2)
 }
 
-func TestBindingTwoWithTheSameInterfaces(t *testing.T) {
+func Test_binding_two_with_the_same_interfaces(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Bind(
@@ -110,7 +110,7 @@ func TestBindingTwoWithTheSameInterfaces(t *testing.T) {
 	assert.Len(t, container.Bindings(), 1)
 }
 
-func TestBindingAndMakeFromInterface(t *testing.T) {
+func Test_binding_and_make_from_interface(t *testing.T) {
 	container := foundation.NewContainer()
 
 	kernel := testStruct{}
@@ -121,7 +121,7 @@ func TestBindingAndMakeFromInterface(t *testing.T) {
 	assert.Equal(t, testStruct{}, resolvedStruct)
 }
 
-func TestBindingWithoutAbstract(t *testing.T) {
+func Test_binding_without_abstract(t *testing.T) {
 	container := foundation.NewContainer()
 
 	container.Instance(testStruct{TestCount: 1})
@@ -131,7 +131,7 @@ func TestBindingWithoutAbstract(t *testing.T) {
 	assert.Equal(t, testStruct{TestCount: 1}, resolvedStruct)
 }
 
-func TestExtendingBindings(t *testing.T) {
+func Test_extending_bindings(t *testing.T) {
 
 	container := foundation.NewContainer()
 
@@ -149,7 +149,7 @@ func TestExtendingBindings(t *testing.T) {
 	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
 }
 
-func TestResolveWithBootApp(t *testing.T) {
+func Test_resolve_with_boot_app(t *testing.T) {
 	bootContainer := foundation.NewContainer()
 	container := foundation.NewContainerByBoot(bootContainer)
 
@@ -158,7 +158,7 @@ func TestResolveWithBootApp(t *testing.T) {
 	assert.Equal(t, "Cooler", container.Make("application_name"))
 }
 
-func TestResolveFromBootApp(t *testing.T) {
+func Test_resolve_from_boot_app(t *testing.T) {
 	bootContainer := foundation.NewContainer()
 	bootContainer.Bind("application_name", "Cooler")
 
@@ -167,7 +167,7 @@ func TestResolveFromBootApp(t *testing.T) {
 	assert.Equal(t, "Cooler", container.Make("application_name"))
 }
 
-func TestResolveFromNormalContainerButNotFromBoot(t *testing.T) {
+func Test_resolve_from_normal_container_but_not_from_boot(t *testing.T) {
 	bootContainer := foundation.NewContainer()
 	bootContainer.Bind("application_name", "Heater")
 

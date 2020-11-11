@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestLogToDefaultChannel(t *testing.T) {
+func Test_log_to_default_channel(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
@@ -18,7 +18,7 @@ func TestLogToDefaultChannel(t *testing.T) {
 	assert.Len(t, openAndReadFile(testFileSecond), 1)
 }
 
-func TestLogToNonExistingChannel(t *testing.T) {
+func Test_log_to_non_existing_channel(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
@@ -27,7 +27,7 @@ func TestLogToNonExistingChannel(t *testing.T) {
 	})
 }
 
-func TestLogToMultipleNonExistingChannels(t *testing.T) {
+func Test_log_to_multiple_non_existing_channels(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
@@ -36,7 +36,7 @@ func TestLogToMultipleNonExistingChannels(t *testing.T) {
 	})
 }
 
-func TestLogToSpecificChannel(t *testing.T) {
+func Test_log_to_specific_channel(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
@@ -46,7 +46,7 @@ func TestLogToSpecificChannel(t *testing.T) {
 	assert.Len(t, openAndReadFile(testFileSecond), 0)
 }
 
-func TestLogToMultipleChannels(t *testing.T) {
+func Test_log_to_multiple_channels(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
