@@ -2,7 +2,6 @@ package encoder
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/report"
 	"github.com/lanvard/support/str"
 )
 
@@ -23,7 +22,7 @@ func (e ErrorToJson) IsAble(object interface{}) bool {
 func (e ErrorToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	err, ok := object.(error)
 	if !ok {
-		return "", report.EncodeError.Wrap("can't convert object to json in error format")
+		return "", EncodeError.Wrap("can't convert object to json in error format")
 	}
 
 	e.Jsonapi = map[string]string{"version": "1.0"}

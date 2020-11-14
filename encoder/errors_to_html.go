@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation/http/view_helper"
-	"github.com/lanvard/foundation/report"
 	"github.com/lanvard/support/str"
 )
 
@@ -20,7 +19,7 @@ func (e ErrorToHtml) IsAble(object interface{}) bool {
 func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	err, ok := object.(error)
 	if !ok {
-		return "", report.EncodeError.Wrap("can't convert object to html in error format")
+		return "", EncodeError.Wrap("can't convert object to html in error format")
 	}
 
 	if e.View != nil {

@@ -2,7 +2,6 @@ package encoder
 
 import (
 	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/report"
 	"reflect"
 )
 
@@ -20,7 +19,7 @@ func (j InterfaceToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inte
 
 	result, ok := object.(string)
 	if !ok {
-		return "", report.EncodeError.Wrap("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
+		return "", EncodeError.Wrap("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
 	}
 
 	return result, nil
