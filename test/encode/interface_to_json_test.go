@@ -22,7 +22,7 @@ func Test_json_response_without_response_encoder(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(
 		t,
-		"no value found with key 'default_response_encoder'",
+		"no value found with key 'default_response_outcome'",
 		err.Error(),
 	)
 }

@@ -12,7 +12,7 @@ func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (respons
 
 	defer func() {
 		if r := recover(); r != nil {
-			instance, err := request.App().MakeE("default_response_encoder")
+			instance, err := request.App().MakeE("default_response_outcome")
 			if err != nil {
 				panic(errors.Wrap(err, "please bind a encoder"))
 			}

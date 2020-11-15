@@ -36,7 +36,7 @@ func Test_panic_without_valid_encoder_defined(t *testing.T) {
 func Test_panic_error_to_json(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("default_response_encoder", outcome.Json)
+	app.Bind("default_response_outcome", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -55,7 +55,7 @@ func Test_panic_error_to_json(t *testing.T) {
 func Test_panic_string_to_json(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("default_response_encoder", outcome.Json)
+	app.Bind("default_response_outcome", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -74,7 +74,7 @@ func Test_panic_string_to_json(t *testing.T) {
 func Test_panic_unknown_to_json(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("default_response_encoder", outcome.Json)
+	app.Bind("default_response_outcome", outcome.Json)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
@@ -93,7 +93,7 @@ func Test_panic_unknown_to_json(t *testing.T) {
 func Test_panic_with_error_to_html(t *testing.T) {
 	// Given
 	app := setUp()
-	app.Bind("default_response_encoder", outcome.Html)
+	app.Bind("default_response_outcome", outcome.Html)
 	request := http.NewRequest(http.Options{App: app})
 
 	// When
