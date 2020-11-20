@@ -22,7 +22,7 @@ func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (respons
 			case error:
 				err = x
 			default:
-				err = errors.New("can't convert panic to response. Error or string required")
+				err = errors.New("can't convert panic to response. IsError or string required")
 			}
 
 			response = instance.(func(interface{}) inter.Response)(err)

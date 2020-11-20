@@ -114,10 +114,10 @@ func Test_form_values(t *testing.T) {
 func Test_form_value_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	value, err := request.Parameter("not_existing_param").NumberE()
-	assert.Equal(t, 0, value)
+	value, err := request.ParameterE("not_existing_param")
+	assert.Equal(t, 0, value.Number())
 	//goland:noinspection GoNilness
-	assert.Equal(t, "no value found with key 'not_existing_param'", err.Error())
+	assert.Equal(t, "key 'not_existing_param': can not found value in map", err.Error())
 }
 
 func Test_value_or(t *testing.T) {

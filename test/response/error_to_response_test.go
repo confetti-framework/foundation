@@ -87,7 +87,7 @@ func Test_panic_unknown_to_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. Error or string required"}]}`, response.GetBody())
+	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. IsError or string required"}]}`, response.GetBody())
 }
 
 func Test_panic_with_error_to_html(t *testing.T) {

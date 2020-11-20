@@ -71,7 +71,7 @@ func Test_collection_with_one_string_to_json(t *testing.T) {
 	assert.Equal(t, "[\"foo\"]", result)
 }
 
-func Test_collection_with_tho_strings_to_json(t *testing.T) {
+func Test_merge_with_tho_strings_to_json(t *testing.T) {
 	app := setUp()
 	result, err := encoder.EncodeThrough(app, support.NewCollection("foo", "bar"), mock.JsonEncoders)
 	assert.NoError(t, err)

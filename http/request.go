@@ -151,42 +151,60 @@ func (r *Request) SetBody(body string) inter.Request {
 }
 
 func (r *Request) Content(keyInput ...string) support.Value {
+	result, err := r.ContentE(keyInput...)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (r *Request) ContentE(keyInput ...string) (support.Value, error) {
 	// Let keyInput be a optional parameter
 	var key string
 	if len(keyInput) > 0 {
 		key = keyInput[0]
 	}
 
-	formMap := support.NewMap(r.source.Form)
-	if !formMap.Empty() {
-		return formMap.Get(key)
+	formMap, err := support.NewMapE(r.source.Form)
+	if err != nil || (formMap != nil && !formMap.Empty()) {
+		return formMap.GetE(key)
 	}
 
-	r.content = r.generateContentFromBody()
+	r.content, err = r.generateContentFromBody()
+	if err != nil {
+		return support.Value{}, err
+	}
 
-	return r.content.Get(key)
+	return r.content.GetE(key)
 }
 
 func (r Request) ContentOr(key string, defaultValue interface{}) support.Value {
-	value := r.Content(key)
-	if value.Error() == nil {
-		return value
+	result, err := r.ContentE(key)
+	if err != nil {
+		return support.NewValue(defaultValue)
 	}
 
-	return support.NewValue(defaultValue)
+	return result
 }
 
 func (r Request) Parameter(key string) support.Value {
-	return r.parameters().Get(key)
+	result, err := r.ParameterE(key)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (r Request) ParameterE(key string) (support.Value, error) {
+	return r.parameters().GetE(key)
 }
 
 func (r Request) ParameterOr(key string, defaultValue interface{}) support.Value {
-	value := r.Parameter(key)
-	if value.Error() == nil {
-		return value
+	value, err := r.ParameterE(key)
+	if err != nil {
+		return support.NewValue(defaultValue)
 	}
-
-	return support.NewValue(defaultValue)
+	return value
 }
 
 func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
@@ -195,16 +213,24 @@ func (r *Request) SetUrlValues(vars map[string]string) inter.Request {
 }
 
 func (r Request) Query(key string) support.Value {
-	return support.NewMap(r.Source().URL.Query()).Get(key)
+	result, err := r.QueryE(key)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (r Request) QueryE(key string) (support.Value, error) {
+	return support.NewMap(r.Source().URL.Query()).GetE(key)
 }
 
 func (r Request) QueryOr(key string, defaultValue interface{}) support.Value {
-	value := support.NewMap(r.Source().URL.Query()).Get(key)
-	if value.Error() == nil {
-		return value
+	result, err := support.NewMap(r.Source().URL.Query()).GetE(key)
+	if err != nil {
+		return support.NewValue(defaultValue)
 	}
 
-	return support.NewValue(defaultValue)
+	return result
 }
 
 func (r Request) Header(key string) string {
@@ -289,25 +315,25 @@ func (r Request) parameters() support.Map {
 	return support.NewMap().Merge(urlMap, queryMap)
 }
 
-func (r Request) generateContentFromBody() support.Value {
+func (r Request) generateContentFromBody() (support.Value, error) {
 	if r.content.Filled() {
-		return r.content
+		return r.content, nil
 	}
 
 	rawBody, err := ioutil.ReadAll(r.source.Body)
 	if err != nil {
-		return support.NewValueE(rawBody, err)
+		return support.Value{}, err
 	}
 
 	rawDecoder := r.Make(inter.RequestBodyDecoder)
 	if rawDecoder == nil {
-		return support.NewValueE(nil, errors.New("no request body decoder found"))
+		return support.Value{}, errors.New("no request body decoder found")
 	}
 
 	decoder := rawDecoder.(func(string) support.Value)
 	body := decoder(string(rawBody))
 
-	return body
+	return body, nil
 }
 
 func (r *Request) getFilesByHeaders(fileHeaders []*multipart.FileHeader) ([]support.File, error) {

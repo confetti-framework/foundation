@@ -13,11 +13,8 @@ func Test_get_empty_struct_by_empty_key(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(
-		t,
-		map[string]interface{}{},
-		container.Make("config."),
-	)
+	result := container.Make("config.")
+	assert.Equal(t, map[string]interface{}{}, result)
 }
 
 func Test_get_filled_struct_by_empty_key(t *testing.T) {
@@ -35,7 +32,7 @@ func Test_get_by_not_existing_key(t *testing.T) {
 
 	result, err := container.MakeE("config.age")
 	assert.Nil(t, result)
-	assert.EqualError(t, err, "no value found with key 'age'")
+	assert.EqualError(t, err, "get instance from container: key 'age': can not found value in map")
 }
 
 func Test_get_by_existing_key(t *testing.T) {

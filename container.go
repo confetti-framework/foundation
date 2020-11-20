@@ -54,7 +54,7 @@ func (c *Container) Instance(concrete interface{}) interface{} {
 	return concrete
 }
 
-// Get the container's bindings.
+// GetE the container's bindings.
 func (c *Container) Bindings() inter.Bindings {
 	return c.bindings
 }
@@ -93,18 +93,24 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 	} else if kind == reflect.String {
 		var instances support.Map
 		instances, err = support.NewMapE(c.bindings)
-		if err != nil {
-			return nil, err
-		}
-		if c.bootContainer != nil {
-			bootBindings := c.bootContainer.Bindings()
-			bootInstances, err := support.NewMapE(bootBindings)
-			if err != nil {
-				return nil, err
+		if err == nil {
+			var value support.Value
+			if c.bootContainer != nil {
+				bootBindings := c.bootContainer.Bindings()
+				bootInstances, err := support.NewMapE(bootBindings)
+				if err != nil {
+					return nil, err
+				}
+				instances.Merge(bootInstances)
 			}
-			instances.Merge(bootInstances)
+			value, err = instances.GetE(abstract.(string))
+			//goland:noinspection GoNilness
+			concrete = value.Raw()
 		}
-		concrete, err = instances.Get(abstract.(string)).RawE()
+	}
+
+	if err != nil {
+		err = errors.Wrap(err, "get instance from container")
 	}
 
 	return concrete, err
