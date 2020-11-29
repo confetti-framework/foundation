@@ -3,6 +3,7 @@ package request
 import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/foundation"
 	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
@@ -13,6 +14,7 @@ import (
 	"github.com/lanvard/routing/outcome"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
+	net "net/http"
 	"net/url"
 	"testing"
 )
@@ -174,7 +176,7 @@ func fakeRequestWithJsonBody() inter.Request {
 
 	return http.NewRequest(http.Options{
 		App:    app,
-		Method: method.Get,
+		Method: method.Post,
 		Host:   "https://api.lanvard.com",
 		Url:    "/user/2432?comment_id=1234",
 		Header: map[string][]string{
@@ -182,6 +184,21 @@ func fakeRequestWithJsonBody() inter.Request {
 		},
 		Content: `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
 	})
+}
+
+func Test_get_content_from_request_with_method_get(t *testing.T) {
+	request := http.NewRequest(http.Options{
+		App:    foundation.NewApp(),
+		Method: method.Get,
+		Host:   "https://api.lanvard.com",
+	})
+
+	content, err := request.ContentE("")
+	assert.Equal(t, support.NewValue(nil), content)
+	assert.EqualError(t, err, "no request body decoder found. Check the headers and http method")
+	status, ok := errors.FindStatus(err)
+	assert.Equal(t, net.StatusUnsupportedMediaType, status)
+	assert.True(t, ok)
 }
 
 var emptyController = func(request inter.Request) inter.Response { return nil }

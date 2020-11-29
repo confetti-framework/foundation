@@ -110,6 +110,10 @@ func (r *Request) Make(abstract interface{}) interface{} {
 	return r.App().Make(abstract)
 }
 
+func (r *Request) MakeE(abstract interface{}) (interface{}, error) {
+	return r.App().MakeE(abstract)
+}
+
 func (r Request) Source() http.Request {
 	return r.source
 }
@@ -319,9 +323,9 @@ func (r Request) generateContentFromBody() (support.Value, error) {
 		return r.content, nil
 	}
 
-	rawDecoder := r.Make(inter.RequestBodyDecoder)
-	if rawDecoder == nil {
-		return support.Value{}, errors.New("no request body decoder found")
+	rawDecoder, err := r.MakeE(inter.RequestBodyDecoder)
+	if errors.Is(err, support.CanNotFoundValueError) {
+		return support.Value{}, NoRequestBodyDecoderFoundError
 	}
 
 	decoder := rawDecoder.(func(request inter.Request) support.Value)
