@@ -2,18 +2,20 @@ package encode
 
 import (
 	"github.com/lanvard/foundation/encoder"
+	"github.com/lanvard/foundation/http"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_json_to_value(t *testing.T) {
-	value := encoder.JsonToValue(`{"name":{"first":"Janet","last":"Prichard"},"age":47}`)
+	request := http.NewRequest(http.Options{Content: `{"name":{"first":"Janet","last":"Prichard"},"age":47}`})
+	value := encoder.RequestWithJsonToValue(request)
 
 	assert.Equal(t, "Janet", value.Get("name.first").String())
 }
 
 func Test_deep_json_to_value(t *testing.T) {
-	value := encoder.JsonToValue(`{
+	content := `{
   "data": {
     "tracktraces": [
       {
@@ -42,7 +44,9 @@ func Test_deep_json_to_value(t *testing.T) {
       }
     ]
   }
-}`)
+}`
+	request := http.NewRequest(http.Options{Content: content})
+	value := encoder.RequestWithJsonToValue(request)
 
 	assert.Equal(t, "J01", value.Get("data.tracktraces.0.history.2.code").String())
 }

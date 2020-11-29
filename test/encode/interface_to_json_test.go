@@ -22,7 +22,7 @@ func Test_json_response_without_response_encoder(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(
 		t,
-		"get instance from container: key 'default_response_outcome': can not found value in map",
+		"get instance from container: key 'default_response_outcome': can not found value",
 		err.Error(),
 	)
 }

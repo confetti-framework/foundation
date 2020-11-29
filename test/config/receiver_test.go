@@ -32,7 +32,7 @@ func Test_get_by_not_existing_key(t *testing.T) {
 
 	result, err := container.MakeE("config.age")
 	assert.Nil(t, result)
-	assert.EqualError(t, err, "get instance from container: key 'age': can not found value in map")
+	assert.EqualError(t, err, "get instance from container: key 'age': can not found value")
 }
 
 func Test_get_by_existing_key(t *testing.T) {

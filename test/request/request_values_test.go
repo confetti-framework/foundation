@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/lanvard/contract/inter"
 	"github.com/lanvard/foundation"
+	"github.com/lanvard/foundation/encoder"
 	"github.com/lanvard/foundation/http"
 	"github.com/lanvard/foundation/http/method"
 	"github.com/lanvard/foundation/http/middleware"
@@ -88,6 +89,7 @@ func Test_get_url(t *testing.T) {
 
 func Test_all_values(t *testing.T) {
 	request := fakeRequestWithForm()
+	request.App().Singleton(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
 
 	assert.Equal(t,
 		support.Map{
@@ -117,7 +119,7 @@ func Test_form_value_not_found(t *testing.T) {
 	value, err := request.ParameterE("not_existing_param")
 	assert.Equal(t, 0, value.Number())
 	//goland:noinspection GoNilness
-	assert.Equal(t, "key 'not_existing_param': can not found value in map", err.Error())
+	assert.Equal(t, "key 'not_existing_param': can not found value", err.Error())
 }
 
 func Test_value_or(t *testing.T) {
@@ -148,10 +150,11 @@ func Test_request_content_type_json(t *testing.T) {
 }
 
 func fakeRequestWithForm() inter.Request {
-	return http.NewRequest(http.Options{
+	request := http.NewRequest(http.Options{
 		Method: method.Get,
 		Host:   "https://api.lanvard.com",
 		Url:    "/user/1432?user_id=1234",
+		Header: map[string][]string{"Content-Type": {"multipart/form-data; boundary=xxx"}},
 		Form: url.Values{
 			"age":      {"10"},
 			"language": {"Go"},
@@ -159,7 +162,10 @@ func fakeRequestWithForm() inter.Request {
 			"first":    {"klaas"},
 			"second":   {"bob", "tom"},
 		},
+		App: foundation.NewApp(),
 	})
+	middleware.RequestBodyDecoder{}.Handle(request, emptyController)
+	return request
 }
 
 func fakeRequestWithJsonBody() inter.Request {
@@ -177,3 +183,5 @@ func fakeRequestWithJsonBody() inter.Request {
 		Content: `{"data":{"foo":[{"foo":{"foo":"NL"},"bar":[{"bar":"A01"},{"bar":"A02"}]}]}}`,
 	})
 }
+
+var emptyController = func(request inter.Request) inter.Response { return nil }

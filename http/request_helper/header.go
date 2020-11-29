@@ -5,9 +5,20 @@ import (
 	"strings"
 )
 
-func IsJson(headerHolder inter.Request) bool {
+func HasJson(headerHolder inter.Request) bool {
 	header := headerHolder.Header("Content-Type")
 	for _, jsonHeader := range []string{"/json", "+json"} {
+		if strings.Contains(header, jsonHeader) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func HasMultiPartFormData(headerHolder inter.Request) bool {
+	header := headerHolder.Header("Content-Type")
+	for _, jsonHeader := range []string{"multipart/form-data"} {
 		if strings.Contains(header, jsonHeader) {
 			return true
 		}

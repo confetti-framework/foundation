@@ -96,6 +96,9 @@ func NewRequest(options Options) inter.Request {
 }
 
 func (r Request) App() inter.App {
+	if r.app == nil {
+		panic("app in request is nil")
+	}
 	return r.app
 }
 
@@ -161,13 +164,9 @@ func (r *Request) Content(keyInput ...string) support.Value {
 func (r *Request) ContentE(keyInput ...string) (support.Value, error) {
 	// Let keyInput be a optional parameter
 	var key string
+	var err error
 	if len(keyInput) > 0 {
 		key = keyInput[0]
-	}
-
-	formMap, err := support.NewMapE(r.source.Form)
-	if err != nil || (formMap != nil && !formMap.Empty()) {
-		return formMap.GetE(key)
 	}
 
 	r.content, err = r.generateContentFromBody()
@@ -320,18 +319,13 @@ func (r Request) generateContentFromBody() (support.Value, error) {
 		return r.content, nil
 	}
 
-	rawBody, err := ioutil.ReadAll(r.source.Body)
-	if err != nil {
-		return support.Value{}, err
-	}
-
 	rawDecoder := r.Make(inter.RequestBodyDecoder)
 	if rawDecoder == nil {
 		return support.Value{}, errors.New("no request body decoder found")
 	}
 
-	decoder := rawDecoder.(func(string) support.Value)
-	body := decoder(string(rawBody))
+	decoder := rawDecoder.(func(request inter.Request) support.Value)
+	body := decoder(&r)
 
 	return body, nil
 }
