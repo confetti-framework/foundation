@@ -19,6 +19,11 @@ func Test_one_error_can_convert_to_html(t *testing.T) {
 	require.True(t, result)
 }
 
+func Test_slice_with_one_error_convert_to_html(t *testing.T) {
+	result := encoder.ErrorToHtml{}.IsAble([]error{errors.New("entity not found")})
+	require.True(t, result)
+}
+
 func Test_not_correct_error_can_not_convert_to_html(t *testing.T) {
 	app := setUp()
 	encoders := []inter.Encoder{encoder.ErrorToHtml{}}
@@ -64,13 +69,39 @@ func Test_one_error_to_html_on_development_with_stack_trace(t *testing.T) {
 	require.Contains(t, result, "errors_to_html_test.go")
 }
 
-//goland:noinspection GoNilness
 func Test_template_error_to_html(t *testing.T) {
 	app := setUp()
 	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
 		EncodeThrough(
 			app,
-			errors.New("entity not found"), mock.HtmlEncoders,
+			errors.New("entity not found"),
+			mock.HtmlEncoders,
+		)
+
+	require.NoError(t, err)
+	require.Equal(t, "<h1>500</h1>\n<h2>Entity not found</h2>\n", result)
+}
+
+func Test_slice_without_error_to_html(t *testing.T) {
+	app := setUp()
+	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
+		EncodeThrough(
+			app,
+			[]error{},
+			mock.HtmlEncoders,
+		)
+
+	require.Equal(t, "", result)
+	require.EqualError(t, err, "can't convert object to html in error format")
+}
+
+func Test_slice_with_one_error_to_html(t *testing.T) {
+	app := setUp()
+	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
+		EncodeThrough(
+			app,
+			[]error{errors.New("entity not found")},
+			mock.HtmlEncoders,
 		)
 
 	require.NoError(t, err)
