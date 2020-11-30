@@ -325,7 +325,7 @@ func (r Request) generateContentFromBody() (support.Value, error) {
 
 	rawDecoder, err := r.MakeE(inter.RequestBodyDecoder)
 	if errors.Is(err, support.CanNotFoundValueError) {
-		return support.Value{}, NoRequestBodyDecoderFoundError
+		return support.Value{}, errors.WithStack(NoRequestBodyDecoderFoundError)
 	}
 
 	decoder := rawDecoder.(func(request inter.Request) support.Value)
