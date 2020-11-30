@@ -6,7 +6,11 @@ import (
 )
 
 func RequestWithFormToValue(request inter.Request) support.Value {
-	formMap, err := support.NewValueE(request.Source().Form)
+	source := request.Source()
+	if err := source.ParseForm(); err != nil {
+		return support.NewValue(err)
+	}
+	formMap, err := support.NewValueE(source.Form)
 	if err != nil {
 		return support.NewValue(err)
 	}
