@@ -18,7 +18,7 @@ func HasJson(headerHolder inter.Request) bool {
 
 func HasMultiPartFormData(headerHolder inter.Request) bool {
 	header := headerHolder.Header("Content-Type")
-	for _, jsonHeader := range []string{"multipart/form-data"} {
+	for _, jsonHeader := range []string{"multipart/form-data", "application/x-www-form-urlencoded"} {
 		if strings.Contains(header, jsonHeader) {
 			return true
 		}

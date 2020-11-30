@@ -11,7 +11,6 @@ type Kernel struct {
 // Handle an incoming HTTP request.
 func (k Kernel) Handle(request inter.Request) inter.Response {
 	return k.sendRequestThroughRouter(request)
-	// @todo event RequestHandled
 }
 
 // Send the given request through the middleware / router.
