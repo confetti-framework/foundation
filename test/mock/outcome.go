@@ -9,7 +9,7 @@ var JsonEncoders = []inter.Encoder{
 	encoder.JsonReaderToJson{},
 	encoder.RawToJson{},
 	encoder.JsonToJson{},
-	encoder.ErrorToJson{},
+	encoder.ErrorSToJson{},
 	encoder.InterfaceToJson{}, // todo: interface is now the default, can't override in ResponseServiceProvider
 }
 

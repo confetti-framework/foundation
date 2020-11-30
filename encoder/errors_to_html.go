@@ -7,16 +7,16 @@ import (
 	"github.com/lanvard/support/str"
 )
 
-type ErrorToHtml struct {
+type ErrorsToHtml struct {
 	View func(app inter.App, err error) inter.View
 }
 
-func (e ErrorToHtml) IsAble(object interface{}) bool {
+func (e ErrorsToHtml) IsAble(object interface{}) bool {
 	_, ok := e.getErrors(object)
 	return ok
 }
 
-func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
+func (e ErrorsToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	errs, ok := e.getErrors(object)
 	if !ok {
 		return "", EncodeError.Wrap("can't convert object to html in error format")
@@ -31,7 +31,7 @@ func (e ErrorToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.
 	return str.UpperFirst(fmt.Sprintf("%v", err)), nil
 }
 
-func (e ErrorToHtml) getErrors(object interface{}) ([]error, bool) {
+func (e ErrorsToHtml) getErrors(object interface{}) ([]error, bool) {
 	err, ok := object.(error)
 	if ok {
 		return []error{err}, ok

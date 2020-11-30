@@ -10,24 +10,24 @@ import (
 )
 
 func Test_can_not_convert_string_to_html_error(t *testing.T) {
-	result := encoder.ErrorToHtml{}.IsAble("Foo")
+	result := encoder.ErrorsToHtml{}.IsAble("Foo")
 	require.False(t, result)
 }
 
 func Test_one_error_can_convert_to_html(t *testing.T) {
-	result := encoder.ErrorToHtml{}.IsAble(errors.New("entity not found"))
+	result := encoder.ErrorsToHtml{}.IsAble(errors.New("entity not found"))
 	require.True(t, result)
 }
 
 func Test_slice_with_one_error_convert_to_html(t *testing.T) {
-	result := encoder.ErrorToHtml{}.IsAble([]error{errors.New("entity not found")})
+	result := encoder.ErrorsToHtml{}.IsAble([]error{errors.New("entity not found")})
 	require.True(t, result)
 }
 
 func Test_not_correct_error_can_not_convert_to_html(t *testing.T) {
 	app := setUp()
-	encoders := []inter.Encoder{encoder.ErrorToHtml{}}
-	encoder := encoder.ErrorToHtml{}
+	encoders := []inter.Encoder{encoder.ErrorsToHtml{}}
+	encoder := encoder.ErrorsToHtml{}
 	result, err := encoder.EncodeThrough(app, "foo", encoders)
 
 	require.Equal(t, "", result)
@@ -37,7 +37,7 @@ func Test_not_correct_error_can_not_convert_to_html(t *testing.T) {
 func Test_one_error_to_html_without_template(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
-	encoder := encoder.ErrorToHtml{}
+	encoder := encoder.ErrorsToHtml{}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
 	require.NoError(t, err)
@@ -49,7 +49,7 @@ func Test_one_error_to_html_without_template(t *testing.T) {
 func Test_one_error_to_html_on_production(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", false)
-	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
+	encoder := encoder.ErrorsToHtml{View: mock.NewViewErrorMock}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
 	require.NoError(t, err)
@@ -61,7 +61,7 @@ func Test_one_error_to_html_on_production(t *testing.T) {
 func Test_one_error_to_html_on_development_with_stack_trace(t *testing.T) {
 	app := setUp()
 	app.Bind("config.App.Debug", true)
-	encoder := encoder.ErrorToHtml{View: mock.NewViewErrorMock}
+	encoder := encoder.ErrorsToHtml{View: mock.NewViewErrorMock}
 	result, err := encoder.EncodeThrough(app, errors.New("entity not found"), mock.HtmlEncoders)
 
 	require.NoError(t, err)
@@ -71,7 +71,7 @@ func Test_one_error_to_html_on_development_with_stack_trace(t *testing.T) {
 
 func Test_template_error_to_html(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
+	result, err := encoder.ErrorsToHtml{View: mock.NewViewErrorMock}.
 		EncodeThrough(
 			app,
 			errors.New("entity not found"),
@@ -84,7 +84,7 @@ func Test_template_error_to_html(t *testing.T) {
 
 func Test_slice_without_error_to_html(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
+	result, err := encoder.ErrorsToHtml{View: mock.NewViewErrorMock}.
 		EncodeThrough(
 			app,
 			[]error{},
@@ -97,7 +97,7 @@ func Test_slice_without_error_to_html(t *testing.T) {
 
 func Test_slice_with_one_error_to_html(t *testing.T) {
 	app := setUp()
-	result, err := encoder.ErrorToHtml{View: mock.NewViewErrorMock}.
+	result, err := encoder.ErrorsToHtml{View: mock.NewViewErrorMock}.
 		EncodeThrough(
 			app,
 			[]error{errors.New("entity not found")},

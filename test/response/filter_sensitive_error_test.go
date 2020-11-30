@@ -68,7 +68,7 @@ func setUp() *foundation.Application {
 	app.Bind("outcome_json_encoders", mock.JsonEncoders)
 	app.Bind("outcome_html_encoders", append(
 		mock.HtmlEncoders,
-		encoder.ErrorToHtml{View: mock.NewViewErrorMock},
+		encoder.ErrorsToHtml{View: mock.NewViewErrorMock},
 	))
 	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseGlob(mock.TemplateByName("") + "/[^sub]*")
