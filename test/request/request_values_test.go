@@ -28,10 +28,10 @@ func Test_number_from_uri(t *testing.T) {
 
 	urlValue := request.Parameter("user_id")
 
-	assert.Equal(t, 1432, urlValue.Number())
+	assert.Equal(t, 1432, urlValue.Int())
 	assert.Equal(t, "1432", urlValue.String())
 	assert.NotEqual(t, 1432, urlValue.String())
-	assert.NotEqual(t, "1432", urlValue.Number())
+	assert.NotEqual(t, "1432", urlValue.Int())
 }
 
 func Test_numbers_from_uri(t *testing.T) {
@@ -56,10 +56,10 @@ func Test_number_from_query(t *testing.T) {
 
 	value := request.Parameter("user_id")
 
-	assert.Equal(t, 1432, value.Number())
+	assert.Equal(t, 1432, value.Int())
 	assert.Equal(t, "1432", value.String())
 	assert.NotEqual(t, 1432, value.String())
-	assert.NotEqual(t, "1432", value.Number())
+	assert.NotEqual(t, "1432", value.Int())
 }
 
 func Test_numbers_from_query(t *testing.T) {
@@ -106,7 +106,7 @@ func Test_all_values(t *testing.T) {
 func Test_form_values(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	assert.Equal(t, 1234, request.Parameter("user_id").Number())
+	assert.Equal(t, 1234, request.Parameter("user_id").Int())
 	assert.Equal(t, "Go", request.Content("language").String())
 	assert.Equal(t, "bob", request.Content("second").String())
 	assert.Equal(t, "bob", request.Content("second").Collection().First().String())
@@ -119,7 +119,7 @@ func Test_form_value_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	value, err := request.ParameterE("not_existing_param")
-	assert.Equal(t, 0, value.Number())
+	assert.Equal(t, 0, value.Int())
 	//goland:noinspection GoNilness
 	assert.Equal(t, "key 'not_existing_param': can not found value", err.Error())
 }
@@ -131,9 +131,9 @@ func Test_value_or(t *testing.T) {
 	assert.Equal(t, "Go", request.ContentOr("language", "PHP").String())
 	assert.Equal(t, "Go", request.ContentOr("language.0", "PHP").String())
 
-	assert.Equal(t, 12, request.ContentOr("fake", 12).Number())
-	assert.Equal(t, 10, request.ContentOr("age", 12).Number())
-	assert.Equal(t, 10, request.ContentOr("age.0", 12).Number())
+	assert.Equal(t, 12, request.ContentOr("fake", 12).Int())
+	assert.Equal(t, 10, request.ContentOr("age", 12).Int())
+	assert.Equal(t, 10, request.ContentOr("age.0", 12).Int())
 }
 
 func Test_request_content_type_json(t *testing.T) {
