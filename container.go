@@ -74,7 +74,7 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 	var err error = nil
 	var abstractName = support.Name(abstract)
 
-	kind := support.Type(abstract)
+	kind := support.Kind(abstract)
 	if kind == reflect.Ptr && abstract == nil {
 		return nil, errors.New("can't resolve interface. To resolve an interface, " +
 			"use the following syntax: (*interface)(nil), use a string or use the struct itself")
@@ -121,7 +121,7 @@ func (c *Container) getConcreteBinding(concrete interface{}, object interface{},
 	concrete = object
 
 	// If concrete is a callback, run it and save the result
-	if support.Type(concrete) == reflect.Func {
+	if support.Kind(concrete) == reflect.Func {
 		callback, simpleCallback := concrete.(func() interface{})
 		if simpleCallback {
 			concrete = callback()
