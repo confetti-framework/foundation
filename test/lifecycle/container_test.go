@@ -1,8 +1,8 @@
 package lifecycle
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

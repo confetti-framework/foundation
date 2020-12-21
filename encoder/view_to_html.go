@@ -1,8 +1,8 @@
 package encoder
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/http/view_helper"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/http/view_helper"
 )
 
 type ViewToHtml struct{}

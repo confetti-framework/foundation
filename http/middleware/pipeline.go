@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/support/caller"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/support/caller"
 	"sort"
 )
 

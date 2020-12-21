@@ -1,7 +1,7 @@
 package encoder
 
 import (
-	"github.com/lanvard/contract/inter"
+	"github.com/confetti-framework/contract/inter"
 	"reflect"
 )
 

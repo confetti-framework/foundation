@@ -1,13 +1,13 @@
 package response
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/decorator/response_decorator"
-	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/test/mock"
-	"github.com/lanvard/routing/outcome"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation"
+	"github.com/confetti-framework/foundation/decorator/response_decorator"
+	"github.com/confetti-framework/foundation/encoder"
+	"github.com/confetti-framework/foundation/test/mock"
+	"github.com/confetti-framework/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	"html/template"
 	net "net/http"

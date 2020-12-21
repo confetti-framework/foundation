@@ -1,9 +1,9 @@
 package request
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/http"
-	"github.com/lanvard/foundation/http/request_helper"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/http"
+	"github.com/confetti-framework/foundation/http/request_helper"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
 	"testing"

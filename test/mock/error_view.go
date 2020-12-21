@@ -2,9 +2,9 @@ package mock
 
 import (
 	"fmt"
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/support/str"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/support/str"
 	"golang.org/x/text/language"
 	"strings"
 )

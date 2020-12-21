@@ -1,8 +1,8 @@
 package encode
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/encoder"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/encoder"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

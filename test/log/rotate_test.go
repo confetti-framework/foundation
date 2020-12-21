@@ -1,10 +1,10 @@
 package log
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/loggers"
-	"github.com/lanvard/syslog/log_level"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation"
+	"github.com/confetti-framework/foundation/loggers"
+	"github.com/confetti-framework/syslog/log_level"
 	"github.com/stretchr/testify/assert"
 	"github.com/vigneshuvi/GoDateFormat"
 	"os"

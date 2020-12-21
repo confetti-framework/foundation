@@ -2,9 +2,9 @@ package foundation
 
 import (
 	"fmt"
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/foundation/loggers"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/loggers"
 )
 
 type Application struct {

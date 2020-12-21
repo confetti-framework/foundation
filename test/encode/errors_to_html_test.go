@@ -1,10 +1,10 @@
 package encode
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/test/mock"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/encoder"
+	"github.com/confetti-framework/foundation/test/mock"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

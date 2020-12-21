@@ -1,7 +1,7 @@
 package encoder
 
 import (
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/support"
 	"github.com/tidwall/gjson"
 )
 

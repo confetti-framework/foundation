@@ -1,9 +1,9 @@
 package loggers
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/syslog/log_level"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/syslog/log_level"
 )
 
 type Stack struct {

@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/syslog"
-	"github.com/lanvard/syslog/log_level"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/syslog"
+	"github.com/confetti-framework/syslog/log_level"
 	"net/http"
 	"time"
 )
@@ -132,7 +132,7 @@ type SlackRequestBody struct {
 	Text string `json:"text"`
 }
 
-// @todo use notifications https://github.com/lanvard/lanvard/issues/70
+// @todo use notifications https://github.com/confetti-framework/confetti-framework/issues/70
 //
 // sendSlackNotification will post to an 'Incoming Webook' url setup in Slack Apps. It accepts
 // some text and extra data.

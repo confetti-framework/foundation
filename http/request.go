@@ -3,10 +3,10 @@ package http
 import (
 	"bytes"
 	"github.com/gorilla/mux"
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/foundation/http/method"
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/http/method"
+	"github.com/confetti-framework/support"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -151,7 +151,7 @@ func (r *Request) SetBody(body string) inter.Request {
 	// Update source body
 	r.source.Body = ioutil.NopCloser(strings.NewReader(body))
 
-	// Invalidate Lanvard body. Rebuild content when requested.
+	// Invalidate Confetti body. Rebuild content when requested.
 	r.content = support.NewValue(nil)
 
 	return r

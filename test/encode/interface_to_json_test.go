@@ -1,10 +1,10 @@
 package encode
 
 import (
-	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/http"
-	"github.com/lanvard/routing/outcome"
+	"github.com/confetti-framework/foundation"
+	"github.com/confetti-framework/foundation/encoder"
+	"github.com/confetti-framework/foundation/http"
+	"github.com/confetti-framework/routing/outcome"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

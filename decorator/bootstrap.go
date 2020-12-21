@@ -1,7 +1,7 @@
 package decorator
 
 import (
-	"github.com/lanvard/contract/inter"
+	"github.com/confetti-framework/contract/inter"
 )
 
 type BootstrapDecorator struct {

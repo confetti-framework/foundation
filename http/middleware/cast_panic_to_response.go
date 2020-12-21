@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 )
 
 type PanicToResponse struct{}

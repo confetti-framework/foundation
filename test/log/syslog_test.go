@@ -3,9 +3,9 @@ package log
 import (
 	"encoding/csv"
 	"fmt"
-	"github.com/lanvard/foundation/loggers"
-	"github.com/lanvard/syslog"
-	"github.com/lanvard/syslog/log_level"
+	"github.com/confetti-framework/foundation/loggers"
+	"github.com/confetti-framework/syslog"
+	"github.com/confetti-framework/syslog/log_level"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"log"

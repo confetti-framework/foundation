@@ -1,9 +1,9 @@
 package encode
 
 import (
-	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/test/mock"
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/foundation/encoder"
+	"github.com/confetti-framework/foundation/test/mock"
+	"github.com/confetti-framework/support"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

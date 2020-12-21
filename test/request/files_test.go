@@ -1,8 +1,8 @@
 package request
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/http"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/http"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"strings"

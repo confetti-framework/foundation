@@ -2,17 +2,17 @@ package request
 
 import (
 	"github.com/gorilla/mux"
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/errors"
-	"github.com/lanvard/foundation"
-	"github.com/lanvard/foundation/encoder"
-	"github.com/lanvard/foundation/http"
-	"github.com/lanvard/foundation/http/method"
-	"github.com/lanvard/foundation/http/middleware"
-	"github.com/lanvard/foundation/http/request_helper"
-	"github.com/lanvard/foundation/test/mock"
-	"github.com/lanvard/routing/outcome"
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation"
+	"github.com/confetti-framework/foundation/encoder"
+	"github.com/confetti-framework/foundation/http"
+	"github.com/confetti-framework/foundation/http/method"
+	"github.com/confetti-framework/foundation/http/middleware"
+	"github.com/confetti-framework/foundation/http/request_helper"
+	"github.com/confetti-framework/foundation/test/mock"
+	"github.com/confetti-framework/routing/outcome"
+	"github.com/confetti-framework/support"
 	"github.com/stretchr/testify/assert"
 	net "net/http"
 	"net/url"
@@ -78,15 +78,15 @@ func Test_numbers_from_query(t *testing.T) {
 func Test_get_url(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Host:   "https://api.lanvard.com",
+		Host:   "https://api.confetti-framework.com",
 		Url:    "/user/1432?test=123",
 	})
 
 	assert.Equal(t, "GET", request.Method())
 	assert.True(t, request_helper.IsMethod(request, "GET"))
 	assert.Equal(t, "/user/1432", request.Path())
-	assert.Equal(t, "https://api.lanvard.com/user/1432", request.Url())
-	assert.Equal(t, "https://api.lanvard.com/user/1432?test=123", request.FullUrl())
+	assert.Equal(t, "https://api.confetti-framework.com/user/1432", request.Url())
+	assert.Equal(t, "https://api.confetti-framework.com/user/1432?test=123", request.FullUrl())
 }
 
 func Test_all_values(t *testing.T) {
@@ -154,7 +154,7 @@ func Test_request_content_type_json(t *testing.T) {
 func fakeRequestWithForm() inter.Request {
 	request := http.NewRequest(http.Options{
 		Method: method.Get,
-		Host:   "https://api.lanvard.com",
+		Host:   "https://api.confetti-framework.com",
 		Url:    "/user/1432?user_id=1234",
 		Header: map[string][]string{"Content-Type": {"multipart/form-data; boundary=xxx"}},
 		Form: url.Values{
@@ -177,7 +177,7 @@ func fakeRequestWithJsonBody() inter.Request {
 	return http.NewRequest(http.Options{
 		App:    app,
 		Method: method.Post,
-		Host:   "https://api.lanvard.com",
+		Host:   "https://api.confetti-framework.com",
 		Url:    "/user/2432?comment_id=1234",
 		Header: map[string][]string{
 			"Content-Type": {"text/json; charset=UTF-8"},
@@ -190,7 +190,7 @@ func Test_get_content_from_request_with_method_get(t *testing.T) {
 	request := http.NewRequest(http.Options{
 		App:    foundation.NewApp(),
 		Method: method.Get,
-		Host:   "https://api.lanvard.com",
+		Host:   "https://api.confetti-framework.com",
 	})
 
 	content, err := request.ContentE("")

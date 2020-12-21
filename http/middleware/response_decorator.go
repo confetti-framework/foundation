@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/lanvard/contract/inter"
-	"github.com/lanvard/foundation/decorator/response_decorator"
+	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/decorator/response_decorator"
 )
 
 type DecorateResponse struct{}

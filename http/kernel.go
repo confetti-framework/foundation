@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/lanvard/contract/inter"
+	"github.com/confetti-framework/contract/inter"
 )
 
 type Kernel struct {
