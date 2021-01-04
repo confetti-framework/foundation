@@ -4,7 +4,7 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/providers"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ func Test_register_nil_index(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(t, map[string]interface{}(nil), container.Make("config"))
+	require.Equal(t, map[string]interface{}(nil), container.Make("config"))
 }
 
 func Test_register_struct(t *testing.T) {
@@ -21,7 +21,7 @@ func Test_register_struct(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(
+	require.Equal(
 		t,
 		firstConfig,
 		container.Make("config.firstConfig"),

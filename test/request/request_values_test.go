@@ -1,7 +1,6 @@
 package request
 
 import (
-	"github.com/gorilla/mux"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/foundation"
@@ -13,7 +12,8 @@ import (
 	"github.com/confetti-framework/foundation/test/mock"
 	"github.com/confetti-framework/routing/outcome"
 	"github.com/confetti-framework/support"
-	"github.com/stretchr/testify/assert"
+	"github.com/gorilla/mux"
+	"github.com/stretchr/testify/require"
 	net "net/http"
 	"net/url"
 	"testing"
@@ -28,10 +28,10 @@ func Test_number_from_uri(t *testing.T) {
 
 	urlValue := request.Parameter("user_id")
 
-	assert.Equal(t, 1432, urlValue.Int())
-	assert.Equal(t, "1432", urlValue.String())
-	assert.NotEqual(t, 1432, urlValue.String())
-	assert.NotEqual(t, "1432", urlValue.Int())
+	require.Equal(t, 1432, urlValue.Int())
+	require.Equal(t, "1432", urlValue.String())
+	require.NotEqual(t, 1432, urlValue.String())
+	require.NotEqual(t, "1432", urlValue.Int())
 }
 
 func Test_numbers_from_uri(t *testing.T) {
@@ -43,8 +43,8 @@ func Test_numbers_from_uri(t *testing.T) {
 
 	values := request.Parameter("user_ids")
 
-	assert.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
-	assert.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
+	require.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
+	require.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
 }
 
 func Test_number_from_query(t *testing.T) {
@@ -56,10 +56,10 @@ func Test_number_from_query(t *testing.T) {
 
 	value := request.Parameter("user_id")
 
-	assert.Equal(t, 1432, value.Int())
-	assert.Equal(t, "1432", value.String())
-	assert.NotEqual(t, 1432, value.String())
-	assert.NotEqual(t, "1432", value.Int())
+	require.Equal(t, 1432, value.Int())
+	require.Equal(t, "1432", value.String())
+	require.NotEqual(t, 1432, value.String())
+	require.NotEqual(t, "1432", value.Int())
 }
 
 func Test_numbers_from_query(t *testing.T) {
@@ -71,8 +71,8 @@ func Test_numbers_from_query(t *testing.T) {
 
 	values := request.Parameter("user_ids")
 
-	assert.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
-	assert.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
+	require.Equal(t, []interface{}{"1432", "5423"}, values.Split(",").Raw())
+	require.NotEqual(t, []int{1432, 5423}, values.Split(",").Raw())
 }
 
 func Test_get_url(t *testing.T) {
@@ -82,18 +82,18 @@ func Test_get_url(t *testing.T) {
 		Url:    "/user/1432?test=123",
 	})
 
-	assert.Equal(t, "GET", request.Method())
-	assert.True(t, request_helper.IsMethod(request, "GET"))
-	assert.Equal(t, "/user/1432", request.Path())
-	assert.Equal(t, "https://api.confetti-framework.com/user/1432", request.Url())
-	assert.Equal(t, "https://api.confetti-framework.com/user/1432?test=123", request.FullUrl())
+	require.Equal(t, "GET", request.Method())
+	require.True(t, request_helper.IsMethod(request, "GET"))
+	require.Equal(t, "/user/1432", request.Path())
+	require.Equal(t, "https://api.confetti-framework.com/user/1432", request.Url())
+	require.Equal(t, "https://api.confetti-framework.com/user/1432?test=123", request.FullUrl())
 }
 
 func Test_all_values(t *testing.T) {
 	request := fakeRequestWithForm()
-	request.App().Singleton(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
+	request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
 
-	assert.Equal(t,
+	require.Equal(t,
 		support.Map{
 			"age":      support.NewValue(support.NewCollection("10")),
 			"first":    support.NewValue(support.NewCollection("klaas")),
@@ -106,34 +106,34 @@ func Test_all_values(t *testing.T) {
 func Test_form_values(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	assert.Equal(t, 1234, request.Parameter("user_id").Int())
-	assert.Equal(t, "Go", request.Content("language").String())
-	assert.Equal(t, "bob", request.Content("second").String())
-	assert.Equal(t, "bob", request.Content("second").Collection().First().String())
-	assert.Equal(t, support.NewCollection("bob", "tom"), request.Content("second").Collection())
-	assert.Equal(t, "tom", request.Content("second.1").String())
-	assert.Equal(t, "tom", request.Content("").Map()["second"].Collection()[1].String())
+	require.Equal(t, 1234, request.Parameter("user_id").Int())
+	require.Equal(t, "Go", request.Content("language").String())
+	require.Equal(t, "bob", request.Content("second").String())
+	require.Equal(t, "bob", request.Content("second").Collection().First().String())
+	require.Equal(t, support.NewCollection("bob", "tom"), request.Content("second").Collection())
+	require.Equal(t, "tom", request.Content("second.1").String())
+	require.Equal(t, "tom", request.Content("").Map()["second"].Collection()[1].String())
 }
 
 func Test_form_value_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	value, err := request.ParameterE("not_existing_param")
-	assert.Equal(t, 0, value.Int())
+	require.Equal(t, 0, value.Int())
 	//goland:noinspection GoNilness
-	assert.Equal(t, "key 'not_existing_param': can not found value", err.Error())
+	require.Equal(t, "key 'not_existing_param': can not found value", err.Error())
 }
 
 func Test_value_or(t *testing.T) {
 	request := fakeRequestWithForm()
 
-	assert.Equal(t, "Sally", request.ContentOr("fake", "Sally").String())
-	assert.Equal(t, "Go", request.ContentOr("language", "PHP").String())
-	assert.Equal(t, "Go", request.ContentOr("language.0", "PHP").String())
+	require.Equal(t, "Sally", request.ContentOr("fake", "Sally").String())
+	require.Equal(t, "Go", request.ContentOr("language", "PHP").String())
+	require.Equal(t, "Go", request.ContentOr("language.0", "PHP").String())
 
-	assert.Equal(t, 12, request.ContentOr("fake", 12).Int())
-	assert.Equal(t, 10, request.ContentOr("age", 12).Int())
-	assert.Equal(t, 10, request.ContentOr("age.0", 12).Int())
+	require.Equal(t, 12, request.ContentOr("fake", 12).Int())
+	require.Equal(t, 10, request.ContentOr("age", 12).Int())
+	require.Equal(t, 10, request.ContentOr("age.0", 12).Int())
 }
 
 func Test_request_content_type_json(t *testing.T) {
@@ -148,7 +148,7 @@ func Test_request_content_type_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, "A02", response.GetBody())
+	require.Equal(t, "A02", response.GetBody())
 }
 
 func fakeRequestWithForm() inter.Request {
@@ -194,11 +194,11 @@ func Test_get_content_from_request_with_method_get(t *testing.T) {
 	})
 
 	content, err := request.ContentE("")
-	assert.Equal(t, support.NewValue(nil), content)
-	assert.EqualError(t, err, "no request body decoder found. Check the headers and http method")
+	require.Equal(t, support.NewValue(nil), content)
+	require.EqualError(t, err, "no request body decoder found. Check the headers and http method")
 	status, ok := errors.FindStatus(err)
-	assert.Equal(t, net.StatusUnsupportedMediaType, status)
-	assert.True(t, ok)
+	require.Equal(t, net.StatusUnsupportedMediaType, status)
+	require.True(t, ok)
 }
 
 var emptyController = func(request inter.Request) inter.Response { return nil }

@@ -3,7 +3,9 @@ package lifecycle
 import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation"
-	"github.com/stretchr/testify/assert"
+	"github.com/confetti-framework/support"
+	"github.com/stretchr/testify/require"
+	"reflect"
 	"testing"
 )
 
@@ -17,7 +19,7 @@ func Test_one_binding_with_an_alias(t *testing.T) {
 
 	kernel := container.Make("testStruct").(testStruct)
 
-	assert.Equal(t, testStruct{}, kernel)
+	require.Equal(t, testStruct{}, kernel)
 }
 
 func Test_make_from_singleton(t *testing.T) {
@@ -30,7 +32,7 @@ func Test_make_from_singleton(t *testing.T) {
 
 	kernel := container.Make((*inter.HttpKernel)(nil)).(testStruct)
 
-	assert.Equal(t, testStruct{}, kernel)
+	require.Equal(t, testStruct{}, kernel)
 }
 
 func Test_make_from_singleton_with_callback(t *testing.T) {
@@ -45,7 +47,55 @@ func Test_make_from_singleton_with_callback(t *testing.T) {
 
 	newStruct := app.Make(testStruct{})
 
-	assert.Equal(t, testStruct{TestCount: 1}, newStruct)
+	require.Equal(t, testStruct{TestCount: 1}, newStruct)
+}
+
+func Test_make_from_singleton_with_callback_specific_return_type(t *testing.T) {
+	app := foundation.NewApp()
+
+	app.Singleton(
+		testStruct{},
+		func() testStruct {
+			return testStruct{TestCount: 1}
+		},
+	)
+
+	newStruct := app.Make(testStruct{})
+
+	require.Equal(t, testStruct{TestCount: 1}, newStruct)
+}
+
+func Test_make_from_binding_with_callback(t *testing.T) {
+	app := foundation.NewApp()
+
+	app.Bind(
+		"a_callback",
+		func() testStruct {
+			return testStruct{TestCount: 1}
+		},
+	)
+
+	newStruct := app.Make("a_callback")
+
+	require.Equal(t, reflect.Func, support.Kind(newStruct))
+	require.Equal(t, 1, newStruct.(func() testStruct)().TestCount)
+}
+
+func Test_make_from_singleton_with_parameters(t *testing.T) {
+	app := foundation.NewApp()
+
+	app.Singleton(
+		"a_callback",
+		func(firstPar string) testStruct {
+			return testStruct{TestCount: 1}
+		},
+	)
+
+	newStruct, err := app.MakeE("a_callback")
+
+	require.NotNil(t, err)
+	require.Nil(t, newStruct)
+	require.EqualError(t, err, "get instance 'a_callback' from container: Can not instantiate callback with parameters")
 }
 
 func Test_resolve_automatically(t *testing.T) {
@@ -53,7 +103,7 @@ func Test_resolve_automatically(t *testing.T) {
 
 	resolvedStruct := container.Make(testStruct{})
 
-	assert.Equal(t, testStruct{}, resolvedStruct)
+	require.Equal(t, testStruct{}, resolvedStruct)
 }
 
 func Test_binding_existing_object(t *testing.T) {
@@ -64,7 +114,7 @@ func Test_binding_existing_object(t *testing.T) {
 
 	resolvedStruct := container.Make("testStruct")
 
-	assert.Equal(t, testStruct{}, resolvedStruct)
+	require.Equal(t, testStruct{}, resolvedStruct)
 }
 
 func Test_one_binding_with_contract(t *testing.T) {
@@ -75,7 +125,7 @@ func Test_one_binding_with_contract(t *testing.T) {
 		testStruct{},
 	)
 
-	assert.Len(t, container.Bindings(), 1)
+	require.Len(t, container.Bindings(), 1)
 }
 
 func Test_multiple_binding_with_contract(t *testing.T) {
@@ -91,7 +141,7 @@ func Test_multiple_binding_with_contract(t *testing.T) {
 		testStruct{},
 	)
 
-	assert.Len(t, app.Bindings(), 2)
+	require.Len(t, app.Bindings(), 2)
 }
 
 func Test_binding_two_with_the_same_interfaces(t *testing.T) {
@@ -107,7 +157,7 @@ func Test_binding_two_with_the_same_interfaces(t *testing.T) {
 		testStruct{},
 	)
 
-	assert.Len(t, container.Bindings(), 1)
+	require.Len(t, container.Bindings(), 1)
 }
 
 func Test_binding_and_make_from_interface(t *testing.T) {
@@ -118,7 +168,7 @@ func Test_binding_and_make_from_interface(t *testing.T) {
 
 	resolvedStruct := container.Make((*testInterface)(nil)).(testInterface)
 
-	assert.Equal(t, testStruct{}, resolvedStruct)
+	require.Equal(t, testStruct{}, resolvedStruct)
 }
 
 func Test_binding_without_abstract(t *testing.T) {
@@ -128,7 +178,15 @@ func Test_binding_without_abstract(t *testing.T) {
 
 	resolvedStruct := container.Make(testStruct{}).(testStruct)
 
-	assert.Equal(t, testStruct{TestCount: 1}, resolvedStruct)
+	require.Equal(t, testStruct{TestCount: 1}, resolvedStruct)
+}
+
+func Test_binding_missing_without_abstract(t *testing.T) {
+	container := foundation.NewContainer()
+
+	resolvedStruct := container.Make(testStruct{}).(testStruct)
+
+	require.Equal(t, testStruct{TestCount: 0}, resolvedStruct)
 }
 
 func Test_extending_bindings(t *testing.T) {
@@ -146,7 +204,7 @@ func Test_extending_bindings(t *testing.T) {
 
 	resolvedStruct := container.Make(testStruct{}).(testStruct)
 
-	assert.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
+	require.Equal(t, testStruct{TestCount: 3}, resolvedStruct)
 }
 
 func Test_resolve_with_boot_app(t *testing.T) {
@@ -155,7 +213,7 @@ func Test_resolve_with_boot_app(t *testing.T) {
 
 	container.Bind("application_name", "Cooler")
 
-	assert.Equal(t, "Cooler", container.Make("application_name"))
+	require.Equal(t, "Cooler", container.Make("application_name"))
 }
 
 func Test_resolve_from_boot_app(t *testing.T) {
@@ -164,7 +222,7 @@ func Test_resolve_from_boot_app(t *testing.T) {
 
 	container := foundation.NewContainerByBoot(bootContainer)
 
-	assert.Equal(t, "Cooler", container.Make("application_name"))
+	require.Equal(t, "Cooler", container.Make("application_name"))
 }
 
 func Test_resolve_from_normal_container_but_not_from_boot(t *testing.T) {
@@ -174,5 +232,5 @@ func Test_resolve_from_normal_container_but_not_from_boot(t *testing.T) {
 	container := foundation.NewContainerByBoot(bootContainer)
 	container.Bind("application_name", "Cooler")
 
-	assert.Equal(t, "Cooler", container.Make("application_name"))
+	require.Equal(t, "Cooler", container.Make("application_name"))
 }

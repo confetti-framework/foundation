@@ -3,7 +3,7 @@ package encode
 import (
 	"github.com/confetti-framework/foundation/encoder"
 	"github.com/confetti-framework/foundation/http"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -11,7 +11,7 @@ func Test_json_to_value(t *testing.T) {
 	request := http.NewRequest(http.Options{Content: `{"name":{"first":"Janet","last":"Prichard"},"age":47}`})
 	value := encoder.RequestWithJsonToValue(request)
 
-	assert.Equal(t, "Janet", value.Get("name.first").String())
+	require.Equal(t, "Janet", value.Get("name.first").String())
 }
 
 func Test_deep_json_to_value(t *testing.T) {
@@ -48,5 +48,5 @@ func Test_deep_json_to_value(t *testing.T) {
 	request := http.NewRequest(http.Options{Content: content})
 	value := encoder.RequestWithJsonToValue(request)
 
-	assert.Equal(t, "J01", value.Get("data.tracktraces.0.history.2.code").String())
+	require.Equal(t, "J01", value.Get("data.tracktraces.0.history.2.code").String())
 }

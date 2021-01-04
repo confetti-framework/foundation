@@ -3,7 +3,6 @@ package encode
 import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/encoder"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -20,6 +19,6 @@ func Test_string_to_string_no_match_with_string(t *testing.T) {
 func Test_string_to_string_encode_valid_string(t *testing.T) {
 	var app inter.App
 	result, err := encoder.StringToString{}.EncodeThrough(app, "val", []inter.Encoder{})
-	assert.Nil(t, err)
+	require.Nil(t, err)
 	require.Equal(t, "val", result)
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/loggers"
 	"github.com/confetti-framework/syslog/log_level"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/vigneshuvi/GoDateFormat"
 	"os"
 	"path/filepath"
@@ -20,7 +20,7 @@ func Test_name_with_date_so_it_can_rotate(t *testing.T) {
 	logger.Info("the message")
 
 	dateWithCorrectFormat := time.Now().Format(GoDateFormat.ConvertFormat("yyyy-mm-dd"))
-	assert.FileExists(t, testDir+dateWithCorrectFormat+"_test.log")
+	require.FileExists(t, testDir+dateWithCorrectFormat+"_test.log")
 }
 
 func Test_don_not_remove_latest_file(t *testing.T) {
@@ -34,7 +34,7 @@ func Test_don_not_remove_latest_file(t *testing.T) {
 	logger.Clear()
 
 	// Then
-	assert.Len(t, getFiles(), 1)
+	require.Len(t, getFiles(), 1)
 }
 
 func Test_dont_remove_other_logs(t *testing.T) {
@@ -54,10 +54,10 @@ func Test_dont_remove_other_logs(t *testing.T) {
 
 	// Then
 	files := getFiles()
-	assert.Len(t, files, 3)
-	assert.Equal(t, testDir+"1_test.log", files[0])
-	assert.Equal(t, testDir+"2_test.log", files[1])
-	assert.Equal(t, testDir+"3_test.log", files[2])
+	require.Len(t, files, 3)
+	require.Equal(t, testDir+"1_test.log", files[0])
+	require.Equal(t, testDir+"2_test.log", files[1])
+	require.Equal(t, testDir+"3_test.log", files[2])
 }
 
 func Test_remove_second_file_if_max_one(t *testing.T) {
@@ -71,7 +71,7 @@ func Test_remove_second_file_if_max_one(t *testing.T) {
 	logger.Clear()
 
 	// Then
-	assert.Len(t, getFiles(), 1)
+	require.Len(t, getFiles(), 1)
 }
 
 func Test_only_remove_current_channel_files(t *testing.T) {
@@ -86,7 +86,7 @@ func Test_only_remove_current_channel_files(t *testing.T) {
 	logger.Clear()
 
 	// Then
-	assert.Len(t, getFiles(), 2)
+	require.Len(t, getFiles(), 2)
 }
 
 func aLogFileIsPresent(filename string) {

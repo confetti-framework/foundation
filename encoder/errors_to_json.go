@@ -5,7 +5,7 @@ import (
 	"github.com/confetti-framework/support/str"
 )
 
-type ErrorSToJson struct {
+type ErrorsToJson struct {
 	Jsonapi map[string]string `json:"jsonapi"`
 	Errors  []Error           `json:"errors"`
 }
@@ -14,12 +14,12 @@ type Error struct {
 	Title string `json:"title"`
 }
 
-func (e ErrorSToJson) IsAble(object interface{}) bool {
+func (e ErrorsToJson) IsAble(object interface{}) bool {
 	_, ok := e.getErrors(object)
 	return ok
 }
 
-func (e ErrorSToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
+func (e ErrorsToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	e.Errors = []Error{}
 	errs, ok := e.getErrors(object)
 	if !ok {
@@ -37,7 +37,7 @@ func (e ErrorSToJson) EncodeThrough(app inter.App, object interface{}, encoders 
 	return EncodeThrough(app, e, encoders)
 }
 
-func (e ErrorSToJson) getErrors(object interface{}) ([]error, bool) {
+func (e ErrorsToJson) getErrors(object interface{}) ([]error, bool) {
 	err, ok := object.(error)
 	if ok {
 		return []error{err}, ok

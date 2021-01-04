@@ -25,7 +25,7 @@ func Test_can_not_encode_non_view(t *testing.T) {
 
 func Test_convert_view_to_html(t *testing.T) {
 	app := setUp()
-	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+	app.Bind("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseFiles(
 			mock.TemplateByName("simple_template.gohtml"),
 		)
@@ -45,7 +45,7 @@ func Test_view_with_unknown_template(t *testing.T) {
 
 func Test_view_with_footer_template(t *testing.T) {
 	app := setUp()
-	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+	app.Bind("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseFiles(
 			mock.TemplateByName("page_with_footer_template.gohtml"),
 			mock.TemplateByName("sub/footer_template.gohtml"),

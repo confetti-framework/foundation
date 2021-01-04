@@ -4,7 +4,7 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/loggers"
 	"github.com/confetti-framework/syslog/log_level"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -14,15 +14,15 @@ func Test_log_to_default_channel(t *testing.T) {
 
 	app.Log().Info("the message")
 
-	assert.Len(t, openAndReadFile(testFile), 0)
-	assert.Len(t, openAndReadFile(testFileSecond), 1)
+	require.Len(t, openAndReadFile(testFile), 0)
+	require.Len(t, openAndReadFile(testFileSecond), 1)
 }
 
 func Test_log_to_non_existing_channel(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
-	assert.PanicsWithError(t, "can not log to channel. Channel 'fake' does not exist", func() {
+	require.PanicsWithError(t, "can not log to channel. Channel 'fake' does not exist", func() {
 		app.Log("fake").Info("the message")
 	})
 }
@@ -31,7 +31,7 @@ func Test_log_to_multiple_non_existing_channels(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
-	assert.PanicsWithError(t, "can not log to one of the channels. Channel 'fake1' does not exist", func() {
+	require.PanicsWithError(t, "can not log to one of the channels. Channel 'fake1' does not exist", func() {
 		app.Log("fake1", "fake2").Info("the message")
 	})
 }
@@ -42,8 +42,8 @@ func Test_log_to_specific_channel(t *testing.T) {
 
 	app.Log("first").Info("the message")
 
-	assert.Len(t, openAndReadFile(testFile), 1)
-	assert.Len(t, openAndReadFile(testFileSecond), 0)
+	require.Len(t, openAndReadFile(testFile), 1)
+	require.Len(t, openAndReadFile(testFileSecond), 0)
 }
 
 func Test_log_to_multiple_channels(t *testing.T) {
@@ -52,8 +52,8 @@ func Test_log_to_multiple_channels(t *testing.T) {
 
 	app.Log("first", "second").Info("the message")
 
-	assert.Len(t, openAndReadFile(testFile), 1)
-	assert.Len(t, openAndReadFile(testFileSecond), 1)
+	require.Len(t, openAndReadFile(testFile), 1)
+	require.Len(t, openAndReadFile(testFileSecond), 1)
 }
 
 func getAppWithChannels() inter.App {

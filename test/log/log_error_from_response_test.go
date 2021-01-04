@@ -10,7 +10,7 @@ import (
 	"github.com/confetti-framework/routing/outcome"
 	"github.com/confetti-framework/syslog/log_level"
 	pkgErrors "github.com/pkg/errors"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -25,10 +25,10 @@ func Test_error_is_logged_with_standard_error(t *testing.T) {
 	response := bootstrapDecorator.Decorate(responseBefore)
 
 	// Then
-	assert.Same(t, responseBefore, response)
+	require.Same(t, responseBefore, response)
 	lines := openAndReadFile(testFile)
-	assert.Len(t, lines, 1)
-	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
+	require.Len(t, lines, 1)
+	require.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 }
 
 func Test_error_without_trace(t *testing.T) {
@@ -43,8 +43,8 @@ func Test_error_without_trace(t *testing.T) {
 
 	// Then
 	lines := openAndReadFile(testFile)
-	assert.Len(t, lines, 1)
-	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
+	require.Len(t, lines, 1)
+	require.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 }
 
 func Test_error_trace(t *testing.T) {
@@ -59,11 +59,11 @@ func Test_error_trace(t *testing.T) {
 
 	// Then
 	lines := openAndReadFile(testFile)
-	assert.Greater(t, len(lines), 3)
-	assert.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
+	require.Greater(t, len(lines), 3)
+	require.Regexp(t, ` \[level severity="emerg"\] incorrect database credentials $`, lines[0][0])
 	if len(lines) > 1 {
-		assert.Regexp(t, `log.Test_error_trace`, lines[1][0])
-		assert.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
+		require.Regexp(t, `log.Test_error_trace`, lines[1][0])
+		require.Regexp(t, `log/log_error_from_response_test.go:[0-9]+$`, lines[2][0])
 	}
 }
 
@@ -80,7 +80,7 @@ func Test_don_not_log_ignored_logs(t *testing.T) {
 
 	// Then
 	lines := openAndReadFile(testFile)
-	assert.Len(t, lines, 0)
+	require.Len(t, lines, 0)
 }
 
 func Test_log_debug_level_from_error(t *testing.T) {
@@ -95,7 +95,7 @@ func Test_log_debug_level_from_error(t *testing.T) {
 
 	// Then
 	lines := openAndReadFile(testFile)
-	assert.Regexp(t, `level severity="debug"`, lines[0][0])
+	require.Regexp(t, `level severity="debug"`, lines[0][0])
 }
 
 func Test_wrap_error(t *testing.T) {
@@ -110,7 +110,7 @@ func Test_wrap_error(t *testing.T) {
 
 	// Then
 	lines := openAndReadFile(testFile)
-	assert.Contains(t, lines[0][0], `validation error: user id not found`)
+	require.Contains(t, lines[0][0], `validation error: user id not found`)
 }
 
 func newTestResponse(app inter.App, content error) inter.Response {

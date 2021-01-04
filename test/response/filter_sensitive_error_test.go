@@ -8,7 +8,7 @@ import (
 	"github.com/confetti-framework/foundation/encoder"
 	"github.com/confetti-framework/foundation/test/mock"
 	"github.com/confetti-framework/routing/outcome"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"html/template"
 	net "net/http"
 	"testing"
@@ -27,7 +27,7 @@ func Test_system_error_filter_for_production(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"An error has occurred"}]}`, response.GetBody())
 }
 
 func Test_system_error_show_for_development(t *testing.T) {
@@ -43,7 +43,7 @@ func Test_system_error_show_for_development(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Incorrect database credentials"}]}`, response.GetBody())
 }
 
 func Test_show_user_error(t *testing.T) {
@@ -59,7 +59,7 @@ func Test_show_user_error(t *testing.T) {
 	response = bootstrapDecorator.Decorate(response)
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Invalid user id"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Invalid user id"}]}`, response.GetBody())
 }
 
 func setUp() *foundation.Application {
@@ -70,7 +70,7 @@ func setUp() *foundation.Application {
 		mock.HtmlEncoders,
 		encoder.ErrorsToHtml{View: mock.NewViewErrorMock},
 	))
-	app.Singleton("template_builder", func(template *template.Template) (*template.Template, error) {
+	app.Bind("template_builder", func(template *template.Template) (*template.Template, error) {
 		return template.ParseGlob(mock.TemplateByName("") + "/[^sub]*")
 	})
 

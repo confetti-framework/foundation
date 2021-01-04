@@ -13,9 +13,9 @@ func (r RequestBodyDecoder) Handle(request inter.Request, next inter.Next) inter
 
 	switch {
 	case request_helper.HasJson(request):
-		request.App().Singleton(inter.RequestBodyDecoder, encoder.RequestWithJsonToValue)
+		request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithJsonToValue)
 	case request_helper.HasMultiPartFormData(request):
-		request.App().Singleton(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
+		request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
 	}
 
 	return next(request)

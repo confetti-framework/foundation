@@ -7,7 +7,7 @@ import (
 	"github.com/confetti-framework/foundation/http"
 	"github.com/confetti-framework/foundation/http/middleware"
 	"github.com/confetti-framework/routing/outcome"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	net "net/http"
 	"testing"
 )
@@ -30,7 +30,7 @@ func Test_panic_without_valid_encoder_defined(t *testing.T) {
 	}
 
 	// Then
-	assert.Panics(t, when)
+	require.Panics(t, when)
 }
 
 func Test_panic_error_to_json(t *testing.T) {
@@ -49,7 +49,7 @@ func Test_panic_error_to_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
 func Test_panic_string_to_json(t *testing.T) {
@@ -68,7 +68,7 @@ func Test_panic_string_to_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"User not found"}]}`, response.GetBody())
 }
 
 func Test_panic_unknown_to_json(t *testing.T) {
@@ -87,7 +87,7 @@ func Test_panic_unknown_to_json(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. IsError or string required"}]}`, response.GetBody())
+	require.Equal(t, `{"jsonapi":{"version":"1.0"},"errors":[{"title":"Can't convert panic to response. IsError or string required"}]}`, response.GetBody())
 }
 
 func Test_panic_with_error_to_html(t *testing.T) {
@@ -106,7 +106,7 @@ func Test_panic_with_error_to_html(t *testing.T) {
 	response.SetApp(request.App())
 
 	// Then
-	assert.Equal(t, "<h1>500</h1>\n<h2>User not found</h2>\n", response.GetBody())
+	require.Equal(t, "<h1>500</h1>\n<h2>User not found</h2>\n", response.GetBody())
 }
 
 func Test_http_status_to_response(t *testing.T) {
@@ -120,7 +120,7 @@ func Test_http_status_to_response(t *testing.T) {
 	response := bootstrapDecorator.Decorate(responseBefore)
 
 	// Then
-	assert.Equal(t, net.StatusInternalServerError, response.GetStatus())
+	require.Equal(t, net.StatusInternalServerError, response.GetStatus())
 }
 
 func Test_http_status_bad_request_to_response(t *testing.T) {
@@ -134,7 +134,7 @@ func Test_http_status_bad_request_to_response(t *testing.T) {
 	response := bootstrapDecorator.Decorate(responseBefore)
 
 	// Then
-	assert.Equal(t, net.StatusBadRequest, response.GetStatus())
+	require.Equal(t, net.StatusBadRequest, response.GetStatus())
 }
 
 type invalidError struct{}

@@ -6,7 +6,7 @@ import (
 	"github.com/confetti-framework/foundation/http"
 	"github.com/confetti-framework/foundation/http/middleware"
 	"github.com/confetti-framework/routing/outcome"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -22,7 +22,7 @@ func Test_middleware_with_app_from_request(t *testing.T) {
 			return outcome.Html("foo")
 		})
 
-	assert.NotNil(t, response)
+	require.NotNil(t, response)
 }
 
 type checkAppRequiredInMiddleware struct{}

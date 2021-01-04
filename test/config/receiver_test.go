@@ -4,7 +4,7 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/providers"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -14,7 +14,7 @@ func Test_get_empty_struct_by_empty_key(t *testing.T) {
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
 	result := container.Make("config.")
-	assert.Equal(t, map[string]interface{}{}, result)
+	require.Equal(t, map[string]interface{}{}, result)
 }
 
 func Test_get_filled_struct_by_empty_key(t *testing.T) {
@@ -22,7 +22,7 @@ func Test_get_filled_struct_by_empty_key(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(t, map[string]interface{}{"firstConfig": firstConfig}, container.Make("config"))
+	require.Equal(t, map[string]interface{}{"firstConfig": firstConfig}, container.Make("config"))
 }
 
 func Test_get_by_not_existing_key(t *testing.T) {
@@ -31,8 +31,8 @@ func Test_get_by_not_existing_key(t *testing.T) {
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
 	result, err := container.MakeE("config.age")
-	assert.Nil(t, result)
-	assert.EqualError(t, err, "get instance from container: key 'age': can not found value")
+	require.Nil(t, result)
+	require.EqualError(t, err, "get instance 'config.age' from container: key 'age': can not found value")
 }
 
 func Test_get_by_existing_key(t *testing.T) {
@@ -40,7 +40,7 @@ func Test_get_by_existing_key(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(t, "The horse", container.Make("config.firstConfig.Title"))
+	require.Equal(t, "The horse", container.Make("config.firstConfig.Title"))
 }
 
 func Test_get_nested_from_struct(t *testing.T) {
@@ -55,7 +55,7 @@ func Test_get_nested_from_struct(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
+	require.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
 }
 
 func Test_get_from_booted_container(t *testing.T) {
@@ -70,7 +70,7 @@ func Test_get_from_booted_container(t *testing.T) {
 	bootContainer = providers.ConfigServiceProvider{Index: index}.Register(bootContainer)
 	container := foundation.NewContainerByBoot(bootContainer)
 
-	assert.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
+	require.Equal(t, "bottom of the sea", container.Make("config.deepConfig.Deep.deeper.0"))
 }
 
 func Test_get_by_asterisk(t *testing.T) {
@@ -78,5 +78,5 @@ func Test_get_by_asterisk(t *testing.T) {
 	var container inter.Container = foundation.NewContainer()
 	container = providers.ConfigServiceProvider{Index: index}.Register(container)
 
-	assert.Len(t, container.Make("config.*"), 2)
+	require.Len(t, container.Make("config.*"), 2)
 }
