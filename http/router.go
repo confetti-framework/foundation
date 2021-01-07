@@ -30,7 +30,7 @@ func (r Router) DispatchToRoute(request inter.Request) inter.Response {
 	middlewares = append(
 		middlewares,
 		middleware.DecorateResponse{},
-		middleware.AppendAppMiddleware{},
+		middleware.AppendApp{},
 		middleware.PanicToResponse{},
 	)
 

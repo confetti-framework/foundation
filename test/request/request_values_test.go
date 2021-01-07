@@ -195,7 +195,7 @@ func Test_get_content_from_request_with_method_get(t *testing.T) {
 
 	content, err := request.ContentE("")
 	require.Equal(t, support.NewValue(nil), content)
-	require.EqualError(t, err, "no request body decoder found. Check the headers and http method")
+	require.EqualError(t, err, "unsupported content type")
 	status, ok := errors.FindStatus(err)
 	require.Equal(t, net.StatusUnsupportedMediaType, status)
 	require.True(t, ok)
