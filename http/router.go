@@ -21,16 +21,14 @@ func (r Router) DispatchToRoute(request inter.Request) inter.Response {
 
 	route := r.routes.Match(request)
 
-	// todo implement event Events\RouteMatched
-
-	middlewares := route.Middleware()
-
-	// Framework middlewares should be placed at the end
-	// so that they are executed first when a response is returned
+	// Framework middlewares should be placed at the beginning and the end
+	middlewares := append(
+		[]inter.HttpMiddleware{middleware.AppendApp{}},
+		route.Middleware()...,
+	)
 	middlewares = append(
 		middlewares,
 		middleware.DecorateResponse{},
-		middleware.AppendApp{},
 		middleware.PanicToResponse{},
 	)
 

@@ -10,10 +10,27 @@ import (
 	"testing"
 )
 
-func Test_middleware_with_app_from_request(t *testing.T) {
+func Test_middleware_without_app_from_request(t *testing.T) {
 	options := http.Options{App: foundation.NewApp()}
 	request := http.NewRequest(options)
-	middlewares := []inter.HttpMiddleware{checkAppRequiredInMiddleware{}, middleware.AppendApp{}}
+	middlewares := []inter.HttpMiddleware{checkAppRequiredInMiddleware{}}
+
+	when := func() {
+		middleware.NewPipeline(request.App()).
+			Send(request).
+			Through(middlewares).
+			Then(func(request inter.Request) inter.Response {
+				return outcome.Html("foo")
+			})
+	}
+
+	require.Panics(t, when)
+}
+
+func Test_middleware_with_app_at_end_of_pipeline(t *testing.T) {
+	options := http.Options{App: foundation.NewApp()}
+	request := http.NewRequest(options)
+	middlewares := []inter.HttpMiddleware{middleware.AppendApp{}}
 
 	response := middleware.NewPipeline(request.App()).
 		Send(request).
@@ -22,16 +39,14 @@ func Test_middleware_with_app_from_request(t *testing.T) {
 			return outcome.Html("foo")
 		})
 
-	require.NotNil(t, response)
+	require.NotNil(t, response.App())
 }
 
 type checkAppRequiredInMiddleware struct{}
 
 func (a checkAppRequiredInMiddleware) Handle(request inter.Request, next inter.Next) inter.Response {
 	response := next(request)
-	if response.App() == nil {
-		panic("app is not present")
-	}
+	response.App()
 
 	return response
 }
