@@ -43,45 +43,67 @@ func (p Pipeline) Through(pipes []inter.HttpMiddleware) Pipeline {
 	return p
 }
 
-// Run the contract with a final destination callback.
-func (p Pipeline) Then(destination inter.Next) inter.Response {
-
-	var callbacks []func(data inter.Request) inter.Response
-	sort.SliceStable(callbacks, func(i, j int) bool {
-		return true
-	})
-	nextCallback := 0
+// Run the contract with a final destination pipe holder.
+// In this case, pipes are middlewares with a request and a response
+func (p Pipeline) Then(controller inter.Controller) inter.Response {
+	var holder inter.PipeHolder
+	var holders []inter.PipeHolder
+	nextHolder := 0
 	pipes := p.Pipes
 
+	stabilizeOrder(holders)
 	pipes = reverse(pipes)
 
 	for i, pipe := range pipes {
+		// Clone pipe and disconnect the reference.
 		pipe := pipe
+
 		if i == 0 {
-			// Give the last callback a destination callback
-			callback := func(data inter.Request) inter.Response {
-				return pipe.Handle(data, destination)
+			// Give the last pipe holder a destination controller
+			holder = func(request inter.Request) inter.Response {
+				response := pipe.Handle(request, controller)
+				// Ensure response has an application (needed when middleware returns a new response)
+				response.SetApp(request.App())
+				return response
 			}
-			callbacks = append(callbacks, callback)
 		} else {
-			// Give other callback the next callback
-			callback := func(data inter.Request) inter.Response {
-				nextCallback--
-				return pipe.Handle(data, callbacks[nextCallback])
+			// Give other pipe holder the next pipe holder
+			holder = func(request inter.Request) inter.Response {
+				nextHolder--
+				response := pipe.Handle(request, holders[nextHolder])
+				// Ensure response has an application (needed when middleware returns a new response)
+				response.SetApp(request.App())
+				return response
 			}
-			callbacks = append(callbacks, callback)
 		}
+		holders = append(holders, holder)
 	}
 
-	// If no callbacks can be generated because no pipes
+	holders = setDefaultHolder(controller, holders)
+	nextHolder = getNextIndex(holders)
+
+	return holders[nextHolder](p.Passable)
+}
+
+// Ensure the pipe holders are stable sorted.
+func stabilizeOrder(holders []inter.PipeHolder) {
+	sort.SliceStable(holders, func(i, j int) bool {
+		return true
+	})
+}
+
+func setDefaultHolder(controller inter.Controller, pipeHolders []inter.PipeHolder) []inter.PipeHolder {
+	// If no pipe holders can be generated because no pipes
 	// are present, proceed directly to the destination
-	if callbacks == nil {
-		callbacks = append(callbacks, destination)
+	if pipeHolders == nil {
+		pipeHolders = append(pipeHolders, controller)
 	}
+	return pipeHolders
+}
 
-	nextCallback = len(callbacks) - 1
-
-	return callbacks[nextCallback](p.Passable)
+// calculate the next holder index
+func getNextIndex(pipeHolders []inter.PipeHolder) int {
+	return len(pipeHolders) - 1
 }
 
 func reverse(pipes []inter.HttpMiddleware) []inter.HttpMiddleware {

@@ -9,6 +9,6 @@ type DecorateResponse struct{}
 
 func (r DecorateResponse) Handle(request inter.Request, next inter.Next) inter.Response {
 	response := next(request)
-	decorators := response.App().Make("response_decorators").([]inter.ResponseDecorator)
+	decorators := request.App().Make("response_decorators").([]inter.ResponseDecorator)
 	return response_decorator.Handler{Decorators: decorators}.Decorate(response)
 }

@@ -6,9 +6,9 @@ import (
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/encoder"
 	"github.com/confetti-framework/foundation/http"
+	"github.com/confetti-framework/foundation/http/http_helper"
 	"github.com/confetti-framework/foundation/http/method"
 	"github.com/confetti-framework/foundation/http/middleware"
-	"github.com/confetti-framework/foundation/http/request_helper"
 	"github.com/confetti-framework/foundation/test/mock"
 	"github.com/confetti-framework/routing/outcome"
 	"github.com/confetti-framework/support"
@@ -83,7 +83,7 @@ func Test_get_url(t *testing.T) {
 	})
 
 	require.Equal(t, "GET", request.Method())
-	require.True(t, request_helper.IsMethod(request, "GET"))
+	require.True(t, http_helper.IsMethod(request, "GET"))
 	require.Equal(t, "/user/1432", request.Path())
 	require.Equal(t, "https://api.confetti-framework.com/user/1432", request.Url())
 	require.Equal(t, "https://api.confetti-framework.com/user/1432?test=123", request.FullUrl())

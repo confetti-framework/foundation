@@ -21,16 +21,7 @@ func (r Router) DispatchToRoute(request inter.Request) inter.Response {
 
 	route := r.routes.Match(request)
 
-	// Framework middlewares should be placed at the beginning and the end
-	middlewares := append(
-		[]inter.HttpMiddleware{middleware.AppendApp{}},
-		route.Middleware()...,
-	)
-	middlewares = append(
-		middlewares,
-		middleware.DecorateResponse{},
-		middleware.PanicToResponse{},
-	)
+	middlewares := allMiddlewares(route.Middleware())
 
 	return middleware.NewPipeline(request.App()).
 		Send(request).

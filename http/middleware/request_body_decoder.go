@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/encoder"
-	"github.com/confetti-framework/foundation/http/request_helper"
+	"github.com/confetti-framework/foundation/http/http_helper"
 )
 
 type RequestBodyDecoder struct{}
@@ -12,9 +12,9 @@ type RequestBodyDecoder struct{}
 func (r RequestBodyDecoder) Handle(request inter.Request, next inter.Next) inter.Response {
 
 	switch {
-	case request_helper.HasJson(request):
+	case http_helper.HasJson(request):
 		request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithJsonToValue)
-	case request_helper.HasMultiPartFormData(request):
+	case http_helper.HasMultiPartFormData(request):
 		request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
 	}
 

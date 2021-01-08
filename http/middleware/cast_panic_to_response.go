@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/http/http_helper"
 )
 
 type PanicToResponse struct{}
@@ -11,23 +12,20 @@ type PanicToResponse struct{}
 func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (response inter.Response) {
 
 	defer func() {
-		if r := recover(); r != nil {
-			instance, err := request.App().MakeE("default_response_outcome")
-			if err != nil {
-				panic(errors.Wrap(err, "please bind a encoder"))
-			}
-			switch x := r.(type) {
-			case string:
-				err = errors.New(x)
-			case error:
-				err = x
-			default:
-				err = errors.New("can't convert panic to response. IsError or string required")
-			}
-
-			response = instance.(func(interface{}) inter.Response)(err)
+		rec := recover()
+		if rec != nil {
+			instance := getDefaultResponseEncoder(request)
+			response = instance(http_helper.GetErrorFromPanic(rec))
 		}
 	}()
 
 	return next(request)
+}
+
+func getDefaultResponseEncoder(request inter.Request) func(interface{}) inter.Response {
+	instance, err := request.App().MakeE("default_response_outcome")
+	if err != nil {
+		panic(errors.Wrap(err, "please bind a encoder"))
+	}
+	return instance.(func(interface{}) inter.Response)
 }
