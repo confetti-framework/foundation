@@ -89,7 +89,7 @@ func Test_get_url(t *testing.T) {
 	require.Equal(t, "https://api.confetti-framework.com/user/1432?test=123", request.FullUrl())
 }
 
-func Test_all_values(t *testing.T) {
+func Test_all_contents(t *testing.T) {
 	request := fakeRequestWithForm()
 	request.App().Bind(inter.RequestBodyDecoder, encoder.RequestWithFormToValue)
 
@@ -103,7 +103,7 @@ func Test_all_values(t *testing.T) {
 		}, request.Content().Source())
 }
 
-func Test_form_values(t *testing.T) {
+func Test_form_contents(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	require.Equal(t, 1234, request.Parameter("user_id").Int())
@@ -115,7 +115,7 @@ func Test_form_values(t *testing.T) {
 	require.Equal(t, "tom", request.Content("").Map()["second"].Collection()[1].String())
 }
 
-func Test_form_value_not_found(t *testing.T) {
+func Test_form_content_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	value, err := request.ParameterE("not_existing_param")
@@ -124,7 +124,7 @@ func Test_form_value_not_found(t *testing.T) {
 	require.Equal(t, "key 'not_existing_param': can not found value", err.Error())
 }
 
-func Test_value_or(t *testing.T) {
+func Test_content_or(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	require.Equal(t, "Sally", request.ContentOr("fake", "Sally").String())
@@ -195,7 +195,7 @@ func Test_get_content_from_request_with_method_get(t *testing.T) {
 
 	content, err := request.ContentE("")
 	require.Equal(t, support.NewValue(nil), content)
-	require.EqualError(t, err, "unsupported content type")
+	require.EqualError(t, err, "unsupported content type or HTTP method")
 	status, ok := errors.FindStatus(err)
 	require.Equal(t, net.StatusUnsupportedMediaType, status)
 	require.True(t, ok)

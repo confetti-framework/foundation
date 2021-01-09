@@ -10,7 +10,7 @@ func GetErrorFromPanic(recoverRaw interface{}) error {
 	case error:
 		err = rec
 	default:
-		err = errors.New("can't convert panic to response. IsError or string required")
+		err = errors.New("can't convert panic to response. Error or string required")
 	}
 	return err
 }
