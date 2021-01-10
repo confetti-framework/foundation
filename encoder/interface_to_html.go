@@ -2,14 +2,18 @@ package encoder
 
 import (
 	"github.com/confetti-framework/contract/inter"
-	"reflect"
+	"github.com/spf13/cast"
 )
 
 type InterfaceToHtml struct{}
 
 func (j InterfaceToHtml) IsAble(object interface{}) bool {
-	_, ok := object.(string)
-	return ok || object == nil
+	_, isError := object.(error)
+	if isError {
+		return false
+	}
+	_, err := cast.ToStringE(object)
+	return err == nil
 }
 
 func (j InterfaceToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inter.Encoder) (string, error) {
@@ -17,9 +21,9 @@ func (j InterfaceToHtml) EncodeThrough(_ inter.App, object interface{}, _ []inte
 		return "", nil
 	}
 
-	result, ok := object.(string)
-	if !ok {
-		return "", EncodeError.Wrap("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
+	result, err := cast.ToStringE(object)
+	if err != nil {
+		return "", EncodeError.Wrap("can not encode to html: " + err.Error())
 	}
 
 	return result, nil

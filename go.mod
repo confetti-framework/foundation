@@ -10,6 +10,7 @@ require (
 	github.com/confetti-framework/syslog v0.1.0-rc
 	github.com/gorilla/mux v1.7.4
 	github.com/pkg/errors v0.9.1
+	github.com/spf13/cast v1.3.1
 	github.com/stretchr/testify v1.6.1
 	github.com/tidwall/gjson v1.6.0
 	github.com/vigneshuvi/GoDateFormat v0.0.0-20190923034126-379ee8a8c45f
