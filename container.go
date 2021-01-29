@@ -50,7 +50,13 @@ func (c *Container) Bind(abstract interface{}, concrete interface{}) {
 // Register a shared binding in the container.
 func (c *Container) Singleton(abstract interface{}, concrete interface{}) {
 	abstractString := support.Name(abstract)
-	c.singletons[abstractString] = concrete
+	if c.bootContainer == nil {
+		// is bootcontainer
+		c.singletons[abstractString] = concrete
+	} else {
+		// is not bootcontainer
+		c.singletons[abstractString] = concrete
+	}
 }
 
 // Register an existing instance as shared in the container without an abstract
