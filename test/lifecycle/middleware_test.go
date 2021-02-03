@@ -5,7 +5,7 @@ import (
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/http"
 	"github.com/confetti-framework/foundation/http/middleware"
-	"github.com/confetti-framework/routing/outcome"
+	"github.com/confetti-framework/foundation/http/outcome"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
