@@ -151,7 +151,7 @@ func Test_log_emergency(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Emergency("the message")
+	logger.Log(log_level.EMERGENCY, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="emerg"\] the message $`, lines[0][0])
@@ -161,7 +161,7 @@ func Test_log_emergency_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Emergency("name=%s", "Ron")
+	logger.Log(log_level.EMERGENCY, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -171,7 +171,7 @@ func Test_log_emergency_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.EmergencyWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.EMERGENCY, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="emerg"\] the message {"key":"value"}$`, lines[0][0])
@@ -181,7 +181,7 @@ func Test_log_alert(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Alert("the message")
+	logger.Log(log_level.ALERT, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="alert"\] the message $`, lines[0][0])
@@ -191,7 +191,7 @@ func Test_log_alert_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Alert("name=%s", "Ron")
+	logger.Log(log_level.ALERT, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -201,7 +201,7 @@ func Test_log_alert_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.AlertWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.ALERT, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="alert"\] the message {"key":"value"}$`, lines[0][0])
@@ -211,7 +211,7 @@ func Test_log_critical(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Critical("the message")
+	logger.Log(log_level.CRITICAL, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="crit"\] the message $`, lines[0][0])
@@ -221,7 +221,7 @@ func Test_log_critical_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Critical("name=%s", "Ron")
+	logger.Log(log_level.CRITICAL, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -231,7 +231,7 @@ func Test_log_critical_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.CriticalWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.CRITICAL, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="crit"\] the message {"key":"value"}$`, lines[0][0])
@@ -241,7 +241,7 @@ func Test_log_error(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Error("the message")
+	logger.Log(log_level.ERROR, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="err"\] the message $`, lines[0][0])
@@ -251,7 +251,7 @@ func Test_log_error_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Error("name=%s", "Ron")
+	logger.Log(log_level.ERROR, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -261,7 +261,7 @@ func Test_log_error_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.ErrorWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.ERROR, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="err"\] the message {"key":"value"}$`, lines[0][0])
@@ -271,7 +271,7 @@ func Test_log_warning(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Warning("the message")
+	logger.Log(log_level.WARNING, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="warning"\] the message $`, lines[0][0])
@@ -281,7 +281,7 @@ func Test_log_warning_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Warning("name=%s", "Ron")
+	logger.Log(log_level.WARNING, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -291,7 +291,7 @@ func Test_log_warning_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.WarningWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.WARNING, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="warning"\] the message {"key":"value"}$`, lines[0][0])
@@ -301,7 +301,7 @@ func Test_log_notice(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Notice("the message")
+	logger.Log(log_level.NOTICE, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="notice"\] the message $`, lines[0][0])
@@ -311,7 +311,7 @@ func Test_log_notice_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Notice("name=%s", "Ron")
+	logger.Log(log_level.NOTICE, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -321,7 +321,7 @@ func Test_log_notice_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.NoticeWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.NOTICE, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="notice"\] the message {"key":"value"}$`, lines[0][0])
@@ -331,7 +331,7 @@ func Test_log_info(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Info("the message")
+	logger.Log(log_level.INFO, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="info"\] the message $`, lines[0][0])
@@ -341,7 +341,7 @@ func Test_log_info_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Info("name=%s", "Ron")
+	logger.Log(log_level.INFO, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -351,7 +351,7 @@ func Test_log_info_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.InfoWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.INFO, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="info"\] the message {"key":"value"}$`, lines[0][0])
@@ -361,7 +361,7 @@ func Test_log_debug(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Debug("the message")
+	logger.Log(log_level.DEBUG, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="debug"\] the message $`, lines[0][0])
@@ -371,7 +371,7 @@ func Test_log_debug_arguments(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Debug("name=%s", "Ron")
+	logger.Log(log_level.DEBUG, "name=%s", "Ron")
 
 	lines := openAndReadFile(testFile)
 	require.Contains(t, lines[0][0], "name=Ron")
@@ -381,7 +381,7 @@ func Test_log_debug_with_data(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.DebugWith("the message", map[string]string{"key": "value"})
+	logger.LogWith(log_level.DEBUG, "the message", map[string]string{"key": "value"})
 
 	lines := openAndReadFile(testFile)
 	require.Regexp(t, ` \[level severity="debug"\] the message {"key":"value"}$`, lines[0][0])
@@ -391,7 +391,7 @@ func Test_log_with_min_level(t *testing.T) {
 	setUp()
 	logger := loggers.Syslog{Path: testFile, MinLevel: log_level.INFO}
 
-	logger.Debug("the message")
+	logger.Log(log_level.DEBUG, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 0)
@@ -401,7 +401,7 @@ func Test_log_same_level_as_min_level(t *testing.T) {
 	setUp()
 	logger := getLogger(testFile, 1)
 
-	logger.Info("the message")
+	logger.Log(log_level.INFO, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -443,7 +443,7 @@ func setUp() {
 
 func openAndReadFile(fileName string) [][]string {
 	file, err := os.Open(fileName)
-	defer func() { file.Close() }()
+	defer func() { _ = file.Close() }()
 	if err != nil {
 		return [][]string{}
 	}

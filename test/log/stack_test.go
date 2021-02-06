@@ -53,7 +53,7 @@ func Test_stack_with_data(t *testing.T) {
 func Test_stack_emergency(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Emergency("the message")
+	logger.Log(log_level.EMERGENCY, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -63,7 +63,7 @@ func Test_stack_emergency(t *testing.T) {
 func Test_stack_emergency_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.EmergencyWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.EMERGENCY, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -73,7 +73,7 @@ func Test_stack_emergency_with_data(t *testing.T) {
 func Test_stack_alert(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Alert("the message")
+	logger.Log(log_level.ALERT, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -83,7 +83,7 @@ func Test_stack_alert(t *testing.T) {
 func Test_stack_alert_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.AlertWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.ALERT, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -93,7 +93,7 @@ func Test_stack_alert_with_data(t *testing.T) {
 func Test_stack_critical(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Critical("the message")
+	logger.Log(log_level.CRITICAL, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -103,7 +103,7 @@ func Test_stack_critical(t *testing.T) {
 func Test_stack_critical_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.CriticalWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.CRITICAL, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -113,7 +113,7 @@ func Test_stack_critical_with_data(t *testing.T) {
 func Test_stack_error(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Error("the message")
+	logger.Log(log_level.ERROR, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -123,7 +123,7 @@ func Test_stack_error(t *testing.T) {
 func Test_stack_error_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.ErrorWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.ERROR, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -133,7 +133,7 @@ func Test_stack_error_with_data(t *testing.T) {
 func Test_stack_warning(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Warning("the message")
+	logger.Log(log_level.WARNING, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -143,7 +143,7 @@ func Test_stack_warning(t *testing.T) {
 func Test_stack_warning_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.WarningWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.WARNING, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -153,7 +153,7 @@ func Test_stack_warning_with_data(t *testing.T) {
 func Test_stack_notice(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Notice("the message")
+	logger.Log(log_level.NOTICE, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -163,7 +163,7 @@ func Test_stack_notice(t *testing.T) {
 func Test_stack_notice_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.NoticeWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.NOTICE, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -173,7 +173,7 @@ func Test_stack_notice_with_data(t *testing.T) {
 func Test_stack_info(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Info("the message")
+	logger.Log(log_level.INFO, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -183,7 +183,7 @@ func Test_stack_info(t *testing.T) {
 func Test_stack_info_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.InfoWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.INFO, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -193,7 +193,7 @@ func Test_stack_info_with_data(t *testing.T) {
 func Test_stack_debug(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.Debug("the message")
+	logger.Log(log_level.DEBUG, "the message")
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)
@@ -203,7 +203,7 @@ func Test_stack_debug(t *testing.T) {
 func Test_stack_debug_with_data(t *testing.T) {
 	logger := getStackWithSingleLogger()
 
-	logger.DebugWith("the message", map[string]int{"key": 12})
+	logger.LogWith(log_level.DEBUG, "the message", map[string]int{"key": 12})
 
 	lines := openAndReadFile(testFile)
 	require.Len(t, lines, 1)

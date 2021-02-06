@@ -22,7 +22,7 @@ func Test_log_to_non_existing_channel(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
-	require.PanicsWithError(t, "can not log to channel. Channel 'fake' does not exist", func() {
+	require.PanicsWithError(t, "can not log to channel: channel 'fake' does not exist", func() {
 		app.Log("fake").Info("the message")
 	})
 }
@@ -31,7 +31,7 @@ func Test_log_to_multiple_non_existing_channels(t *testing.T) {
 	setUp()
 	app := getAppWithChannels()
 
-	require.PanicsWithError(t, "can not log to one of the channels. Channel 'fake1' does not exist", func() {
+	require.PanicsWithError(t, "can not log to one of the channels: channel 'fake1' does not exist", func() {
 		app.Log("fake1", "fake2").Info("the message")
 	})
 }

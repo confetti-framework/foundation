@@ -2,11 +2,11 @@ package http
 
 import (
 	"bytes"
-	"github.com/gorilla/mux"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/foundation/http/method"
 	"github.com/confetti-framework/support"
+	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
 	"mime/multipart"

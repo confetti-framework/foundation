@@ -72,9 +72,7 @@ func (a *Application) IsEnvironment(environments ...string) bool {
 	return false
 }
 
-func (a *Application) Log(channels ...string) inter.Logger {
-	var logger inter.Logger
-
+func (a *Application) Log(channels ...string) inter.LoggerFacade {
 	// If no channels are specified, take the default
 	if len(channels) == 0 {
 		defaultLogger, err := a.MakeE("config.Logging.Default")
@@ -84,13 +82,8 @@ func (a *Application) Log(channels ...string) inter.Logger {
 		channels = []string{defaultLogger.(string)}
 	}
 
-	//  If multiple loggers are present, wrap them in a stack
-	if len(channels) > 1 {
-		logger = loggers.Stack{Channels: channels}
-	} else {
-		logger = a.getLoggerByChannel(channels[0])
-	}
-
+	// Use one stack for al the channels
+	logger := loggers.NewLoggerFacade(loggers.Stack{Channels: channels})
 	return logger.SetApp(a)
 }
 

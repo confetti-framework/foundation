@@ -17,7 +17,7 @@ func Test_name_with_date_so_it_can_rotate(t *testing.T) {
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
 	logger = logger.SetApp(newTestApp())
-	logger.Info("the message")
+	logger.Log(log_level.INFO, "the message")
 
 	dateWithCorrectFormat := time.Now().Format(GoDateFormat.ConvertFormat("yyyy-mm-dd"))
 	require.FileExists(t, testDir+dateWithCorrectFormat+"_test.log")
@@ -28,7 +28,7 @@ func Test_don_not_remove_latest_file(t *testing.T) {
 	setUp()
 	var logger inter.Logger = loggers.Syslog{Path: testDir + "{yyyy-mm-dd}_test.log", MinLevel: log_level.INFO}
 	logger = logger.SetApp(newTestApp())
-	logger.Info("the message")
+	logger.Log(log_level.INFO, "the message")
 
 	// When
 	logger.Clear()
@@ -41,13 +41,13 @@ func Test_dont_remove_other_logs(t *testing.T) {
 	// Given
 	setUp()
 	logger1 := getLogger(testDir+"1_test.log", 2)
-	logger1.Info("old message")
+	logger1.Log(log_level.INFO, "old message")
 
 	logger2 := getLogger(testDir+"2_test.log", 2)
-	logger2.Info("new message")
+	logger2.Log(log_level.INFO, "new message")
 
 	logger3 := getLogger(testDir+"3_test.log", 2)
-	logger3.Info("new message")
+	logger3.Log(log_level.INFO, "new message")
 
 	// When
 	logger1.Clear()
@@ -65,7 +65,7 @@ func Test_remove_second_file_if_max_one(t *testing.T) {
 	setUp()
 	aLogFileIsPresent(testDir + "2019-10-21_test.log")
 	logger := getLogger(testDir+"{yyyy-mm-dd}_test.log", 1)
-	logger.Info("new message")
+	logger.Log(log_level.INFO, "new message")
 
 	// When
 	logger.Clear()
@@ -80,7 +80,7 @@ func Test_only_remove_current_channel_files(t *testing.T) {
 	aLogFileIsPresent(testDir + "2019-10-21_channel1.log")
 	aLogFileIsPresent(testDir + "2019-10-21_channel2.log")
 	logger := getLogger(testDir+"{yyyy-mm-dd}_channel2.log", 1)
-	logger.Info("new message")
+	logger.Log(log_level.INFO, "new message")
 
 	// When
 	logger.Clear()
@@ -91,7 +91,7 @@ func Test_only_remove_current_channel_files(t *testing.T) {
 
 func aLogFileIsPresent(filename string) {
 	logger := getLogger(filename, 1)
-	logger.Info("message in " + filename)
+	logger.Log(log_level.INFO, "message in "+filename)
 }
 
 func getFiles() []string {

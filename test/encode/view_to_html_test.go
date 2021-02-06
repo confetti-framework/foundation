@@ -54,5 +54,5 @@ func Test_view_with_footer_template(t *testing.T) {
 	app.Singleton("defined_templates", []string{mock.TemplateByName("footer_template.gohtml")})
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.PageWithFooter{}, nil)
 	require.NoError(t, err)
-	require.Equal(t, "<p>body</p>\n\n<footer>contact information</footer>", result)
+	require.Equal(t, "<p>body</p>\n\n    <footer>contact information</footer>", result)
 }
