@@ -189,6 +189,32 @@ func Test_binding_missing_without_abstract(t *testing.T) {
 	require.Equal(t, testStruct{TestCount: 0}, resolvedStruct)
 }
 
+func Test_resolve_with_an_pointer_value_and_empty_instance(t *testing.T) {
+	container := foundation.NewContainer()
+
+	instance := testStruct{}
+	container.Instance(instance)
+
+	var requestedStruct testStruct
+	_, err := container.MakeE(&requestedStruct)
+
+	require.Nil(t, err)
+	require.Equal(t, testStruct{TestCount: 0}, requestedStruct)
+}
+
+func Test_resolve_with_an_pointer_value(t *testing.T) {
+	container := foundation.NewContainer()
+
+	instance := testStruct{TestCount: 1}
+	container.Instance(instance)
+
+	var requestedStruct testStruct
+	_, err := container.MakeE(&requestedStruct)
+
+	require.Nil(t, err)
+	require.Equal(t, testStruct{TestCount: 1}, requestedStruct)
+}
+
 func Test_extending_bindings(t *testing.T) {
 
 	container := foundation.NewContainer()

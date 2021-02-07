@@ -95,7 +95,7 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 	var abstractName = support.Name(abstract)
 
 	kind := support.Kind(abstract)
-	if kind == reflect.Ptr && abstract == nil {
+	if support.Kind(abstract) == reflect.Ptr && abstract == nil {
 		return nil, errors.New("can't resolve interface. To resolve an interface, " +
 			"use the following syntax: (*interface)(nil), use a string or use the struct itself")
 	}
@@ -137,6 +137,8 @@ func (c *Container) MakeE(abstract interface{}) (interface{}, error) {
 		err = errors.Wrap(err, "get instance '%s' from container", abstractName)
 	}
 
+	resolvePointerValue(abstract, concrete)
+
 	return concrete, err
 }
 
@@ -165,11 +167,20 @@ func (c *Container) getConcreteBinding(
 	return concrete, nil
 }
 
-// "Extend" an abstract type in the container.
+// Extend an abstract type in the container.
 func (c *Container) Extend(abstract interface{}, function func(service interface{}) interface{}) {
 	concrete := c.Make(abstract)
 
 	newConcrete := function(concrete)
 
 	c.Bind(abstract, newConcrete)
+}
+
+func resolvePointerValue(abstract interface{}, concrete interface{}) {
+	if support.Kind(abstract) == reflect.Ptr {
+		of := reflect.ValueOf(abstract)
+		if !of.IsNil() {
+			of.Elem().Set(reflect.ValueOf(concrete))
+		}
+	}
 }
