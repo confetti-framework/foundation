@@ -1,14 +1,14 @@
 package service
 
 import (
-	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/support"
 	"reflect"
 )
 
 type ParsedOption struct {
-	Number int
-	Tag    reflect.StructTag
-	Caster inter.Caster
+	Number   int
+	Tag      reflect.StructTag
+	TypeName string
 }
 
 func GetOptions(command interface{}) []ParsedOption {
@@ -17,25 +17,11 @@ func GetOptions(command interface{}) []ParsedOption {
 	elem := reflect.ValueOf(command)
 
 	for i := 0; i < elem.NumField(); i++ {
-		tag := reflect.TypeOf(command).Field(i).Tag
+		typeField := reflect.TypeOf(command).Field(i)
+		tag := typeField.Tag
 		field := elem.Field(i)
-		caster := getCasterByKind(field.Kind())
-		result = append(result, ParsedOption{Number: i, Tag: tag, Caster: caster})
+		result = append(result, ParsedOption{Number: i, Tag: tag, TypeName: support.Name(field.Interface())})
 	}
 
 	return result
-}
-
-func getCasterByKind(kind reflect.Kind) inter.Caster {
-	switch kind {
-	case reflect.Bool:
-		return CastToBool
-	case reflect.String:
-		return CastToString
-	case reflect.Int:
-		return CastToInt
-	case reflect.Float64:
-		return CastToFloat
-	}
-	return nil
 }
