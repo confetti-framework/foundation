@@ -44,7 +44,7 @@ var Style = table.Style{
 func RenderIndex(output io.Writer, commands []inter.Command) inter.ExitCode {
 	t := table.NewWriter()
 	t.SetOutputMirror(output)
-	t.SetTitle("Confetti Baker")
+	t.SetTitle("Confetti")
 	t.AppendHeader(table.Row{"Command", "Description"})
 
 	for _, command := range commands {

@@ -26,7 +26,9 @@ func (s Slack) Group(_ string) inter.Logger {
 	return s
 }
 
-func (s Slack) Clear() {}
+func (s Slack) Clear() bool {
+	return false
+}
 
 func (s Slack) Log(severity log_level.Level, message string, arguments ...interface{}) {
 	s.LogWith(severity, fmt.Sprintf(message, arguments...), "")
