@@ -6,7 +6,7 @@ import (
 	"io"
 )
 
-var Style = table.Style{
+var style = table.Style{
 	Name: "Custom",
 	Box: table.BoxStyle{
 		BottomLeft:       " ",
@@ -41,17 +41,17 @@ var Style = table.Style{
 	Title: table.TitleOptionsBright,
 }
 
-func RenderIndex(output io.Writer, commands []inter.Command) inter.ExitCode {
+func RenderIndex(app inter.App, output io.Writer, commands []inter.Command) inter.ExitCode {
 	t := table.NewWriter()
 	t.SetOutputMirror(output)
-	t.SetTitle("Confetti")
+	t.SetTitle("%s (%s)", app.Make("config.App.Name").(string), app.Make("config.App.Env").(string))
 	t.AppendHeader(table.Row{"Command", "Description"})
 
 	for _, command := range commands {
 		t.AppendRow([]interface{}{command.Name(), command.Description()})
 	}
 
-	t.SetStyle(Style)
+	t.SetStyle(style)
 	t.Render()
 
 	return inter.Success

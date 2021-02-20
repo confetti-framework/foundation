@@ -19,15 +19,11 @@ func (k Kernel) Handle() inter.ExitCode {
 		k.Output = os.Stdout
 	}
 
-	args := service.GetArgs(k.App)
-	if len(args) > 1 {
-		code := service.DispatchCommands(k.App, k.Output, k.Commands)
-		if code != inter.Help {
-			// todo test help page
-			_, _ = fmt.Fprintln(k.Output, "Done")
-			return code
-		}
+	code := service.DispatchCommands(k.App, k.Output, k.Commands)
+	if code != inter.Help {
+		_, _ = fmt.Fprintln(k.Output, "Done")
+		return code
 	}
 
-	return service.RenderIndex(k.Output, k.Commands)
+	return service.RenderIndex(k.App, k.Output, k.Commands)
 }

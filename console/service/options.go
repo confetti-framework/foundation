@@ -11,6 +11,11 @@ type ParsedOption struct {
 	TypeName string
 }
 
+type ValueOption struct {
+	Value  bool
+	Option ParsedOption
+}
+
 func GetOptions(command interface{}) []ParsedOption {
 	//goland:noinspection GoPreferNilSlice
 	result := []ParsedOption{}
