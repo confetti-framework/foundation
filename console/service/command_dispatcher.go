@@ -2,8 +2,10 @@ package service
 
 import (
 	"flag"
+	"fmt"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/console/flag_type"
 	"io"
 	"reflect"
 	"strings"
@@ -33,7 +35,7 @@ func handleCommand(app inter.App, output io.Writer, command inter.Command) inter
 		if code != inter.Continue {
 			return code
 		}
-		setValuesInCommand(&command, options, actualArgs)
+		setValuesInCommand(&command, flagSet, options, actualArgs)
 
 		return command.Handle(app, output)
 	}
@@ -41,15 +43,14 @@ func handleCommand(app inter.App, output io.Writer, command inter.Command) inter
 	return inter.Continue
 }
 
-func setValuesInCommand(command *inter.Command, options []ParsedOption, actualArgs []string) {
+func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []ParsedOption, actualArgs []string) {
 	for _, option := range options {
 		for _, actual := range actualArgs[2:] {
 			actual := strings.TrimLeft(actual, "-")
-			if option.Tag.Get("short") == actual {
-				setValue(command, option.Number)
-			}
-			if option.Tag.Get("flag") == actual {
-				setValue(command, option.Number)
+			if actual == option.Tag.Get("short") {
+				setValueByFlag(command, option.Number, set.Lookup(option.Tag.Get("short")))
+			} else if actual == option.Tag.Get("flag") {
+				setValueByFlag(command, option.Number, set.Lookup(option.Tag.Get("flag")))
 			}
 		}
 	}
@@ -80,18 +81,34 @@ func validate(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
 
 func registerOptions(set *flag.FlagSet, options []ParsedOption) {
 	for _, option := range options {
-		shortFlag := option.Tag.Get("short")
-		if set.Lookup(shortFlag) == nil {
-			set.Bool(shortFlag, false, "")
-		}
-		longFlag := option.Tag.Get("flag")
-		if set.Lookup(longFlag) == nil {
-			set.Bool(longFlag, false, option.Tag.Get("description"))
-		}
+		registerFlag(set, option, option.Tag.Get("short"), "")
+		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"))
 	}
 }
 
-func setValue(command *inter.Command, i int) {
+func registerFlag(set *flag.FlagSet, option ParsedOption, flag string, description string) interface{} {
+	var result interface{}
+
+	// Check if the flag is already present.
+	if set.Lookup(flag) != nil || flag == "" {
+		return nil
+	}
+
+	// special case: bool doesn't need an arg
+	if _, ok := option.Value.(bool); ok {
+		value := flag_type.BoolValue(false)
+		set.Var(&value, flag, description)
+		result = value
+	} else {
+		value := flag_type.String("")
+		set.Var(&value, flag, description)
+		result = value
+	}
+
+	return result
+}
+
+func setValueByFlag(command *inter.Command, i int, lookup *flag.Flag) {
 	// v is the interface{}
 	v := reflect.ValueOf(command).Elem()
 
@@ -104,7 +121,12 @@ func setValue(command *inter.Command, i int) {
 	tmp.Set(v.Elem())
 
 	// Set the field.
-	tmp.Field(i).SetBool(true)
+	rawValue, ok := lookup.Value.(interface{ Get() interface{} })
+	if ok == false {
+		panic(fmt.Sprintf("Can't get value from flag type: Method `Get() interface{}` not found in %v", lookup))
+	}
+	value := reflect.ValueOf(rawValue.Get())
+	tmp.Field(i).Set(value)
 
 	// Set the interface to the modified struct value.
 	v.Set(tmp)

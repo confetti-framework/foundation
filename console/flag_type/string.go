@@ -12,3 +12,7 @@ func (s *String) Set(value string) error {
 	*s = String(value)
 	return nil
 }
+
+func (s *String) Get() interface{} {
+	return string(*s)
+}

@@ -1,19 +1,13 @@
 package service
 
 import (
-	"github.com/confetti-framework/support"
 	"reflect"
 )
 
 type ParsedOption struct {
-	Number   int
-	Tag      reflect.StructTag
-	TypeName string
-}
-
-type ValueOption struct {
-	Value  bool
-	Option ParsedOption
+	Number int
+	Tag    reflect.StructTag
+	Value  interface{}
 }
 
 func GetOptions(command interface{}) []ParsedOption {
@@ -25,7 +19,13 @@ func GetOptions(command interface{}) []ParsedOption {
 		typeField := reflect.TypeOf(command).Field(i)
 		tag := typeField.Tag
 		field := elem.Field(i)
-		result = append(result, ParsedOption{Number: i, Tag: tag, TypeName: support.Name(field.Interface())})
+		option := ParsedOption{
+			Number: i,
+			Tag:    tag,
+			Value:  field.Interface(),
+		}
+
+		result = append(result, option)
 	}
 
 	return result

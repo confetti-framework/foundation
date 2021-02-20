@@ -20,26 +20,12 @@ func (s structWithOptionBool) Description() string { return "test" }
 
 func (s structWithOptionBool) Handle(app inter.App, writer io.Writer) inter.ExitCode {
 	if s.DryRun {
-		fmt.Fprintln(writer, "true")
+		_, _ = fmt.Fprintln(writer, "true")
 	} else {
-		fmt.Fprintln(writer, "false")
+		_, _ = fmt.Fprintln(writer, "false")
 	}
 
 	return inter.Success
-}
-
-func Test_cast_option_bool_true(t *testing.T) {
-	output, app := setUp()
-
-	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--dry-run"})
-
-	console.Kernel{
-		App:      app,
-		Output:   &output,
-		Commands: []inter.Command{structWithOptionBool{}},
-	}.Handle()
-
-	require.Contains(t, output.String(), `true`)
 }
 
 func Test_cast_multiple_fields_true(t *testing.T) {
@@ -72,6 +58,47 @@ func Test_cast_multiple_fields_one_true(t *testing.T) {
 
 type structWithMultipleFlags struct {
 	DryRun bool `short:"dr" flag:"dry-run"`
+}
+
+func Test_cast_option_bool_true(t *testing.T) {
+	output, app := setUp()
+
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--dry-run"})
+
+	console.Kernel{
+		App:      app,
+		Output:   &output,
+		Commands: []inter.Command{structWithOptionBool{}},
+	}.Handle()
+
+	require.Contains(t, output.String(), `true`)
+}
+
+type structWithOptionString struct {
+	Username string `flag:"username"`
+}
+
+func (s structWithOptionString) Name() string        { return "test" }
+func (s structWithOptionString) Description() string { return "test" }
+
+func (s structWithOptionString) Handle(app inter.App, writer io.Writer) inter.ExitCode {
+	_, _ = fmt.Fprintln(writer, "name:"+s.Username)
+
+	return inter.Success
+}
+
+func Test_cast_option_string(t *testing.T) {
+	output, app := setUp()
+
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--username", "viktor"})
+
+	console.Kernel{
+		App:      app,
+		Output:   &output,
+		Commands: []inter.Command{structWithOptionString{}},
+	}.Handle()
+
+	require.Contains(t, output.String(), `name:viktor`)
 }
 
 func (s structWithMultipleFlags) Name() string        { return "test" }
