@@ -4,16 +4,20 @@ import (
 	"flag"
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
-	"github.com/confetti-framework/errors"
-	"github.com/confetti-framework/foundation/console/flag_type"
+	"github.com/confetti-framework/support"
 	"io"
 	"reflect"
 	"strings"
 )
 
-func DispatchCommands(app inter.App, output io.Writer, commands []inter.Command) inter.ExitCode {
+func DispatchCommands(
+	app inter.App,
+	output io.Writer,
+	commands []inter.Command,
+	flagProviders []func() []flag.Getter,
+) inter.ExitCode {
 	for _, command := range commands {
-		code := handleCommand(app, output, command)
+		code := handleCommand(app, output, command, flagProviders)
 		if code != inter.Continue {
 			return code
 		}
@@ -22,7 +26,12 @@ func DispatchCommands(app inter.App, output io.Writer, commands []inter.Command)
 	return inter.Help
 }
 
-func handleCommand(app inter.App, output io.Writer, command inter.Command) inter.ExitCode {
+func handleCommand(
+	app inter.App,
+	output io.Writer,
+	command inter.Command,
+	flagProviders []func() []flag.Getter,
+) inter.ExitCode {
 	flagSet := flag.NewFlagSet(command.Name(), flag.ContinueOnError)
 	flagSet.SetOutput(output)
 	actualArgs := actualArgs(app)
@@ -30,8 +39,8 @@ func handleCommand(app inter.App, output io.Writer, command inter.Command) inter
 	if actualCommandName(actualArgs) == command.Name() {
 		options := GetOptions(command)
 
-		registerOptions(flagSet, options)
-		code := validate(flagSet, actualArgs)
+		registerOptions(flagSet, options, flagProviders)
+		code := parse(flagSet, actualArgs)
 		if code != inter.Continue {
 			return code
 		}
@@ -48,12 +57,20 @@ func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []Par
 		for _, actual := range actualArgs[2:] {
 			actual := strings.TrimLeft(actual, "-")
 			if actual == option.Tag.Get("short") {
-				setValueByFlag(command, option.Number, set.Lookup(option.Tag.Get("short")))
+				setValueByFlag(command, option.Number, getValue(set, option.Tag.Get("short")))
 			} else if actual == option.Tag.Get("flag") {
-				setValueByFlag(command, option.Number, set.Lookup(option.Tag.Get("flag")))
+				setValueByFlag(command, option.Number, getValue(set, option.Tag.Get("flag")))
 			}
 		}
 	}
+}
+
+func getValue(set *flag.FlagSet, key string) flag.Getter {
+	rawValue, ok := set.Lookup(key).Value.(flag.Getter)
+	if ok == false {
+		panic(fmt.Sprintf("Can't get value from flag type. Flag for key %s does not implement `flag.Getter`", key))
+	}
+	return rawValue
 }
 
 func actualCommandName(appArgs []string) string {
@@ -63,52 +80,54 @@ func actualCommandName(appArgs []string) string {
 	return ""
 }
 
-func validate(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
+func parse(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
 	var err error = nil
 	if len(appArgs) > 1 {
 		err = flagSet.Parse(appArgs[2:])
 	}
-
-	switch {
-	case errors.Is(err, flag.ErrHelp):
-		return inter.Help
-	case err != nil:
+	if err != nil {
 		return inter.Failure
-	default:
-		return inter.Continue
 	}
+	return inter.Continue
 }
 
-func registerOptions(set *flag.FlagSet, options []ParsedOption) {
+func registerOptions(set *flag.FlagSet, options []ParsedOption, flagProviders []func() []flag.Getter) {
 	for _, option := range options {
-		registerFlag(set, option, option.Tag.Get("short"), "")
-		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"))
+		fg := flagGettersByProviders(flagProviders)
+		registerFlag(set, option, option.Tag.Get("short"), "", fg)
+		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"), fg)
 	}
 }
 
-func registerFlag(set *flag.FlagSet, option ParsedOption, flag string, description string) interface{} {
-	var result interface{}
-
-	// Check if the flag is already present.
-	if set.Lookup(flag) != nil || flag == "" {
-		return nil
+func flagGettersByProviders(providers []func() []flag.Getter) []flag.Getter {
+	var result []flag.Getter
+	for _, provider := range providers {
+		result = append(result, provider()...)
 	}
-
-	// special case: bool doesn't need an arg
-	if _, ok := option.Value.(bool); ok {
-		value := flag_type.BoolValue(false)
-		set.Var(&value, flag, description)
-		result = value
-	} else {
-		value := flag_type.String("")
-		set.Var(&value, flag, description)
-		result = value
-	}
-
 	return result
 }
 
-func setValueByFlag(command *inter.Command, i int, lookup *flag.Flag) {
+func registerFlag(set *flag.FlagSet, option ParsedOption, flag string, description string, getters []flag.Getter) {
+	// Check if the flag is already present.
+	if set.Lookup(flag) != nil || flag == "" {
+		return
+	}
+
+	// There is no need to add a - to a tag. This will be added automatically.
+	if flag[0] == '-' {
+		panic("field with tag `" + flag + "` starts with a -. That's not allowed.")
+	}
+
+	for _, getter := range getters {
+		getterName := support.Name(getter.Get())
+		valueName := support.Name(option.Value)
+		if getterName == valueName {
+			set.Var(getter, flag, description)
+		}
+	}
+}
+
+func setValueByFlag(command *inter.Command, i int, rawValue flag.Getter) {
 	// v is the interface{}
 	v := reflect.ValueOf(command).Elem()
 
@@ -121,10 +140,6 @@ func setValueByFlag(command *inter.Command, i int, lookup *flag.Flag) {
 	tmp.Set(v.Elem())
 
 	// Set the field.
-	rawValue, ok := lookup.Value.(interface{ Get() interface{} })
-	if ok == false {
-		panic(fmt.Sprintf("Can't get value from flag type: Method `Get() interface{}` not found in %v", lookup))
-	}
 	value := reflect.ValueOf(rawValue.Get())
 	tmp.Field(i).Set(value)
 

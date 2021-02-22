@@ -5,7 +5,6 @@ import (
 	"github.com/confetti-framework/foundation/console"
 	"github.com/confetti-framework/foundation/console/service"
 	"github.com/stretchr/testify/require"
-	"io"
 	"testing"
 )
 
@@ -130,13 +129,6 @@ func Test_get_parsed_option_with_description(t *testing.T) {
 	require.Equal(t, "Execute the command as a dry run", options[0].Tag.Get("description"))
 }
 
-
-func (s structWithDescription) Name() string        { return "test" }
-func (s structWithDescription) Description() string { return "test" }
-func (s structWithDescription) Handle(app inter.App, writer io.Writer) inter.ExitCode {
-	return inter.Success
-}
-
 func Test_show_help_description_of_wrong_flag(t *testing.T) {
 	output, app := setUp()
 	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--fake_flag"})
@@ -174,5 +166,20 @@ func Test_show_help_description_of_wrong_short(t *testing.T) {
 		"-dr\n \t\n -dry-run\n \tThe flag description")
 }
 
+func Test_show_help_with_short_flags_when_multiple_options_are_given(t *testing.T) {
+	output, app := setUp()
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--invalid"})
 
-// todo test empty flag + empty short flag
+	code := console.Kernel{
+		App:      app,
+		Output:   &output,
+		Commands: []inter.Command{structWithMultipleFields{}},
+	}.Handle()
+
+	require.Equal(t, inter.Failure, code)
+	require.Contains(t, output.String(), `flag provided but not defined: -invalid`)
+	require.Contains(t, output.String(), "-dr")
+	require.Contains(t, output.String(), "-dry-run")
+	require.Contains(t, output.String(), "-send-mail")
+	require.Contains(t, output.String(), "-sm")
+}

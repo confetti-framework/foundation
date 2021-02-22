@@ -24,7 +24,6 @@ func GetOptions(command interface{}) []ParsedOption {
 			Tag:    tag,
 			Value:  field.Interface(),
 		}
-
 		result = append(result, option)
 	}
 

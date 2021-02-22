@@ -64,8 +64,8 @@ func Test_validate_one_option(t *testing.T) {
 }
 
 type structWithMultipleFields struct {
-	DryRun   bool `flag:"dry-run"`
-	SendMail bool `flag:"send-mail"`
+	DryRun   bool `short:"dr" flag:"dry-run"`
+	SendMail bool `short:"sm" flag:"send-mail"`
 }
 func (s structWithMultipleFields) Name() string        { return "test" }
 func (s structWithMultipleFields) Description() string { return "test" }
