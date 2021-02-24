@@ -45,7 +45,7 @@ func Test_get_parsed_option(t *testing.T) {
 	options := service.GetOptions(mockCommandOption{})
 
 	require.Equal(t, "dry-run", options[0].Tag.Get("flag"))
-	require.Equal(t, false, options[0].Value)
+	require.Equal(t, "bool", options[0].Type)
 }
 
 type mockCommandMultipleOptions struct {
@@ -57,9 +57,9 @@ func Test_get_parsed_option_multiple_fields(t *testing.T) {
 	options := service.GetOptions(mockCommandMultipleOptions{})
 
 	require.Equal(t, "dry-run", options[0].Tag.Get("flag"))
-	require.Equal(t, false, options[0].Value)
+	require.Equal(t, "bool", options[0].Type)
 	require.Equal(t, "vvv", options[1].Tag.Get("flag"))
-	require.Equal(t, false, options[1].Value)
+	require.Equal(t, "bool", options[1].Type)
 }
 
 type mockCommandOptions struct {
@@ -81,7 +81,7 @@ func Test_get_parsed_option_bool(t *testing.T) {
 	options := service.GetOptions(mockCommandOptionBool{})
 
 	require.Equal(t, "dry-run", options[0].Tag.Get("flag"))
-	require.Equal(t, false, options[0].Value)
+	require.Equal(t, "bool", options[0].Type)
 }
 
 type mockCommandOptionString struct {
@@ -92,7 +92,7 @@ func Test_get_parsed_option_string(t *testing.T) {
 	options := service.GetOptions(mockCommandOptionString{})
 
 	require.Equal(t, "username", options[0].Tag.Get("flag"))
-	require.Equal(t, "", options[0].Value)
+	require.Equal(t, "string", options[0].Type)
 }
 
 type mockCommandOptionInt struct {
@@ -103,7 +103,7 @@ func Test_get_parsed_option_int(t *testing.T) {
 	options := service.GetOptions(mockCommandOptionInt{})
 
 	require.Equal(t, "amount", options[0].Tag.Get("flag"))
-	require.Equal(t, 0, options[0].Value)
+	require.Equal(t, "int", options[0].Type)
 }
 
 type mockCommandOptionFloat struct {
@@ -114,7 +114,7 @@ func Test_get_parsed_option_float(t *testing.T) {
 	options := service.GetOptions(mockCommandOptionFloat{})
 
 	require.Equal(t, "number", options[0].Tag.Get("flag"))
-	require.Equal(t, 0., options[0].Value)
+	require.Equal(t, "float", options[0].Type)
 }
 
 type mockCommandOptionsWithDescription struct {

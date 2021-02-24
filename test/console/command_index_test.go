@@ -23,17 +23,17 @@ func Test_index_with_one_command(t *testing.T) {
 	code := console.Kernel{
 		App: app,
 		Output:   &output,
-		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)
-	require.Contains(t,
-		TrimDoubleSpaces(output.String()),`
- COMMAND DESCRIPTION
-
- log:clear Clear the log files as indicated in the configuration.
-
-`)
+	require.Contains(
+		t,
+		TrimDoubleSpaces(output.String()),
+		"Confetti (testing)" +
+			"\n\n" +
+			" -h --help Can be used with any command to show\n the command's available arguments and options\n\n" +
+			" log:clear Clear the log files as indicated in the configuration.",
+	)
 }
 
 type aCommand struct {

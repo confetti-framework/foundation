@@ -1,28 +1,29 @@
 package service
 
 import (
+	"github.com/confetti-framework/support"
 	"reflect"
 )
 
-type ParsedOption struct {
+type Field struct {
 	Number int
 	Tag    reflect.StructTag
-	Value  interface{}
+	Type   string
 }
 
-func GetOptions(command interface{}) []ParsedOption {
+func GetOptions(command interface{}) []Field {
 	//goland:noinspection GoPreferNilSlice
-	result := []ParsedOption{}
+	result := []Field{}
 	elem := reflect.ValueOf(command)
 
 	for i := 0; i < elem.NumField(); i++ {
 		typeField := reflect.TypeOf(command).Field(i)
 		tag := typeField.Tag
 		field := elem.Field(i)
-		option := ParsedOption{
+		option := Field{
 			Number: i,
 			Tag:    tag,
-			Value:  field.Interface(),
+			Type:   support.Name(field.Interface()),
 		}
 		result = append(result, option)
 	}

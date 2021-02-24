@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
-	"github.com/confetti-framework/support"
 	"io"
 	"reflect"
 	"strings"
@@ -12,12 +11,12 @@ import (
 
 func DispatchCommands(
 	app inter.App,
-	output io.Writer,
+	w io.Writer,
 	commands []inter.Command,
 	flagProviders []func() []flag.Getter,
 ) inter.ExitCode {
 	for _, command := range commands {
-		code := handleCommand(app, output, command, flagProviders)
+		code := handleCommand(app, w, command, flagProviders)
 		if code != inter.Continue {
 			return code
 		}
@@ -28,31 +27,33 @@ func DispatchCommands(
 
 func handleCommand(
 	app inter.App,
-	output io.Writer,
+	w io.Writer,
 	command inter.Command,
 	flagProviders []func() []flag.Getter,
 ) inter.ExitCode {
-	flagSet := flag.NewFlagSet(command.Name(), flag.ContinueOnError)
-	flagSet.SetOutput(output)
+	set := flag.NewFlagSet(command.Name(), flag.ContinueOnError)
+	set.SetOutput(w)
+
 	actualArgs := actualArgs(app)
 
-	if actualCommandName(actualArgs) == command.Name() {
+	if ActualCommandName(actualArgs) == command.Name() {
 		options := GetOptions(command)
+		set.Usage = helpFormat(w, command, options)
 
-		registerOptions(flagSet, options, flagProviders)
-		code := parse(flagSet, actualArgs)
+		registerFlags(set, options, flagProviders)
+		code := parse(set, actualArgs)
 		if code != inter.Continue {
 			return code
 		}
-		setValuesInCommand(&command, flagSet, options, actualArgs)
+		setValuesInCommand(&command, set, options, actualArgs)
 
-		return command.Handle(app, output)
+		return command.Handle(app, w)
 	}
 
 	return inter.Continue
 }
 
-func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []ParsedOption, actualArgs []string) {
+func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []Field, actualArgs []string) {
 	for _, option := range options {
 		for _, actual := range actualArgs[2:] {
 			actual := strings.TrimLeft(actual, "-")
@@ -73,13 +74,6 @@ func getValue(set *flag.FlagSet, key string) flag.Getter {
 	return rawValue
 }
 
-func actualCommandName(appArgs []string) string {
-	if len(appArgs) > 1 {
-		return appArgs[1]
-	}
-	return ""
-}
-
 func parse(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
 	var err error = nil
 	if len(appArgs) > 1 {
@@ -91,40 +85,12 @@ func parse(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
 	return inter.Continue
 }
 
-func registerOptions(set *flag.FlagSet, options []ParsedOption, flagProviders []func() []flag.Getter) {
-	for _, option := range options {
-		fg := flagGettersByProviders(flagProviders)
-		registerFlag(set, option, option.Tag.Get("short"), "", fg)
-		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"), fg)
-	}
-}
-
 func flagGettersByProviders(providers []func() []flag.Getter) []flag.Getter {
 	var result []flag.Getter
 	for _, provider := range providers {
 		result = append(result, provider()...)
 	}
 	return result
-}
-
-func registerFlag(set *flag.FlagSet, option ParsedOption, flag string, description string, getters []flag.Getter) {
-	// Check if the flag is already present.
-	if set.Lookup(flag) != nil || flag == "" {
-		return
-	}
-
-	// There is no need to add a - to a tag. This will be added automatically.
-	if flag[0] == '-' {
-		panic("field with tag `" + flag + "` starts with a -. That's not allowed.")
-	}
-
-	for _, getter := range getters {
-		getterName := support.Name(getter.Get())
-		valueName := support.Name(option.Value)
-		if getterName == valueName {
-			set.Var(getter, flag, description)
-		}
-	}
 }
 
 func setValueByFlag(command *inter.Command, i int, rawValue flag.Getter) {
@@ -145,15 +111,4 @@ func setValueByFlag(command *inter.Command, i int, rawValue flag.Getter) {
 
 	// Set the interface to the modified struct value.
 	v.Set(tmp)
-}
-
-// actualArgs converts arguments from config []interface{} to []string
-func actualArgs(app inter.App) []string {
-	var result []string
-	argsRaw := app.Make("config.App.OsArgs")
-	for _, argRaw := range argsRaw.([]interface{}) {
-		result = append(result, argRaw.(string))
-	}
-
-	return result
 }

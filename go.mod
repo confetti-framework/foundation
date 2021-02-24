@@ -16,3 +16,7 @@ require (
 	github.com/vigneshuvi/GoDateFormat v0.0.0-20210204121036-67364dc23c79
 	golang.org/x/text v0.3.5
 )
+
+replace (
+	github.com/confetti-framework/contract v0.2.0-beta => ../contract
+)

@@ -2,7 +2,6 @@ package console
 
 import (
 	"flag"
-	"fmt"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console/flag_type"
 	"github.com/confetti-framework/foundation/console/service"
@@ -25,6 +24,10 @@ var flagGetters = func() []flag.Getter {
 	}
 }
 
+var commands = []inter.Command{
+	LogClear{},
+}
+
 type Kernel struct {
 	App           inter.App
 	Commands      []inter.Command
@@ -37,13 +40,21 @@ func (k Kernel) Handle() inter.ExitCode {
 		k.Output = os.Stdout
 	}
 
+	k.Commands = append(k.Commands, commands...)
 	k.FlagProviders = append(k.FlagProviders, flagGetters)
 
 	code := service.DispatchCommands(k.App, k.Output, k.Commands, k.FlagProviders)
 	if code != inter.Help {
-		_, _ = fmt.Fprintln(k.Output, "Done")
 		return code
 	}
 
 	return service.RenderIndex(k.App, k.Output, k.Commands)
+}
+
+func (k Kernel) GetCommands() []inter.Command {
+	return k.Commands
+}
+
+func (k Kernel) GetFlagProviders() []func() []flag.Getter {
+	return k.FlagProviders
 }

@@ -18,8 +18,8 @@ type structWithOptionBool struct {
 	DryRun bool `flag:"dry-run"`
 }
 
-func (s structWithOptionBool) Name() string        { return "test" }
-func (s structWithOptionBool) Description() string { return "test" }
+func (s structWithOptionBool) Name() string        { return "the_name" }
+func (s structWithOptionBool) Description() string { return "the_description" }
 
 func (s structWithOptionBool) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
 	if s.DryRun {
