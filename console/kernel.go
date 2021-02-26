@@ -26,6 +26,7 @@ var flagGetters = func() []flag.Getter {
 
 var commands = []inter.Command{
 	LogClear{},
+	Baker{},
 }
 
 type Kernel struct {
@@ -44,7 +45,7 @@ func (k Kernel) Handle() inter.ExitCode {
 	k.FlagProviders = append(k.FlagProviders, flagGetters)
 
 	code := service.DispatchCommands(k.App, k.Output, k.Commands, k.FlagProviders)
-	if code != inter.Help {
+	if code != inter.Index {
 		return code
 	}
 

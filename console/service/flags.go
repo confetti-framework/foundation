@@ -44,8 +44,8 @@ func registerFlag(set *flag.FlagSet, option Field, flag string, description stri
 	}
 
 	for _, getter := range getters {
-		getterName := support.Name(getter)
-		if getterName == option.Type {
+		getterName := support.Name(getter.Get())
+		if getterName == support.Name(option.Value) {
 			set.Var(getter, flag, description)
 		}
 	}

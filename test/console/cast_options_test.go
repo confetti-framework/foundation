@@ -59,7 +59,7 @@ func Test_cast_multiple_fields_one_true(t *testing.T) {
 
 func Test_cast_option_bool_true(t *testing.T) {
 	output, app := setUp()
-	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--dry-run"})
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "the_name", "--dry-run"})
 
 	console.Kernel{
 		App:      app,
@@ -67,7 +67,7 @@ func Test_cast_option_bool_true(t *testing.T) {
 		Commands: []inter.Command{structWithOptionBool{}},
 	}.Handle()
 
-	require.Contains(t, output.String(), `true`)
+ 	require.Contains(t, output.String(), `true`)
 }
 
 type structWithOptionString struct {
@@ -262,8 +262,7 @@ func setUp() (bytes.Buffer, inter.App) {
 	var output bytes.Buffer
 
 	app := foundation.NewTestApp(func(container inter.Container) inter.Container {
-		var osArgs []interface{}
-		container.Bind("config.App.OsArgs", osArgs)
+		container.Bind("config.App.OsArgs", []interface{}{})
 		container.Bind("config.App.Name", "Confetti")
 		container.Bind("config.App.Env", "testing")
 		return container

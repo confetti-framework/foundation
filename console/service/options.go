@@ -1,14 +1,13 @@
 package service
 
 import (
-	"github.com/confetti-framework/support"
 	"reflect"
 )
 
 type Field struct {
 	Number int
 	Tag    reflect.StructTag
-	Type   string
+	Value  interface{}
 }
 
 func GetOptions(command interface{}) []Field {
@@ -23,7 +22,7 @@ func GetOptions(command interface{}) []Field {
 		option := Field{
 			Number: i,
 			Tag:    tag,
-			Type:   support.Name(field.Interface()),
+			Value:  field.Interface(),
 		}
 		result = append(result, option)
 	}

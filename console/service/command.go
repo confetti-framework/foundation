@@ -9,6 +9,9 @@ import (
 	"strings"
 )
 
+const flagShort = "short"
+const flagLong = "flag"
+
 func DispatchCommands(
 	app inter.App,
 	w io.Writer,
@@ -22,7 +25,13 @@ func DispatchCommands(
 		}
 	}
 
-	return inter.Help
+	args := actualArgs(app)
+	if len(args) > 1 {
+		fmt.Fprintf(w, "command provided but not defined: %s\n", ActualCommandName(args))
+		return inter.Failure
+	}
+
+	return inter.Index
 }
 
 func handleCommand(
@@ -45,7 +54,11 @@ func handleCommand(
 		if code != inter.Continue {
 			return code
 		}
-		setValuesInCommand(&command, set, options, actualArgs)
+		code = validateRequiredFields(w, set, options)
+		if code != inter.Continue {
+			return code
+		}
+		setValuesInCommand(&command, set, options)
 
 		return command.Handle(app, w)
 	}
@@ -53,25 +66,63 @@ func handleCommand(
 	return inter.Continue
 }
 
-func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []Field, actualArgs []string) {
+func validateRequiredFields(w io.Writer, set *flag.FlagSet, options []Field) inter.ExitCode {
 	for _, option := range options {
-		for _, actual := range actualArgs[2:] {
-			actual := strings.TrimLeft(actual, "-")
-			if actual == option.Tag.Get("short") {
-				setValueByFlag(command, option.Number, getValue(set, option.Tag.Get("short")))
-			} else if actual == option.Tag.Get("flag") {
-				setValueByFlag(command, option.Number, getValue(set, option.Tag.Get("flag")))
-			}
+		if option.Tag.Get("required") != "true" {
+			continue
+		}
+
+		short := getActualValue(set, option, flagShort)
+		long := getActualValue(set, option, flagLong)
+		if isEqualOrNil(option.Value, short) && isEqualOrNil(option.Value, long) {
+			_, _ = fmt.Fprintf(
+				w,
+				"\n  flag is not provided but is required:\n\n  %s \u001B[30;1m%T\u001B[0m\n\n",
+				flagsFormat(option),
+				option.Value,
+			)
+
+			return inter.Failure
 		}
 	}
+	return inter.Continue
 }
 
-func getValue(set *flag.FlagSet, key string) flag.Getter {
-	rawValue, ok := set.Lookup(key).Value.(flag.Getter)
-	if ok == false {
-		panic(fmt.Sprintf("Can't get value from flag type. Flag for key %s does not implement `flag.Getter`", key))
+func flagsFormat(option Field) string {
+	var result string
+	if option.Tag.Get(flagShort) != "" {
+		result += "-" + option.Tag.Get(flagShort)
 	}
-	return rawValue
+	result += " "
+	if option.Tag.Get(flagLong) != "" {
+		result += "--" + option.Tag.Get(flagLong)
+	}
+	return strings.Trim(result, " ")
+}
+
+func isEqualOrNil(field interface{}, actual interface{}) bool {
+	return actual == nil || field == actual
+}
+
+func getActualValue(set *flag.FlagSet, option Field, key string) interface{} {
+	lookup := set.Lookup(option.Tag.Get(key))
+	if lookup == nil {
+		return nil
+	}
+	return lookup.Value.(flag.Getter).Get()
+}
+
+func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []Field) {
+	for _, option := range options {
+		short := getActualValue(set, option, flagShort)
+		if short != nil {
+			setValueByFlag(command, option.Number, short)
+		}
+		long := getActualValue(set, option, flagLong)
+		if long != nil {
+			setValueByFlag(command, option.Number, long)
+		}
+	}
 }
 
 func parse(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
@@ -93,7 +144,7 @@ func flagGettersByProviders(providers []func() []flag.Getter) []flag.Getter {
 	return result
 }
 
-func setValueByFlag(command *inter.Command, i int, rawValue flag.Getter) {
+func setValueByFlag(command *inter.Command, i int, rawValue interface{}) {
 	// v is the interface{}
 	v := reflect.ValueOf(command).Elem()
 
@@ -106,7 +157,7 @@ func setValueByFlag(command *inter.Command, i int, rawValue flag.Getter) {
 	tmp.Set(v.Elem())
 
 	// Set the field.
-	value := reflect.ValueOf(rawValue.Get())
+	value := reflect.ValueOf(rawValue)
 	tmp.Field(i).Set(value)
 
 	// Set the interface to the modified struct value.

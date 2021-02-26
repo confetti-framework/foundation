@@ -29,7 +29,7 @@ func (l LogClear) Handle(app inter.App, writer io.Writer) inter.ExitCode {
 		}
 	}
 
-	_, _ = fmt.Fprintf(writer, "Done")
+	_, _ = fmt.Fprintln(writer, "Done")
 
 	return inter.Success
 }

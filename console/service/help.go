@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/support"
 	"github.com/jedib0t/go-pretty/v6/table"
 	"io"
 )
@@ -36,7 +37,7 @@ func helpFormatFlag(f Field) []interface{} {
 
 	return []interface{}{
 		"\u001B[0m" + flags + "\u001b[0m",
-		"\t\u001b[30;1m" + f.Type + "\u001B[0m",
+		"\t\u001b[30;1m" + support.Name(f.Value) + "\u001B[0m",
 		f.Tag.Get(inter.Description),
 	}
 }

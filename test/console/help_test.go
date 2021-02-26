@@ -18,5 +18,5 @@ func Test_help_command(t *testing.T) {
 	}.Handle()
 
 	require.Equal(t, inter.Failure, code)
-	require.Contains(t, output.String(), "Usage of the_name")
+	require.Contains(t, output.String(), "\n  the_name\n")
 }

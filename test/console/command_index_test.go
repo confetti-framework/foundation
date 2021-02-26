@@ -31,7 +31,9 @@ func Test_index_with_one_command(t *testing.T) {
 		TrimDoubleSpaces(output.String()),
 		"Confetti (testing)" +
 			"\n\n" +
-			" -h --help Can be used with any command to show\n the command's available arguments and options\n\n" +
+			" -h --help Can be used with any command to show\n" +
+			" the command's available arguments and options.\n\n" +
+			" baker Interact with your application.\n" +
 			" log:clear Clear the log files as indicated in the configuration.",
 	)
 }

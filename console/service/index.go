@@ -55,7 +55,7 @@ func RenderIndex(app inter.App, writer io.Writer, commands []inter.Command) inte
 		app.Make("config.App.Name").(string),
 		app.Make("config.App.Env").(string),
 	)
-	t.AppendRow([]interface{}{"-h --help", "Can be used with any command to show\nthe command's available arguments and options"})
+	t.AppendRow([]interface{}{"-h --help", "Can be used with any command to show\nthe command's available arguments and options."})
 	t.AppendRow([]interface{}{" "})
 
 	// Sort all rows
