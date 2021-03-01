@@ -4,7 +4,6 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console"
 	"github.com/stretchr/testify/require"
-	"io"
 	"regexp"
 	"strings"
 	"testing"
@@ -12,7 +11,7 @@ import (
 
 func Test_index_show_title(t *testing.T) {
 	output, app := setUp()
-	code := console.Kernel{App: app, Output: &output}.Handle()
+	code := console.Kernel{App: app, Writer: &output}.Handle()
 
 	require.Equal(t, inter.Success, code)
 	require.Contains(t, output.String(), "Confetti (testing)")
@@ -21,15 +20,15 @@ func Test_index_show_title(t *testing.T) {
 func Test_index_with_one_command(t *testing.T) {
 	output, app := setUp()
 	code := console.Kernel{
-		App: app,
-		Output:   &output,
+		App:    app,
+		Writer: &output,
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)
 	require.Contains(
 		t,
 		TrimDoubleSpaces(output.String()),
-		"Confetti (testing)" +
+		"Confetti (testing)\x1b[39m" +
 			"\n\n" +
 			" -h --help Can be used with any command to show\n" +
 			" the command's available arguments and options.\n\n" +
@@ -44,15 +43,15 @@ type aCommand struct {
 
 func (s aCommand) Name() string        { return "a_command" }
 func (s aCommand) Description() string { return "" }
-func (s aCommand) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
+func (s aCommand) Handle(_ inter.Cli) inter.ExitCode {
 	return inter.Success
 }
 
 func Test_index_in_correct_order(t *testing.T) {
 	output, app := setUp()
 	code := console.Kernel{
-		App: app,
-		Output:   &output,
+		App:      app,
+		Writer:   &output,
 		Commands: []inter.Command{console.LogClear{}, aCommand{}},
 	}.Handle()
 

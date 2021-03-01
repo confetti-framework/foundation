@@ -2,9 +2,7 @@ package service
 
 import (
 	"flag"
-	"fmt"
 	"github.com/confetti-framework/contract/inter"
-	"io"
 	"reflect"
 	"strings"
 )
@@ -13,21 +11,20 @@ const flagShort = "short"
 const flagLong = "flag"
 
 func DispatchCommands(
-	app inter.App,
-	w io.Writer,
+	c inter.Cli,
 	commands []inter.Command,
 	flagProviders []func() []flag.Getter,
 ) inter.ExitCode {
 	for _, command := range commands {
-		code := handleCommand(app, w, command, flagProviders)
+		code := handleCommand(c, command, flagProviders)
 		if code != inter.Continue {
 			return code
 		}
 	}
 
-	args := actualArgs(app)
+	args := actualArgs(c.App())
 	if len(args) > 1 {
-		fmt.Fprintf(w, "command provided but not defined: %s\n", ActualCommandName(args))
+		c.Error("command provided but not defined: %s", ActualCommandName(args))
 		return inter.Failure
 	}
 
@@ -35,51 +32,49 @@ func DispatchCommands(
 }
 
 func handleCommand(
-	app inter.App,
-	w io.Writer,
+	c inter.Cli,
 	command inter.Command,
 	flagProviders []func() []flag.Getter,
 ) inter.ExitCode {
 	set := flag.NewFlagSet(command.Name(), flag.ContinueOnError)
-	set.SetOutput(w)
+	set.SetOutput(c.Writer())
 
-	actualArgs := actualArgs(app)
+	actualArgs := actualArgs(c.App())
 
 	if ActualCommandName(actualArgs) == command.Name() {
-		options := GetOptions(command)
-		set.Usage = helpFormat(w, command, options)
+		fields := GetCommandFields(command)
+		set.Usage = helpFormat(c, command, fields)
 
-		registerFlags(set, options, flagProviders)
+		registerFlags(set, fields, flagProviders)
 		code := parse(set, actualArgs)
 		if code != inter.Continue {
 			return code
 		}
-		code = validateRequiredFields(w, set, options)
+		code = validateRequiredFields(c, set, fields)
 		if code != inter.Continue {
 			return code
 		}
-		setValuesInCommand(&command, set, options)
+		setValuesInCommand(&command, set, fields)
 
-		return command.Handle(app, w)
+		return command.Handle(c)
 	}
 
 	return inter.Continue
 }
 
-func validateRequiredFields(w io.Writer, set *flag.FlagSet, options []Field) inter.ExitCode {
-	for _, option := range options {
-		if option.Tag.Get("required") != "true" {
+func validateRequiredFields(c inter.Cli, set *flag.FlagSet, fields []Field) inter.ExitCode {
+	for _, field := range fields {
+		if field.Tag.Get("required") != "true" {
 			continue
 		}
 
-		short := getActualValue(set, option, flagShort)
-		long := getActualValue(set, option, flagLong)
-		if isEqualOrNil(option.Value, short) && isEqualOrNil(option.Value, long) {
-			_, _ = fmt.Fprintf(
-				w,
-				"\n  flag is not provided but is required:\n\n  %s \u001B[30;1m%T\u001B[0m\n\n",
-				flagsFormat(option),
-				option.Value,
+		short := getActualValue(set, field, flagShort)
+		long := getActualValue(set, field, flagLong)
+		if isEqualOrNil(field.Value, short) && isEqualOrNil(field.Value, long) {
+			c.Error("  flag is not provided but is required:\n")
+			c.Line("  %s \u001B[30;1m%T\u001B[0m\n",
+				flagsFormat(field),
+				typeFormat(field),
 			)
 
 			return inter.Failure
@@ -88,14 +83,14 @@ func validateRequiredFields(w io.Writer, set *flag.FlagSet, options []Field) int
 	return inter.Continue
 }
 
-func flagsFormat(option Field) string {
+func flagsFormat(field Field) string {
 	var result string
-	if option.Tag.Get(flagShort) != "" {
-		result += "-" + option.Tag.Get(flagShort)
+	if field.Tag.Get(flagShort) != "" {
+		result += "-" + field.Tag.Get(flagShort)
 	}
 	result += " "
-	if option.Tag.Get(flagLong) != "" {
-		result += "--" + option.Tag.Get(flagLong)
+	if field.Tag.Get(flagLong) != "" {
+		result += "--" + field.Tag.Get(flagLong)
 	}
 	return strings.Trim(result, " ")
 }
@@ -104,23 +99,23 @@ func isEqualOrNil(field interface{}, actual interface{}) bool {
 	return actual == nil || field == actual
 }
 
-func getActualValue(set *flag.FlagSet, option Field, key string) interface{} {
-	lookup := set.Lookup(option.Tag.Get(key))
+func getActualValue(set *flag.FlagSet, f Field, key string) interface{} {
+	lookup := set.Lookup(f.Tag.Get(key))
 	if lookup == nil {
 		return nil
 	}
 	return lookup.Value.(flag.Getter).Get()
 }
 
-func setValuesInCommand(command *inter.Command, set *flag.FlagSet, options []Field) {
-	for _, option := range options {
-		short := getActualValue(set, option, flagShort)
+func setValuesInCommand(command *inter.Command, set *flag.FlagSet, fields []Field) {
+	for _, f := range fields {
+		short := getActualValue(set, f, flagShort)
 		if short != nil {
-			setValueByFlag(command, option.Number, short)
+			setValueByFlag(command, f.Number, short)
 		}
-		long := getActualValue(set, option, flagLong)
+		long := getActualValue(set, f, flagLong)
 		if long != nil {
-			setValueByFlag(command, option.Number, long)
+			setValueByFlag(command, f.Number, long)
 		}
 	}
 }

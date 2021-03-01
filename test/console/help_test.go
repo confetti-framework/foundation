@@ -13,10 +13,10 @@ func Test_help_command(t *testing.T) {
 
 	code := console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithOptionBool{}},
 	}.Handle()
 
 	require.Equal(t, inter.Failure, code)
-	require.Contains(t, output.String(), "\n  the_name\n")
+	require.Contains(t, output.String(), "\n  the_name")
 }

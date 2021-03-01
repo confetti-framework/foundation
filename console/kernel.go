@@ -3,10 +3,10 @@ package console
 import (
 	"flag"
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/foundation/console/facade"
 	"github.com/confetti-framework/foundation/console/flag_type"
 	"github.com/confetti-framework/foundation/console/service"
 	"io"
-	"os"
 )
 
 // These values must be in a callback so that they are new
@@ -31,25 +31,23 @@ var commands = []inter.Command{
 
 type Kernel struct {
 	App           inter.App
+	Writer        io.Writer
+	WriterErr     io.Writer
 	Commands      []inter.Command
-	Output        io.Writer
 	FlagProviders []func() []flag.Getter
 }
 
 func (k Kernel) Handle() inter.ExitCode {
-	if k.Output == nil {
-		k.Output = os.Stdout
-	}
-
 	k.Commands = append(k.Commands, commands...)
 	k.FlagProviders = append(k.FlagProviders, flagGetters)
 
-	code := service.DispatchCommands(k.App, k.Output, k.Commands, k.FlagProviders)
+	cli := facade.NewCli(k.App, k.Writer, k.WriterErr)
+	code := service.DispatchCommands(cli, k.Commands, k.FlagProviders)
 	if code != inter.Index {
 		return code
 	}
 
-	return service.RenderIndex(k.App, k.Output, k.Commands)
+	return service.RenderIndex(cli, k.Commands)
 }
 
 func (k Kernel) GetCommands() []inter.Command {

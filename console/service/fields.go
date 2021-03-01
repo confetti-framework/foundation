@@ -10,7 +10,7 @@ type Field struct {
 	Value  interface{}
 }
 
-func GetOptions(command interface{}) []Field {
+func GetCommandFields(command interface{}) []Field {
 	//goland:noinspection GoPreferNilSlice
 	result := []Field{}
 	elem := reflect.ValueOf(command)
@@ -19,12 +19,11 @@ func GetOptions(command interface{}) []Field {
 		typeField := reflect.TypeOf(command).Field(i)
 		tag := typeField.Tag
 		field := elem.Field(i)
-		option := Field{
+		result = append(result, Field{
 			Number: i,
 			Tag:    tag,
 			Value:  field.Interface(),
-		}
-		result = append(result, option)
+		})
 	}
 
 	return result

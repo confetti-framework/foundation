@@ -28,7 +28,7 @@ func Test_log_clear_without_loggers(t *testing.T) {
 
 	code := console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
@@ -57,7 +57,7 @@ func Test_log_clear_with_recent_log_file(t *testing.T) {
 	// When
 	code := console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
@@ -97,7 +97,7 @@ func Test_log_clear_with_old_logger_file(t *testing.T) {
 	// When
 	code := console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
@@ -108,9 +108,9 @@ func Test_log_clear_with_old_logger_file(t *testing.T) {
 	readDir, err := ioutil.ReadDir(dir)
 	require.Nil(t, err)
 	require.Len(t, readDir, 1)
-	require.Equal(
+	require.Regexp(
 		t,
-		"Files cleaned for channel: test_logger\nDone\n",
+		`Files cleaned for channel: test_logger.*\n`,
 		TrimDoubleSpaces(output.String()),
 	)
 }

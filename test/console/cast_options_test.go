@@ -6,9 +6,9 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/console"
+	"github.com/confetti-framework/foundation/console/facade"
 	"github.com/spf13/cast"
 	"github.com/stretchr/testify/require"
-	"io"
 	"strconv"
 	"testing"
 	"time"
@@ -21,11 +21,11 @@ type structWithOptionBool struct {
 func (s structWithOptionBool) Name() string        { return "the_name" }
 func (s structWithOptionBool) Description() string { return "the_description" }
 
-func (s structWithOptionBool) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
+func (s structWithOptionBool) Handle(c inter.Cli) inter.ExitCode {
 	if s.DryRun {
-		_, _ = fmt.Fprintln(writer, "true")
+		_, _ = fmt.Fprintln(c.Writer(), "true")
 	} else {
-		_, _ = fmt.Fprintln(writer, "false")
+		_, _ = fmt.Fprintln(c.Writer(), "false")
 	}
 
 	return inter.Success
@@ -37,7 +37,7 @@ func Test_cast_multiple_fields_true(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithMultipleFields{}},
 	}.Handle()
 
@@ -50,7 +50,7 @@ func Test_cast_multiple_fields_one_true(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithMultipleFields{}},
 	}.Handle()
 
@@ -63,7 +63,7 @@ func Test_cast_option_bool_true(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithOptionBool{}},
 	}.Handle()
 
@@ -77,8 +77,8 @@ type structWithOptionString struct {
 func (s structWithOptionString) Name() string        { return "test" }
 func (s structWithOptionString) Description() string { return "test" }
 
-func (s structWithOptionString) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
-	_, _ = fmt.Fprintln(writer, "name:"+s.Username)
+func (s structWithOptionString) Handle(c inter.Cli) inter.ExitCode {
+	_, _ = fmt.Fprintln(c.Writer(), "name:"+s.Username)
 
 	return inter.Success
 }
@@ -89,7 +89,7 @@ func Test_cast_option_string(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithOptionString{}},
 	}.Handle()
 
@@ -103,8 +103,8 @@ type structWithOptionDuration struct {
 func (s structWithOptionDuration) Name() string        { return "test" }
 func (s structWithOptionDuration) Description() string { return "test" }
 
-func (s structWithOptionDuration) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
-	_, _ = fmt.Fprintln(writer, "seconds:"+cast.ToString(s.Duration.Seconds()))
+func (s structWithOptionDuration) Handle(c inter.Cli) inter.ExitCode {
+	_, _ = fmt.Fprintln(c.Writer(), "seconds:"+cast.ToString(s.Duration.Seconds()))
 
 	return inter.Success
 }
@@ -115,7 +115,7 @@ func Test_cast_option_duration(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithOptionDuration{}},
 	}.Handle()
 
@@ -132,11 +132,11 @@ type structWithOptionInt struct {
 func (s structWithOptionInt) Name() string        { return "test" }
 func (s structWithOptionInt) Description() string { return "test" }
 
-func (s structWithOptionInt) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
-	_, _ = fmt.Fprintln(writer, "int:"+strconv.Itoa(s.Int))
-	_, _ = fmt.Fprintln(writer, "int64:"+cast.ToString(s.Int63))
-	_, _ = fmt.Fprintln(writer, "uint:"+cast.ToString(s.Uint))
-	_, _ = fmt.Fprintln(writer, "uint64:"+cast.ToString(s.Uint64))
+func (s structWithOptionInt) Handle(c inter.Cli) inter.ExitCode {
+	_, _ = fmt.Fprintln(c.Writer(), "int:"+strconv.Itoa(s.Int))
+	_, _ = fmt.Fprintln(c.Writer(), "int64:"+cast.ToString(s.Int63))
+	_, _ = fmt.Fprintln(c.Writer(), "uint:"+cast.ToString(s.Uint))
+	_, _ = fmt.Fprintln(c.Writer(), "uint64:"+cast.ToString(s.Uint64))
 
 	return inter.Success
 }
@@ -153,7 +153,7 @@ func Test_cast_option_int(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithOptionInt{}},
 	}.Handle()
 
@@ -171,9 +171,9 @@ type structWithDoubleOptionSameType struct {
 func (s structWithDoubleOptionSameType) Name() string        { return "test" }
 func (s structWithDoubleOptionSameType) Description() string { return "test" }
 
-func (s structWithDoubleOptionSameType) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
-	_, _ = fmt.Fprintln(writer, "int1:"+strconv.Itoa(s.Int1))
-	_, _ = fmt.Fprintln(writer, "int2:"+strconv.Itoa(s.Int2))
+func (s structWithDoubleOptionSameType) Handle(c inter.Cli) inter.ExitCode {
+	_, _ = fmt.Fprintln(c.Writer(), "int1:"+strconv.Itoa(s.Int1))
+	_, _ = fmt.Fprintln(c.Writer(), "int2:"+strconv.Itoa(s.Int2))
 
 	return inter.Success
 }
@@ -188,7 +188,7 @@ func Test_cast_double_option_same_type(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithDoubleOptionSameType{}},
 	}.Handle()
 
@@ -202,11 +202,11 @@ type structWithMultipleFlags struct {
 
 func (s structWithMultipleFlags) Name() string        { return "test" }
 func (s structWithMultipleFlags) Description() string { return "test" }
-func (s structWithMultipleFlags) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
+func (s structWithMultipleFlags) Handle(c inter.Cli) inter.ExitCode {
 	if s.DryRun {
-		_, _ = fmt.Fprintln(writer, "true")
+		_, _ = fmt.Fprintln(c.Writer(), "true")
 	} else {
-		_, _ = fmt.Fprintln(writer, "false")
+		_, _ = fmt.Fprintln(c.Writer(), "false")
 	}
 
 	return inter.Success
@@ -218,7 +218,7 @@ func Test_cast_short_flag(t *testing.T) {
 
 	console.Kernel{
 		App:      app,
-		Output:   &output,
+		Writer:   &output,
 		Commands: []inter.Command{structWithMultipleFlags{}},
 	}.Handle()
 
@@ -231,7 +231,7 @@ type structWithDash struct {
 
 func (s structWithDash) Name() string        { return "test:with_dash" }
 func (s structWithDash) Description() string { return "test" }
-func (s structWithDash) Handle(_ inter.App, writer io.Writer) inter.ExitCode {
+func (s structWithDash) Handle(_ inter.Cli) inter.ExitCode {
 	return inter.Success
 }
 
@@ -242,7 +242,7 @@ func Test_cast_flag_with_dash(t *testing.T) {
 	require.Panics(t, func() {
 		console.Kernel{
 			App:      app,
-			Output:   &output,
+			Writer:   &output,
 			Commands: []inter.Command{structWithDash{}},
 		}.Handle()
 	})
@@ -254,12 +254,12 @@ type structWithDescription struct {
 
 func (s structWithDescription) Name() string        { return "test" }
 func (s structWithDescription) Description() string { return "test" }
-func (s structWithDescription) Handle(app inter.App, writer io.Writer) inter.ExitCode {
+func (s structWithDescription) Handle(_ inter.Cli) inter.ExitCode {
 	return inter.Success
 }
 
 func setUp() (bytes.Buffer, inter.App) {
-	var output bytes.Buffer
+	var writer bytes.Buffer
 
 	app := foundation.NewTestApp(func(container inter.Container) inter.Container {
 		container.Bind("config.App.OsArgs", []interface{}{})
@@ -268,5 +268,25 @@ func setUp() (bytes.Buffer, inter.App) {
 		return container
 	})
 
-	return output, app
+	return writer, app
+}
+
+func Test_programmatically_executing_commands(t *testing.T) {
+	_, app := setUp()
+	exitCode := structWithDescription{}.Handle(facade.NewCli(app))
+
+	require.Equal(t, inter.Success, exitCode)
+}
+
+func Test_programmatically_executinasdfg_commands(t *testing.T) {
+	_, app := setUp()
+
+
+
+	exitCode := structWithDescription{}.Handle(facade.NewCli(app))
+
+
+
+
+	require.Equal(t, inter.Success, exitCode)
 }
