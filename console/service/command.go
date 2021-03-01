@@ -72,7 +72,7 @@ func validateRequiredFields(c inter.Cli, set *flag.FlagSet, fields []Field) inte
 		long := getActualValue(set, field, flagLong)
 		if isEqualOrNil(field.Value, short) && isEqualOrNil(field.Value, long) {
 			c.Error("  flag is not provided but is required:\n")
-			c.Line("  %s \u001B[30;1m%T\u001B[0m\n",
+			c.Line("  %s \u001B[30;1m%s\u001B[0m\n",
 				flagsFormat(field),
 				typeFormat(field),
 			)

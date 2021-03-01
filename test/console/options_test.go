@@ -258,5 +258,5 @@ func Test_command_with_required_short_or_long_flag(t *testing.T) {
 	require.Equal(t, inter.Failure, code)
 	require.Contains(t, output.String(), "  flag is not provided but is required:")
 	require.Contains(t, output.String(), " -d --dry-run ")
-	require.Contains(t, output.String(), " bool")
+	require.Contains(t, output.String(), "bool required")
 }

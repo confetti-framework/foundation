@@ -54,17 +54,7 @@ var tableStyle = table.Style{
 
 func NewCli(app inter.App, writers ...io.Writer) *cli {
 	c := &cli{app: app}
-	switch len(writers) {
-	case 0:
-		c.writer = os.Stdout
-		c.writerErr = os.Stderr
-	case 1:
-		c.writer = writers[0]
-		c.writerErr = writers[0]
-	case 2:
-		c.writer = writers[0]
-		c.writerErr = writers[1]
-	}
+	setWriters(writers, c)
 
 	return c
 }
@@ -186,4 +176,28 @@ func (c *cli) ProgressBar(max int64, description ...string) *progressbar.Progres
 	)
 	bar.RenderBlank()
 	return bar
+}
+
+func setWriters(writers []io.Writer, c *cli) {
+	switch len(writers) {
+	case 1:
+		c.writer = writers[0]
+		// Use the normal writer for err
+		c.writerErr = writers[0]
+	case 2:
+		c.writer = writers[0]
+		c.writerErr = writers[1]
+		if c.writerErr == nil {
+			// Use the normal writer for err
+			c.writerErr = writers[0]
+		}
+	}
+
+	// If nothing is given or the writer is nil, use the writer of the os.
+	if c.writer == nil {
+		c.writer = os.Stdout
+	}
+	if c.writerErr == nil {
+		c.writerErr = os.Stderr
+	}
 }

@@ -1,6 +1,7 @@
 package console
 
 import (
+	"bytes"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console"
 	"github.com/confetti-framework/foundation/loggers"
@@ -22,23 +23,27 @@ func Test_log_clear_get_description(t *testing.T) {
 }
 
 func Test_log_clear_without_loggers(t *testing.T) {
-	output, app := setUp()
+	writer, app := setUp()
+	var writerErr bytes.Buffer
+
 	app.Bind("config.App.OsArgs", []interface{}{"/main", "log:clear"})
 	app.Bind("config.Logging.Channels", map[string]interface{}{})
 
 	code := console.Kernel{
-		App:      app,
-		Writer:   &output,
-		Commands: []inter.Command{console.LogClear{}},
+		App:       app,
+		Writer:    &writer,
+		WriterErr: &writerErr,
+		Commands:  []inter.Command{console.LogClear{}},
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, TrimDoubleSpaces(output.String()), `No files to clear. No loggers found`)
+	require.Contains(t, writerErr.String(), `No files to clear. No loggers found`)
+	require.Contains(t, writer.String(), `Done`)
 }
 
 func Test_log_clear_with_recent_log_file(t *testing.T) {
 	// Given
-	output, app := setUp()
+	writer, app := setUp()
 	app.Bind("config.App.OsArgs", []interface{}{"/main", "log:clear"})
 
 	dir, err := ioutil.TempDir("", "log_clear_without_loggers_")
@@ -57,13 +62,13 @@ func Test_log_clear_with_recent_log_file(t *testing.T) {
 	// When
 	code := console.Kernel{
 		App:      app,
-		Writer:   &output,
+		Writer:   &writer,
 		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
 	// Then
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, TrimDoubleSpaces(output.String()), `Done`)
+	require.Contains(t, TrimDoubleSpaces(writer.String()), `Done`)
 
 	readDir, err := ioutil.ReadDir(dir)
 	require.Nil(t, err)
@@ -73,7 +78,7 @@ func Test_log_clear_with_recent_log_file(t *testing.T) {
 //goland:noinspection GoNilness
 func Test_log_clear_with_old_logger_file(t *testing.T) {
 	// Given
-	output, app := setUp()
+	writer, app := setUp()
 	app.Bind("config.App.OsArgs", []interface{}{"/main", "log:clear"})
 
 	dir, err := ioutil.TempDir("", "log_clear_without_loggers_")
@@ -97,13 +102,13 @@ func Test_log_clear_with_old_logger_file(t *testing.T) {
 	// When
 	code := console.Kernel{
 		App:      app,
-		Writer:   &output,
+		Writer:   &writer,
 		Commands: []inter.Command{console.LogClear{}},
 	}.Handle()
 
 	// Then
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, TrimDoubleSpaces(output.String()), `Done`)
+	require.Contains(t, TrimDoubleSpaces(writer.String()), `Done`)
 
 	readDir, err := ioutil.ReadDir(dir)
 	require.Nil(t, err)
@@ -111,6 +116,6 @@ func Test_log_clear_with_old_logger_file(t *testing.T) {
 	require.Regexp(
 		t,
 		`Files cleaned for channel: test_logger.*\n`,
-		TrimDoubleSpaces(output.String()),
+		TrimDoubleSpaces(writer.String()),
 	)
 }

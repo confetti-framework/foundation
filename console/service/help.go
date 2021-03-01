@@ -43,7 +43,7 @@ func helpFormatFlag(f Field) table.Row {
 func typeFormat(f Field) string {
 	t := support.Name(f.Value)
 	if f.Tag.Get("required") == "true" {
-		t = "<" + t + ">"
+		t = t + " required"
 	}
 	return t
 }
