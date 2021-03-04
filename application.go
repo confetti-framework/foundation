@@ -21,7 +21,7 @@ func NewApp() *Application {
 	return &app
 }
 
-// GetE the service container
+// Container fetch the container from the application
 func (a *Application) Container() *inter.Container {
 	return a.container
 }

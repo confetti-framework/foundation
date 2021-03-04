@@ -17,7 +17,9 @@ func (s Stack) SetApp(app inter.AppReader) inter.Logger {
 	return s
 }
 
-func (s Stack) Clear() {}
+func (s Stack) Clear() bool {
+	return false
+}
 
 func (s Stack) Group(group string) inter.Logger {
 	s.group = group

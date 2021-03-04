@@ -34,6 +34,14 @@ func NewContainerByBoot(bootContainer inter.Container) inter.Container {
 	return container
 }
 
+func NewTestApp(decorator func(container inter.Container) inter.Container) inter.App {
+	app := NewApp()
+	container := inter.Container(NewContainer())
+	container = decorator(container)
+	app.SetContainer(NewContainerByBoot(container))
+	return app
+}
+
 // Determine if the given abstract type has been bound.
 func (c *Container) Bound(abstract string) bool {
 	_, bound := c.bindings[abstract]

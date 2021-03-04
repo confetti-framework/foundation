@@ -38,10 +38,10 @@ func (r Syslog) Group(group string) inter.Logger {
 	return r
 }
 
-func (r Syslog) Clear() {
+func (r Syslog) Clear() bool {
 	// No files will be deleted when MaxFiles is 0
 	if r.MaxFiles == 0 {
-		return
+		return false
 	}
 
 	files := getFilesToCleanUp(r.Path)
@@ -54,6 +54,8 @@ func (r Syslog) Clear() {
 			}
 		}
 	}
+
+	return true
 }
 
 func (r Syslog) Log(severity log_level.Level, message string, arguments ...interface{}) {
