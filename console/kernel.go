@@ -25,7 +25,6 @@ var flagGetters = func() []flag.Getter {
 }
 
 var commands = []inter.Command{
-	LogClear{},
 	Baker{},
 }
 
