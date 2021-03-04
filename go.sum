@@ -4,8 +4,8 @@ github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e h1:fY5BOSpyZCqRo5O
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 h1:q763qf9huN11kDQavWsoZXJNW3xEE4JJyHa5Q25/sd8=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
-github.com/confetti-framework/baker v1.0.0 h1:CINSjqlwR2F0KrRQc83K53cr7fLjOlcjm+v7fV9TEI8=
-github.com/confetti-framework/baker v1.0.0/go.mod h1:Ym6MeJ5WNtQGJFqdfMgdZXSBqFyZs2dc1Q52AjJvEBo=
+github.com/confetti-framework/baker v1.1.0 h1:j4TKjtQoP2bJQFruRBckkraFlETEqQONfB2+9e52yFs=
+github.com/confetti-framework/baker v1.1.0/go.mod h1:Ym6MeJ5WNtQGJFqdfMgdZXSBqFyZs2dc1Q52AjJvEBo=
 github.com/confetti-framework/contract v0.2.1 h1:8mQWISbt1MpDcSOEygbY2SOrWaxgss7bMAOLbAg066U=
 github.com/confetti-framework/contract v0.2.1/go.mod h1:Svbmzd7rTz6h7l7wM6QWcA6IJ44CejZ3Lc7phALp7Qs=
 github.com/confetti-framework/errors v0.11.0-rc.1 h1:Docd/3JG4DwVAiz/KSXnO31fS4wv3rWFPLhgv9c9KVI=
@@ -60,8 +60,6 @@ github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db h1:62I3jR2Em
 github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db/go.mod h1:l0dey0ia/Uv7NcFFVbCLtqEBQbrT4OCwCSKTEv6enCw=
 github.com/motemen/go-quickfix v0.0.0-20200118031250-2a6e54e79a50 h1:LKXuJ8pSlacZRgcNFoN2OHehByrDxJesflgC/tH7aBM=
 github.com/motemen/go-quickfix v0.0.0-20200118031250-2a6e54e79a50/go.mod h1:8l73QMUlCqIlm+7YUTMwzUS4UH4gQqigx7toFASjmu0=
-github.com/motemen/gore v0.5.2 h1:MXcPj3myuuAToh1EaZbfYworggO7wEva6C49TOGqltA=
-github.com/motemen/gore v0.5.2/go.mod h1:LLl0jKyT5KKWhFV5VwhcR1/D/obZk8NnZxRWZcHqZUg=
 github.com/peterh/liner v1.2.1 h1:O4BlKaq/LWu6VRWmol4ByWfzx6MfXc5Op5HETyIy5yg=
 github.com/peterh/liner v1.2.1/go.mod h1:CRroGNssyjTd/qIG2FyxByd2S8JEAZXBl4qUrZf8GS0=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
@@ -72,7 +70,6 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/rivo/uniseg v0.1.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
-github.com/schollz/progressbar v1.0.0 h1:gbyFReLHDkZo8mxy/dLWMr+Mpb1MokGJ1FqCiqacjZM=
 github.com/schollz/progressbar/v3 v3.7.4 h1:G2HfclnGJR2HtTOmFkERQcRqo9J20asOFiuD6AnI5EQ=
 github.com/schollz/progressbar/v3 v3.7.4/go.mod h1:1H8m5kMPW6q5fyjpDqtBHW1JT22mu2NwHQ1ApuCPh/8=
 github.com/spf13/cast v1.3.1 h1:nFm6S0SMdyzrzcmThSipiEubIDy8WEXKNZ0UOgiRpng=

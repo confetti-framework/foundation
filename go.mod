@@ -3,7 +3,7 @@ module github.com/confetti-framework/foundation
 go 1.15
 
 require (
-	github.com/confetti-framework/baker v1.0.0
+	github.com/confetti-framework/baker v1.1.0
 	github.com/confetti-framework/contract v0.2.1
 	github.com/confetti-framework/errors v0.11.0
 	github.com/confetti-framework/support v0.2.3
@@ -11,7 +11,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/jedib0t/go-pretty/v6 v6.1.0
 	github.com/manifoldco/promptui v0.8.0
-	github.com/motemen/gore v0.5.2 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/schollz/progressbar/v3 v3.7.4
 	github.com/spf13/cast v1.3.1
