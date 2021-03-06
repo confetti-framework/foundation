@@ -6,6 +6,8 @@ github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1 h1:q763qf9huN11kDQavWs
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/confetti-framework/baker v1.1.0 h1:j4TKjtQoP2bJQFruRBckkraFlETEqQONfB2+9e52yFs=
 github.com/confetti-framework/baker v1.1.0/go.mod h1:Ym6MeJ5WNtQGJFqdfMgdZXSBqFyZs2dc1Q52AjJvEBo=
+github.com/confetti-framework/baker v1.1.1 h1:SN1FaRciig7CeNfE6MQyMUuQN1FYDRGwfVB8jGqafM8=
+github.com/confetti-framework/baker v1.1.1/go.mod h1:Ym6MeJ5WNtQGJFqdfMgdZXSBqFyZs2dc1Q52AjJvEBo=
 github.com/confetti-framework/contract v0.2.1 h1:8mQWISbt1MpDcSOEygbY2SOrWaxgss7bMAOLbAg066U=
 github.com/confetti-framework/contract v0.2.1/go.mod h1:Svbmzd7rTz6h7l7wM6QWcA6IJ44CejZ3Lc7phALp7Qs=
 github.com/confetti-framework/errors v0.11.0-rc.1 h1:Docd/3JG4DwVAiz/KSXnO31fS4wv3rWFPLhgv9c9KVI=

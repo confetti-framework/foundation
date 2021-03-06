@@ -3,6 +3,8 @@ package console
 import (
 	"github.com/confetti-framework/foundation/console/facade"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
+	"strings"
 	"testing"
 )
 
@@ -115,4 +117,40 @@ func Test_progress_with_description(t *testing.T) {
 	_ = bar.Add(100)
 
 	require.Contains(t, writer.String(), "Sending emails 100%")
+}
+
+func Test_confirm_true(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("y\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", false)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.True(t, con)
+}
+
+func Test_confirm_false(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("n\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", false)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.False(t, con)
+}
+
+func Test_confirm_default_true(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", true)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.True(t, con)
 }

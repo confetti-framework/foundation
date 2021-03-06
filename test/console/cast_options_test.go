@@ -277,16 +277,3 @@ func Test_programmatically_executing_commands(t *testing.T) {
 
 	require.Equal(t, inter.Success, exitCode)
 }
-
-func Test_programmatically_executinasdfg_commands(t *testing.T) {
-	_, app := setUp()
-
-
-
-	exitCode := structWithDescription{}.Handle(facade.NewCli(app))
-
-
-
-
-	require.Equal(t, inter.Success, exitCode)
-}
