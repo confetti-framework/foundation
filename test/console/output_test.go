@@ -3,8 +3,12 @@ package console
 import (
 	"github.com/confetti-framework/foundation/console/facade"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
+	"strings"
 	"testing"
 )
+
+const navigateDown = "\u001B[B"
 
 func Test_output_info_with_empty_string(t *testing.T) {
 	writer, app := setUp()
@@ -115,4 +119,92 @@ func Test_progress_with_description(t *testing.T) {
 	_ = bar.Add(100)
 
 	require.Contains(t, writer.String(), "Sending emails 100%")
+}
+
+func Test_ask_valid(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("horse\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	answer := cli.Ask("Animal:")
+
+	require.Contains(t, writer.String(), "Animal:")
+	require.Contains(t, writer.String(), "horse")
+	require.Equal(t, "horse", answer)
+}
+
+func Test_ask_empty_answer(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	answer := cli.Ask("Animal:")
+
+	require.Contains(t, writer.String(), "Animal:")
+	require.Equal(t, "", answer)
+}
+
+func Test_secret(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("a67is@fAs!\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	answer := cli.Secret("Animal:")
+
+	require.Contains(t, writer.String(), "Animal:")
+	require.NotContains(t, writer.String(), "a67is@fAs!")
+	require.Equal(t, "a67is@fAs!", answer)
+}
+
+func Test_choice_valid_answer(t *testing.T) {
+	reader := strings.NewReader(navigateDown + navigateDown + "\n")
+	writer, app := setUp()
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	answer := cli.Choice("Animal:", "dog", "bear", "horse")
+
+	require.Contains(t, writer.String(), "Use the arrow keys to navigate:")
+	require.Contains(t, writer.String(), "Animal:")
+	require.Contains(t, writer.String(), "horse")
+	require.Equal(t, "horse", answer)
+}
+
+func Test_confirm_true(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("y\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", false)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.True(t, con)
+}
+
+func Test_confirm_false(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("n\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", false)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.False(t, con)
+}
+
+func Test_confirm_default_true(t *testing.T) {
+	writer, app := setUp()
+	reader := strings.NewReader("\n")
+	rc := ioutil.NopCloser(reader)
+	cli := facade.NewCliByReadersAndWriter(app, rc, &writer, nil)
+
+	con := cli.Confirm("Sure?", true)
+
+	require.Contains(t, writer.String(), "Sure?")
+	require.True(t, con)
 }

@@ -12,9 +12,10 @@ import (
 )
 
 type cli struct {
-	app    inter.App
-	writer io.Writer
+	app       inter.App
+	writer    io.Writer
 	writerErr io.Writer
+	reader    io.ReadCloser
 }
 
 var tableStyle = table.Style{
@@ -59,6 +60,21 @@ func NewCli(app inter.App, writers ...io.Writer) *cli {
 	return c
 }
 
+func NewCliByReadersAndWriter(
+	app inter.App,
+	reader io.ReadCloser,
+	writer io.Writer,
+	writerErr io.Writer,
+) *cli {
+	c := NewCli(app, writer, writerErr)
+	c.reader = reader
+	if c.reader == nil {
+		c.reader = os.Stdin
+	}
+
+	return c
+}
+
 func (c *cli) App() inter.App {
 	return c.app
 }
@@ -72,7 +88,11 @@ func (c *cli) WriterErr() io.Writer {
 }
 
 func (c cli) Ask(label string) string {
-	prompt := promptui.Prompt{Label: label}
+	prompt := promptui.Prompt{
+		Label:  label,
+		Stdin:  c.reader,
+		Stdout: writeCloser{writer: c.writer},
+	}
 	result, err := prompt.Run()
 	if err != nil {
 		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
@@ -82,7 +102,12 @@ func (c cli) Ask(label string) string {
 }
 
 func (c cli) Secret(label string) string {
-	prompt := promptui.Prompt{Label: label, Mask: '*'}
+	prompt := promptui.Prompt{
+		Label:  label,
+		Mask:   '*',
+		Stdin:  c.reader,
+		Stdout: writeCloser{writer: c.writer},
+	}
 	result, err := prompt.Run()
 	if err != nil {
 		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
@@ -92,14 +117,18 @@ func (c cli) Secret(label string) string {
 }
 
 func (c cli) Confirm(label string, defaultValue bool) bool {
-	prompt := promptui.Prompt{Label: label, IsConfirm: true}
+	prompt := promptui.Prompt{
+		Label:     label,
+		IsConfirm: true,
+		Stdin:     c.reader,
+		Stdout:    writeCloser{writer: c.writer},
+	}
 	if defaultValue {
 		prompt.Default = "y"
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
-		os.Exit(int(inter.Failure))
+		return defaultValue
 	}
 
 	switch result {
@@ -113,7 +142,12 @@ func (c cli) Confirm(label string, defaultValue bool) bool {
 }
 
 func (c cli) Choice(label string, items ...string) string {
-	prompt := promptui.Select{Label: label, Items: items}
+	prompt := promptui.Select{
+		Label: label,
+		Items: items,
+		Stdin:     c.reader,
+		Stdout:    writeCloser{writer: c.writer},
+	}
 	_, selected, err := prompt.Run()
 	if err != nil {
 		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
@@ -148,13 +182,6 @@ func (c cli) Table() table.Writer {
 	return t
 }
 
-func (c cli) printColor(color string, f string, a []interface{}) {
-	_, err := fmt.Fprintf(c.writer, color+f+"\033[39m\n", a...)
-	if err != nil {
-		panic(err)
-	}
-}
-
 func (c *cli) ProgressBar(max int64, description ...string) *progressbar.ProgressBar {
 	desc := ""
 	if len(description) > 0 {
@@ -176,6 +203,25 @@ func (c *cli) ProgressBar(max int64, description ...string) *progressbar.Progres
 	)
 	bar.RenderBlank()
 	return bar
+}
+
+type writeCloser struct {
+	writer io.Writer
+}
+
+func (w writeCloser) Write(b []byte) (n int, err error) {
+	return w.writer.Write(b)
+}
+
+func (w writeCloser) Close() error {
+	return nil
+}
+
+func (c cli) printColor(color string, f string, a []interface{}) {
+	_, err := fmt.Fprintf(c.writer, color+f+"\033[39m\n", a...)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func setWriters(writers []io.Writer, c *cli) {
