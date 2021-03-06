@@ -37,7 +37,6 @@ func Test_index_with_one_command(t *testing.T) {
 	)
 }
 
-// todo fix test
 func Test_command_suggestions_on_failed_command(t *testing.T) {
 	output, app := setUp()
 	kernel := console.Kernel{
@@ -45,27 +44,32 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		Writer:   &output,
 		Commands: []inter.Command{aCommand{}, bCommand{}},
 	}
-	app.Bind("config.App.OsArgs", []interface{}{"/main", "com"})
 
-	code := kernel.Handle()
+	t.Run("check with mutliple suggestions", func(t *testing.T) {
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "com"})
 
-	require.Equal(t, inter.Failure, code)
-	require.Contains(
-		t,
-		TrimDoubleSpaces(output.String()),
-		"command provided but not defined: com\x1b[39m\n\x1b[31m\n"+
-			"Do you mean one of these?\x1b[39m\n\x1b[31m"+
-			"\ta_command\x1b[39m\n\x1b[31m"+
-			"\tb_command\x1b[39m\n\x1b[32m\x1b[39m",
-	)
+		code := kernel.Handle()
 
-	output.Reset()
-	app.Bind("config.App.OsArgs", []interface{}{"/main", "a_com", "\ny\n"})
-	//fmt.Fprint(kernel.Writer, "y\n")
+		require.Equal(t, inter.Failure, code)
+		require.Contains(
+			t,
+			TrimDoubleSpaces(output.String()),
+			"command provided but not defined: com\x1b[39m\n\x1b[31m\n"+
+				"Do you mean one of these?\x1b[39m\n\x1b[31m"+
+				"\ta_command\x1b[39m\n\x1b[31m"+
+				"\tb_command\x1b[39m\n\x1b[32m\x1b[39m",
+		)
+	})
 
-	kernel.Handle()
-	require.Contains(t, output.String(), "command a done")
-	//stdin
+	// todo fix test
+	t.Run("check with single suggestion", func(t *testing.T) {
+		output.Reset()
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "a_com", "\ny\n"})
+		//fmt.Fprint(kernel.Writer, "y\n")
+
+		kernel.Handle()
+		require.Contains(t, output.String(), "command a done")
+	})
 }
 
 type aCommand struct {
