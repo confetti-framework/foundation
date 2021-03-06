@@ -128,8 +128,7 @@ func (c cli) Confirm(label string, defaultValue bool) bool {
 	}
 	result, err := prompt.Run()
 	if err != nil {
-		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
-		return false
+		return defaultValue
 	}
 
 	switch result {
@@ -143,7 +142,12 @@ func (c cli) Confirm(label string, defaultValue bool) bool {
 }
 
 func (c cli) Choice(label string, items ...string) string {
-	prompt := promptui.Select{Label: label, Items: items}
+	prompt := promptui.Select{
+		Label: label,
+		Items: items,
+		Stdin:     c.reader,
+		Stdout:    writeCloser{writer: c.writer},
+	}
 	_, selected, err := prompt.Run()
 	if err != nil {
 		_, _ = fmt.Fprintf(c.writer, "Prompt failed %v\n", err)
