@@ -19,7 +19,7 @@ require (
 	github.com/tidwall/gjson v1.6.8
 	github.com/vigneshuvi/GoDateFormat v0.0.0-20210204121036-67364dc23c79
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
-	golang.org/x/sys v0.0.0-20210228012217-479acdf4ea46 // indirect
+	golang.org/x/sys v0.0.0-20210305230114-8fe3ee5dd75b // indirect
 	golang.org/x/term v0.0.0-20210220032956-6a3ed077a48d // indirect
 	golang.org/x/text v0.3.5
 )

@@ -2,6 +2,7 @@ package service
 
 import (
 	"flag"
+	"fmt"
 	"github.com/confetti-framework/contract/inter"
 	"reflect"
 	"strings"
@@ -24,11 +25,36 @@ func DispatchCommands(
 
 	args := actualArgs(c.App())
 	if len(args) > 1 {
-		c.Error("command provided but not defined: %s", ActualCommandName(args))
-		return inter.Failure
+		actualCommand := ActualCommandName(args)
+		c.Error("command provided but not defined: %s", actualCommand)
+		return suggestCommands(c, actualCommand, commands)
 	}
 
 	return inter.Index
+}
+
+func suggestCommands(c inter.Cli, actualCommand string, commands []inter.Command) inter.ExitCode {
+	suggestions := []inter.Command{}
+	for _, command := range commands {
+		if strings.Contains(command.Name(), actualCommand) {
+			suggestions = append(suggestions, command)
+		}
+	}
+
+	c.Error("\nDo you mean one of these?")
+	for _, suggestion := range suggestions {
+		c.Error("\t%s", suggestion.Name())
+	}
+	c.Info("")
+
+	if len(suggestions) == 1 {
+		exec := c.Confirm(fmt.Sprintf("do you want to execute \"%s\"", suggestions[0].Name()), false)
+		if exec {
+			return suggestions[0].Handle(c)
+		}
+	}
+
+	return inter.Failure
 }
 
 func handleCommand(
