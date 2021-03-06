@@ -146,7 +146,7 @@ func Test_ask_empty_answer(t *testing.T) {
 	require.Equal(t, "", answer)
 }
 
-func Test_ask_secret(t *testing.T) {
+func Test_secret(t *testing.T) {
 	writer, app := setUp()
 	reader := strings.NewReader("a67is@fAs!\n")
 	rc := ioutil.NopCloser(reader)
@@ -159,7 +159,7 @@ func Test_ask_secret(t *testing.T) {
 	require.Equal(t, "a67is@fAs!", answer)
 }
 
-func Test_ask_choice_valid_answer(t *testing.T) {
+func Test_choice_valid_answer(t *testing.T) {
 	reader := strings.NewReader(navigateDown + navigateDown + "\n")
 	writer, app := setUp()
 	rc := ioutil.NopCloser(reader)
