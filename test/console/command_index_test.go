@@ -1,9 +1,13 @@
 package console
 
 import (
+	"flag"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console"
+	"github.com/confetti-framework/foundation/console/facade"
+	"github.com/confetti-framework/foundation/console/service"
 	"github.com/stretchr/testify/require"
+	"io/ioutil"
 	"regexp"
 	"strings"
 	"testing"
@@ -28,12 +32,59 @@ func Test_index_with_one_command(t *testing.T) {
 	require.Contains(
 		t,
 		TrimDoubleSpaces(output.String()),
-		"Confetti (testing)\x1b[39m" +
-			"\n\n" +
-			" -h --help Can be used with any command to show\n" +
-			" the command's available arguments and options.\n\n" +
+		"Confetti (testing)\x1b[39m"+
+			"\n\n"+
+			" -h --help Can be used with any command to show\n"+
+			" the command's available arguments and options.\n\n"+
 			" baker Interact with your application.",
 	)
+}
+
+func Test_command_suggestions_on_failed_command(t *testing.T) {
+	commands := []inter.Command{aCommand{}, bCommand{}}
+
+	t.Run("check with mutliple suggestions", func(t *testing.T) {
+		output, app := setUp()
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "com"})
+		rc := ioutil.NopCloser(strings.NewReader(""))
+		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
+
+		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+
+		require.Equal(t, inter.Failure, code)
+		require.Contains(
+			t,
+			TrimDoubleSpaces(output.String()),
+			"command provided but not defined: com\x1b[39m\n\x1b[31m\n"+
+				"Do you mean one of these?\x1b[39m\n\x1b[31m"+
+				"\ta_command\x1b[39m\n\x1b[31m"+
+				"\tb_command\x1b[39m\n\x1b[32m\x1b[39m",
+		)
+	})
+
+	t.Run("check with single suggestion which is executed", func(t *testing.T) {
+		output, app := setUp()
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "a_com"})
+		rc := ioutil.NopCloser(strings.NewReader("y\n"))
+		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
+
+		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+
+		require.Equal(t, inter.Success, code)
+		require.Contains(t, output.String(), "command a done")
+	})
+
+	t.Run("check with single suggestion which is not executed", func(t *testing.T) {
+		output, app := setUp()
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "a_com"})
+		rc := ioutil.NopCloser(strings.NewReader("\n"))
+		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
+
+		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+
+		require.Equal(t, inter.Failure, code)
+		require.NotContains(t, output.String(), "command a done")
+	})
 }
 
 type aCommand struct {
@@ -42,7 +93,16 @@ type aCommand struct {
 
 func (s aCommand) Name() string        { return "a_command" }
 func (s aCommand) Description() string { return "" }
-func (s aCommand) Handle(_ inter.Cli) inter.ExitCode {
+func (s aCommand) Handle(c inter.Cli) inter.ExitCode {
+	c.Info("command a done")
+	return inter.Success
+}
+
+type bCommand struct{}
+
+func (s bCommand) Name() string        { return "b_command" }
+func (s bCommand) Description() string { return "" }
+func (s bCommand) Handle(_ inter.Cli) inter.ExitCode {
 	return inter.Success
 }
 
