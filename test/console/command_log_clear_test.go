@@ -11,6 +11,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -118,4 +120,16 @@ func Test_log_clear_with_old_logger_file(t *testing.T) {
 		`Files cleaned for channel: test_logger.*\n`,
 		TrimDoubleSpaces(writer.String()),
 	)
+}
+
+func TrimDoubleSpaces(value string) string {
+	// Replace double spaces
+	regex := regexp.MustCompile(` {2,}`)
+	value = regex.ReplaceAllString(strings.Trim(value, " "), " ")
+
+	// replace newline with only one space
+	regex = regexp.MustCompile(` \n`)
+	value = regex.ReplaceAllString(value, "\n")
+
+	return value
 }
