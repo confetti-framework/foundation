@@ -1,3 +1,5 @@
+// +build !race
+
 package console
 
 import (
@@ -8,7 +10,6 @@ import (
 	"github.com/confetti-framework/foundation/console/service"
 	"github.com/stretchr/testify/require"
 	"io/ioutil"
-	"regexp"
 	"strings"
 	"testing"
 )
@@ -116,16 +117,4 @@ func Test_index_in_correct_order(t *testing.T) {
 
 	require.Equal(t, inter.Success, code)
 	require.Regexp(t, "(?s)a_command.*log", output.String())
-}
-
-func TrimDoubleSpaces(value string) string {
-	// Replace double spaces
-	regex := regexp.MustCompile(` {2,}`)
-	value = regex.ReplaceAllString(strings.Trim(value, " "), " ")
-
-	// replace newline with only one space
-	regex = regexp.MustCompile(` \n`)
-	value = regex.ReplaceAllString(value, "\n")
-
-	return value
 }
