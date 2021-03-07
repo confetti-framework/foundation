@@ -8,7 +8,7 @@ require (
 	github.com/confetti-framework/errors v0.11.0
 	github.com/confetti-framework/support v0.2.3
 	github.com/confetti-framework/syslog v0.1.1
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/jedib0t/go-pretty/v6 v6.1.0
 	github.com/lunixbochs/vtclean v1.0.0 // indirect
