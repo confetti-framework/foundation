@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/confetti-framework/foundation/branch/main/graph/badge.svg?token=S8S1H6D2SA)](https://codecov.io/gh/confetti-framework/foundation)
+
 # Foundation
 
 This repository contains the foundation for confetti.
