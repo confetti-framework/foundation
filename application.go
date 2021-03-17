@@ -46,6 +46,9 @@ func (a *Application) MakeE(abstract interface{}) (interface{}, error) {
 	return (*a.container).MakeE(abstract)
 }
 
+// Bind registers a binding. You can pass the struct
+// or interface that we want to register, along with
+// a closure that returns an instance of the struct.
 func (a *Application) Bind(abstract interface{}, concrete interface{}) {
 	(*a.container).Bind(abstract, concrete)
 }

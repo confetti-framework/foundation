@@ -86,6 +86,18 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		require.Equal(t, inter.Failure, code)
 		require.NotContains(t, output.String(), "command a done")
 	})
+
+	t.Run("check with none suggestion which is not executed", func(t *testing.T) {
+		output, app := setUp()
+		app.Bind("config.App.OsArgs", []interface{}{"/main", "none"})
+		rc := ioutil.NopCloser(strings.NewReader("\n"))
+		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
+
+		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+
+		require.Equal(t, inter.Failure, code)
+		require.NotContains(t, output.String(), "Do you mean one of these?")
+	})
 }
 
 type aCommand struct {

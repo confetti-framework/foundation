@@ -41,14 +41,16 @@ func suggestCommands(c inter.Cli, actualCommand string, commands []inter.Command
 		}
 	}
 
-	c.Error("\nDo you mean one of these?")
-	for _, suggestion := range suggestions {
-		c.Error("\t%s", suggestion.Name())
+	if len(suggestions) > 1 {
+		c.Error("\nDo you mean one of these?")
+		for _, suggestion := range suggestions {
+			c.Error("\t%s", suggestion.Name())
+		}
+		c.Info("")
 	}
-	c.Info("")
 
 	if len(suggestions) == 1 {
-		exec := c.Confirm(fmt.Sprintf("do you want to execute \"%s\"", suggestions[0].Name()), false)
+		exec := c.Confirm(fmt.Sprintf("Do you want to execute \"%s\"", suggestions[0].Name()), false)
 		if exec {
 			return suggestions[0].Handle(c)
 		}
