@@ -6,7 +6,7 @@ require (
 	github.com/confetti-framework/baker v1.1.1
 	github.com/confetti-framework/contract v0.2.1
 	github.com/confetti-framework/errors v0.11.0
-	github.com/confetti-framework/support v0.3.0
+	github.com/confetti-framework/support v0.3.1
 	github.com/confetti-framework/syslog v0.1.1
 	github.com/google/uuid v1.2.0
 	github.com/gorilla/mux v1.8.0

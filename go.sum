@@ -16,6 +16,8 @@ github.com/confetti-framework/support v0.2.3 h1:AOzZVtPeJlZBExW2SjYY3R3973ytve2F
 github.com/confetti-framework/support v0.2.3/go.mod h1:HtyauB5vd5R+85mwosRpD0h6InS39HDJfKpkjXzdU3s=
 github.com/confetti-framework/support v0.3.0 h1:Pg1g7rX5RgmyKQ3ZD1i1KXv5Llo16JGBTsbRtaAR8z4=
 github.com/confetti-framework/support v0.3.0/go.mod h1:uKZGENz+fvUglW6uEq070WDA/scgByuxcfQOyiuScgM=
+github.com/confetti-framework/support v0.3.1 h1:gLk8oqjvZ5dcK3GGCl9hKIBVQG1GakZOeAGzu/vsCDY=
+github.com/confetti-framework/support v0.3.1/go.mod h1:uKZGENz+fvUglW6uEq070WDA/scgByuxcfQOyiuScgM=
 github.com/confetti-framework/syslog v0.1.0-rc/go.mod h1:O6eT3y5cYDGQSVT6lrhScB5NKdylG0R304PmGiChm7Y=
 github.com/confetti-framework/syslog v0.1.1 h1:ZYea1UXjp/m1DajS6regPislq+kUhe6+/RpNzCaJ8js=
 github.com/confetti-framework/syslog v0.1.1/go.mod h1:O6eT3y5cYDGQSVT6lrhScB5NKdylG0R304PmGiChm7Y=
