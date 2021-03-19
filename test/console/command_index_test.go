@@ -19,7 +19,7 @@ func Test_index_show_title(t *testing.T) {
 	code := console.Kernel{App: app, Writer: &output}.Handle()
 
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, output.String(), "Confetti (testing)")
+	require.Contains(t, output.String(), "Confetti")
 }
 
 func Test_index_with_one_command(t *testing.T) {
@@ -33,11 +33,12 @@ func Test_index_with_one_command(t *testing.T) {
 	require.Contains(
 		t,
 		TrimDoubleSpaces(output.String()),
-		"Confetti (testing)\x1b[39m"+
-			"\n\n"+
-			" -h --help Can be used with any command to show\n"+
-			" the command's available arguments and options.\n\n"+
-			" baker Interact with your application.",
+		"\x1b[39m\n Confetti\x1b[39m\n\n"+
+			" \x1b[30;1mGlobal options:\n"+
+			" -h --help Show the command's available arguments.\n"+
+			" --env-file Run the command with a defined environment file.\n"+
+			" \x1b[0m\n",
+		TrimDoubleSpaces(output.String()),
 	)
 }
 

@@ -12,15 +12,16 @@ func helpFormat(c inter.Cli, command inter.Command, options []Field) func() {
 		t := c.Table()
 
 		_, _ = fmt.Fprintf(c.Writer(), "\n  %s  \u001B[30;1m%s\n", command.Name(), command.Description())
+		t.AppendRow(helpRow("--env-file ", "string", "Run the command with a environment file."))
 		for _, option := range options {
-			t.AppendRow(helpFormatFlag(option))
+			t.AppendRow(helpRowByFlag(option))
 		}
 
 		t.Render()
 	}
 }
 
-func helpFormatFlag(f Field) table.Row {
+func helpRowByFlag(f Field) table.Row {
 	var flags string
 	short := f.Tag.Get(inter.Short)
 	long := f.Tag.Get(inter.Flag)
@@ -32,11 +33,14 @@ func helpFormatFlag(f Field) table.Row {
 		flags += fmt.Sprintf("--%s ", long)
 	}
 
+	return helpRow(flags, typeFormat(f), f.Tag.Get(inter.Description))
+}
 
+func helpRow(flags string, typeFormat string, desc string) table.Row {
 	return []interface{}{
 		"\u001B[0m" + flags + "\u001b[0m",
-		"\t\u001b[30;1m" + typeFormat(f) + "\u001B[0m",
-		f.Tag.Get(inter.Description),
+		"\t\u001b[30;1m" + typeFormat + "\u001B[0m",
+		desc,
 	}
 }
 

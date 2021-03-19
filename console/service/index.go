@@ -8,8 +8,7 @@ import (
 func RenderIndex(c inter.Cli, commands []inter.Command) inter.ExitCode {
 	// Add title and instruction for global usage
 	name := c.App().Make("config.App.Name").(string)
-	env := c.App().Make("config.App.Env").(string)
-	c.Line("\n  %s (%s)", name, env)
+	c.Line("\n  %s", name)
 
 	// Sort all commands
 	sort.SliceStable(commands, func(i, c int) bool {
@@ -17,8 +16,10 @@ func RenderIndex(c inter.Cli, commands []inter.Command) inter.ExitCode {
 	})
 
 	t := c.Table()
-	t.AppendRow([]interface{}{"-h --help", "Can be used with any command to show\nthe command's available arguments and options."})
-	t.AppendRow([]interface{}{" "})
+	t.AppendRow([]interface{}{"\u001b[30;1mGlobal options:"})
+	t.AppendRow([]interface{}{"-h --help", "Show the command's available arguments."})
+	t.AppendRow([]interface{}{"--env-file", "Run the command with a defined environment file."})
+	t.AppendRow([]interface{}{"\u001B[0m "})
 	for _, command := range commands {
 		t.AppendRow([]interface{}{command.Name(), command.Description()})
 	}

@@ -22,7 +22,7 @@ func Test_show_index_if_no_command(t *testing.T) {
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, TrimDoubleSpaces(output.String()), "\n Confetti (testing)\x1b[39m\n\n -h --help Can be used with any command to show\n")
+	require.Contains(t, TrimDoubleSpaces(output.String()), "\n Confetti\x1b[39m\n\n")
 }
 
 func Test_get_option_from_command_without_options(t *testing.T) {
@@ -169,6 +169,49 @@ func Test_show_help_with_short_flags_when_multiple_options_are_given(t *testing.
 	require.Contains(t, output.String(), "-dry-run")
 	require.Contains(t, output.String(), "-send-mail")
 	require.Contains(t, output.String(), "-sm")
+}
+
+func Test_allow_env_file_flag_without_value(t *testing.T) {
+	output, app := setUp()
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--env-file"})
+
+	code := console.Kernel{
+		App:      app,
+		Writer:   &output,
+		Commands: []inter.Command{structWithMultipleFields{}},
+	}.Handle()
+
+	require.Equal(t, inter.Failure, code, "Output: "+output.String())
+	require.Contains(t, output.String(), `flag needs an argument: -env-file`)
+}
+
+func Test_allow_env_file_flag_with_value(t *testing.T) {
+	output, app := setUp()
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--env-file", ".env.testing"})
+
+	code := console.Kernel{
+		App:      app,
+		Writer:   &output,
+		Commands: []inter.Command{structWithMultipleFields{}},
+	}.Handle()
+
+	require.Equal(t, inter.Success, code, "Output: "+output.String())
+	require.NotContains(t, output.String(), `flag provided but not defined: -env-file`)
+}
+
+func Test_show_env_file_flag_in_help(t *testing.T) {
+	output, app := setUp()
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main", "test", "--help"})
+
+	code := console.Kernel{
+		App:      app,
+		Writer:   &output,
+		Commands: []inter.Command{structWithMultipleFields{}},
+	}.Handle()
+
+	require.Equal(t, inter.Failure, code, "Output: "+output.String())
+	require.Contains(t, output.String(), `--env-file`, output.String())
+	require.Contains(t, output.String(), `Run the command with a environment file.`, output.String())
 }
 
 func Test_show_if_invalid_command_is_given(t *testing.T) {
