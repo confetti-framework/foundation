@@ -113,7 +113,7 @@ func setUp() *foundation.Application {
 	app := foundation.NewApp()
 	app.Bind("config.App.Debug", false)
 	app.Bind("template_builder", func(template *template.Template) (*template.Template, error) {
-		return template.ParseGlob(mock.TemplateByName("") + "/[^sub]*")
+		return template.Parse("{{define \"footer\"}}\n    <footer>contact information</footer>{{end}}")
 	})
 	return app
 }

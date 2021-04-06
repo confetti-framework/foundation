@@ -26,21 +26,11 @@ func Test_can_not_encode_non_view(t *testing.T) {
 func Test_convert_view_to_html(t *testing.T) {
 	app := setUp()
 	app.Bind("template_builder", func(template *template.Template) (*template.Template, error) {
-		return template.ParseFiles(
-			mock.TemplateByName("simple_template.gohtml"),
-		)
+		return template.Parse("ok")
 	})
 	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.SimpleViewMock{}, nil)
 	require.NoError(t, err)
 	require.Equal(t, "ok", result)
-}
-
-//goland:noinspection GoNilness
-func Test_view_with_unknown_template(t *testing.T) {
-	app := setUp()
-	result, err := encoder.ViewToHtml{}.EncodeThrough(app, mock.PageWithFooter{}, nil)
-	require.Contains(t, err.Error(), `no such template "footer"`)
-	require.Equal(t, "", result)
 }
 
 func Test_view_with_footer_template(t *testing.T) {

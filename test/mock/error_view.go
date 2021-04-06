@@ -1,6 +1,7 @@
 package mock
 
 import (
+	_ "embed"
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
@@ -8,6 +9,9 @@ import (
 	"golang.org/x/text/language"
 	"strings"
 )
+
+//go:embed error_template.gohtml
+var errorTemplate string
 
 type errorViewMock struct {
 	Message    string
@@ -30,7 +34,7 @@ func NewViewErrorMock(app inter.App, err error) inter.View {
 }
 
 func (_ errorViewMock) Template() string {
-	return TemplateByName("error_template.gohtml")
+	return errorTemplate
 }
 
 func AppName(app inter.App) string {
