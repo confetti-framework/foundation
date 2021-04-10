@@ -34,10 +34,10 @@ func Test_index_with_one_command(t *testing.T) {
 		t,
 		TrimDoubleSpaces(output.String()),
 		"\x1b[39m\n Confetti\x1b[39m\n\n"+
-			" \x1b[30;1mGlobal options:\n"+
+			" \x1b[32mGlobal options:\u001B[0m\n"+
 			" -h --help Show the command's available arguments.\n"+
 			" --env-file Run the command with a defined environment file.\n"+
-			" \x1b[0m\n",
+			"\n",
 		TrimDoubleSpaces(output.String()),
 	)
 }
