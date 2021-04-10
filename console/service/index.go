@@ -20,6 +20,9 @@ func RenderIndex(c inter.Cli, commands []inter.Command) inter.ExitCode {
 	t.AppendRow([]interface{}{"-h --help", "Show the command's available arguments."})
 	t.AppendRow([]interface{}{"--env-file", "Run the command with a defined environment file."})
 	t.AppendRow([]interface{}{"\u001B[0m "})
+
+	t.AppendRow([]interface{}{"\u001B[30;1mAvailable commands:\u001B[0m"})
+
 	for _, command := range commands {
 		t.AppendRow([]interface{}{command.Name(), command.Description()})
 	}

@@ -57,7 +57,7 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		require.Contains(
 			t,
 			TrimDoubleSpaces(output.String()),
-			"command provided but not defined: com\x1b[39m\n\x1b[31m\n"+
+			"Command provided but not defined: com\x1b[39m\n\x1b[31m\n"+
 				"Do you mean one of these?\x1b[39m\n\x1b[31m"+
 				"\ta_command\x1b[39m\n\x1b[31m"+
 				"\tb_command\x1b[39m\n\x1b[32m\x1b[39m",
