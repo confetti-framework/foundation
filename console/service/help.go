@@ -11,11 +11,15 @@ func helpFormat(c inter.Cli, command inter.Command, options []Field) func() {
 	return func() {
 		t := c.Table()
 
-		_, _ = fmt.Fprintf(c.Writer(), "\n  %s  \u001B[30;1m%s\n", command.Name(), command.Description())
-		t.AppendRow(helpRow("--env-file ", "string", "Run the command with a environment file."))
+		c.Info("Description:")
+		_, _ = fmt.Fprintf(c.Writer(), "  %s  \u001B[30;1m%s\u001B[0m\n", command.Name(), command.Description())
+		_, _ = fmt.Fprintf(c.Writer(), "\n\u001B[32mOptions:\u001B[39m")
 		for _, option := range options {
 			t.AppendRow(helpRowByFlag(option))
 		}
+
+		t.AppendRow(helpRow("-h --help ", "", "Show the command's available arguments."))
+		t.AppendRow(helpRow("--env-file ", "string", "Run the command with a environment file."))
 
 		t.Render()
 	}

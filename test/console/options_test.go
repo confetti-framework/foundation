@@ -225,7 +225,7 @@ func Test_show_if_invalid_command_is_given(t *testing.T) {
 	}.Handle()
 
 	require.Equal(t, inter.Failure, code)
-	require.Contains(t, output.String(), `command provided but not defined: fake`)
+	require.Contains(t, output.String(), `Command provided but not defined: fake`)
 }
 
 type structWithRequiredFlag struct {

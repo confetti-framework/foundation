@@ -26,7 +26,7 @@ func DispatchCommands(
 	args := actualArgs(c.App())
 	if len(args) > 1 {
 		actualCommand := ActualCommandName(args)
-		c.Error("command provided but not defined: %s", actualCommand)
+		c.Error("Command provided but not defined: %s", actualCommand)
 		return suggestCommands(c, actualCommand, commands)
 	}
 
