@@ -10,7 +10,7 @@ import (
 
 // AppServe starts the http server to handle requests.
 type AppServe struct {
-	Host string `flag:"host" description:"The host address to serve the application on [default: \"127.0.0.1\"]"`
+	Host string `flag:"host" description:"The host address to serve the application on"`
 	Port int `short:"p" flag:"port" description:"The port to serve the application on"`
 }
 
@@ -37,7 +37,8 @@ func (s AppServe) Handle(c inter.Cli) inter.ExitCode {
 		http.HandleHttpKernel(app, response, request)
 	}
 
-	c.Line("\u001B[32mStarting %s server:\u001B[0m http://%s", name, s.getAddr(c.App()))
+	c.Line("\u001B[32mStarting %s server at port:\u001B[0m %s", name, s.getPortAddr(c.App()))
+
 	server := &net.Server{
 		Addr:         s.getAddr(c.App()),
 		Handler:      net.HandlerFunc(handler),
