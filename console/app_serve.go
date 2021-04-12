@@ -10,7 +10,8 @@ import (
 
 // AppServe starts the http server to handle requests.
 type AppServe struct {
-	Port int `short:"p" flag:"port"`
+	Host string `short:"h" flag:"host" description:"The host address to serve the application on [default: \"127.0.0.1\"]"`
+	Port int `short:"p" flag:"port" description:"The port to serve the application on"`
 }
 
 // Name of the command
@@ -36,13 +37,14 @@ func (s AppServe) Handle(c inter.Cli) inter.ExitCode {
 		http.HandleHttpKernel(app, response, request)
 	}
 
-	c.Info("Start %s to handle requests", name)
+	c.Line("\u001B[32mStarting %s server:\u001B[0m http://%s", name, s.getAddr(c.App()))
 	server := &net.Server{
-		Addr:         s.getPortAddr(c.App()),
+		Addr:         s.getAddr(c.App()),
 		Handler:      net.HandlerFunc(handler),
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  30 * time.Second,
 	}
+
 	if err := server.ListenAndServe(); err != nil && err != net.ErrServerClosed {
 		c.Error("Could not %s", err)
 		return inter.Failure
@@ -60,5 +62,19 @@ func (s AppServe) getPortAddr(app inter.App) string {
 	} else {
 		port = app.Make("config.App.Port").(int)
 	}
-	return ":" + strconv.Itoa(port)
+	return strconv.Itoa(port)
+}
+
+func (s AppServe) getHostAddr(app inter.App) string {
+	var host string
+	if len(s.Host) != 0 {
+		host = s.Host
+	} else {
+		host = "127.0.0.1"
+	}
+	return host
+}
+
+func (s AppServe) getAddr(app inter.App) string {
+	return s.getHostAddr(app) + ":" + s.getPortAddr(app)
 }
