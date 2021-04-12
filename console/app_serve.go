@@ -10,7 +10,7 @@ import (
 
 // AppServe starts the http server to handle requests.
 type AppServe struct {
-	Host string `short:"h" flag:"host" description:"The host address to serve the application on [default: \"127.0.0.1\"]"`
+	Host string `flag:"host" description:"The host address to serve the application on [default: \"127.0.0.1\"]"`
 	Port int `short:"p" flag:"port" description:"The port to serve the application on"`
 }
 
