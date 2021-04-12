@@ -69,8 +69,6 @@ func (s AppServe) getHostAddr(app inter.App) string {
 	var host string
 	if len(s.Host) != 0 {
 		host = s.Host
-	} else {
-		host = "127.0.0.1"
 	}
 	return host
 }
