@@ -11,7 +11,7 @@ import (
 // AppServe starts the http server to handle requests.
 type AppServe struct {
 	Host string `flag:"host" description:"The host address to serve the application on [default: \"127.0.0.1\"]"`
-	Port int `short:"p" flag:"port" description:"The port to serve the application on"`
+	Port int    `short:"p" flag:"port" description:"The port to serve the application on"`
 }
 
 // Name of the command
@@ -66,13 +66,14 @@ func (s AppServe) getPortAddr(app inter.App) string {
 }
 
 func (s AppServe) getHostAddr(app inter.App) string {
-	var host string
 	if len(s.Host) != 0 {
-		host = s.Host
-	} else {
-		host = "127.0.0.1"
+		return s.Host
 	}
-	return host
+	h, err := app.MakeE("config.App.Host")
+	if err == nil {
+		return h.(string)
+	}
+	return "127.0.0.1"
 }
 
 func (s AppServe) getAddr(app inter.App) string {
