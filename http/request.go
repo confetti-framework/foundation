@@ -199,7 +199,11 @@ func (r Request) Parameter(key string) support.Value {
 }
 
 func (r Request) ParameterE(key string) (support.Value, error) {
-	return r.parameters().GetE(key)
+	value, err := r.parameters().GetE(key)
+	if err != nil {
+		err = errors.Wrap(err, "from route parameter")
+	}
+	return value, err
 }
 
 func (r Request) ParameterOr(key string, defaultValue interface{}) support.Value {
@@ -224,7 +228,11 @@ func (r Request) Query(key string) support.Value {
 }
 
 func (r Request) QueryE(key string) (support.Value, error) {
-	return support.NewMap(r.Source().URL.Query()).GetE(key)
+	value, err := support.NewMap(r.Source().URL.Query()).GetE(key)
+	if err != nil {
+		err = errors.Wrap(err, "from URL query")
+	}
+	return value, err
 }
 
 func (r Request) QueryOr(key string, defaultValue interface{}) support.Value {
