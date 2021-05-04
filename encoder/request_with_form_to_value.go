@@ -10,9 +10,9 @@ func RequestWithFormToValue(request inter.Request) support.Value {
 	if err := source.ParseForm(); err != nil {
 		return support.NewValue(err)
 	}
-	formMap, err := support.NewValueE(source.Form)
-	if err != nil {
-		return support.NewValue(err)
+	formMap := support.NewValue(source.Form)
+	if formMap.Error() != nil {
+		return support.NewValue(formMap.Error())
 	}
 	return formMap
 }

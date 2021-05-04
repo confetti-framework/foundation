@@ -15,6 +15,9 @@ func (p PanicToResponse) Handle(request inter.Request, next inter.Next) (respons
 		rec := recover()
 		if rec != nil {
 			instance := getDefaultResponseEncoder(request)
+			if err, ok := rec.(error); ok {
+				rec = errors.WithStack(err)
+			}
 			response = instance(http_helper.GetErrorFromPanic(rec))
 		}
 	}()
