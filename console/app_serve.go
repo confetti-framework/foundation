@@ -26,8 +26,9 @@ func (s AppServe) Description() string {
 
 // Handle contains the logic of the command
 func (s AppServe) Handle(c inter.Cli) inter.ExitCode {
-	name := c.App().Make("config.App.Name").(string)
-	appProvider := c.App().Make(inter.AppProvider).(func() inter.App)
+	app := c.App()
+	name := app.Make("config.App.Name").(string)
+	appProvider := app.Make(inter.AppProvider).(func() inter.App)
 
 	// This bootstraps the framework and gets it ready for use, then it will load up
 	// this application so that we can run it and send the responses back to the
@@ -37,9 +38,9 @@ func (s AppServe) Handle(c inter.Cli) inter.ExitCode {
 		http.HandleHttpKernel(app, response, request)
 	}
 
-	c.Line("\u001B[32mStarting %s server:\u001B[0m http://%s", name, s.getAddr(c.App()))
+	c.Line("\u001B[32mStarting %s server:\u001B[0m %s", name, s.getHumanAddr(app))
 	server := &net.Server{
-		Addr:         s.getAddr(c.App()),
+		Addr:         s.getListenAddr(app),
 		Handler:      net.HandlerFunc(handler),
 		WriteTimeout: 30 * time.Second,
 		ReadTimeout:  30 * time.Second,
@@ -73,9 +74,16 @@ func (s AppServe) getHostAddr(app inter.App) string {
 	if err == nil {
 		return h.(string)
 	}
-	return "127.0.0.1"
+	return ""
 }
 
-func (s AppServe) getAddr(app inter.App) string {
+func (s AppServe) getListenAddr(app inter.App) string {
 	return s.getHostAddr(app) + ":" + s.getPortAddr(app)
+}
+
+func (s AppServe) getHumanAddr(app inter.App) interface{} {
+	if s.getHostAddr(app) != "" {
+		return s.getHostAddr(app) + ":" + s.getPortAddr(app)
+	}
+	return "http://localhost:" + s.getPortAddr(app)
 }
