@@ -115,12 +115,20 @@ func Test_form_contents(t *testing.T) {
 	require.Equal(t, "tom", request.Content("").Map()["second"].Collection()[1].String())
 }
 
-func Test_form_content_not_found(t *testing.T) {
+func Test_route_parameter_not_found(t *testing.T) {
 	request := fakeRequestWithForm()
 
 	value, err := request.ParameterE("not_existing_param")
-	require.Equal(t, 0, value.Int())
 	//goland:noinspection GoNilness
+	require.Equal(t, "from route parameter: key 'not_existing_param': can not found value", err.Error())
+	//goland:noinspection GoNilness
+	require.Equal(t, 0, value.Int())
+}
+
+func Test_form_content_not_found(t *testing.T) {
+	request := fakeRequestWithForm()
+
+	_, err := request.ContentE("not_existing_param")
 	require.Equal(t, "key 'not_existing_param': can not found value", err.Error())
 }
 

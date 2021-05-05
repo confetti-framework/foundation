@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/errors"
+	"github.com/confetti-framework/foundation/db"
 	"github.com/confetti-framework/foundation/loggers"
 )
 
@@ -26,12 +27,12 @@ func (a *Application) Container() *inter.Container {
 	return a.container
 }
 
-// Set the service container
+// SetContainer set the service container
 func (a *Application) SetContainer(container inter.Container) {
 	a.container = &container
 }
 
-// Register a shared binding in the container.
+// Singleton registered a shared binding in the container.
 func (a *Application) Singleton(abstract interface{}, concrete interface{}) {
 	(*a.container).Singleton(abstract, concrete)
 }
@@ -41,7 +42,7 @@ func (a *Application) Make(abstract interface{}) interface{} {
 	return (*a.container).Make(abstract)
 }
 
-// Make or give an error by the given type from the container.
+// MakeE make or give an error by the given type from the container.
 func (a *Application) MakeE(abstract interface{}) (interface{}, error) {
 	return (*a.container).MakeE(abstract)
 }
@@ -88,6 +89,20 @@ func (a *Application) Log(channels ...string) inter.LoggerFacade {
 	// Use one stack for al the channels
 	logger := loggers.NewLoggerFacade(loggers.Stack{Channels: channels})
 	return logger.SetApp(a)
+}
+
+func (a *Application) Db(connectionName ...string) inter.Database {
+	openConnections := a.Make("open_connections").(map[string]inter.Connection)
+	connection := openConnections[a.dbConnectionName(connectionName)]
+
+	return db.NewDatabase(a, connection)
+}
+
+func (a *Application) dbConnectionName(connection []string) string {
+	if len(connection) == 0 {
+		return a.Make("config.Database.Default").(string)
+	}
+	return connection[0]
 }
 
 func (a *Application) getLoggerByChannel(channel string) inter.Logger {

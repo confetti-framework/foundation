@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	net "net/http"
 	"strings"
 )
@@ -38,6 +39,9 @@ func HandleHttpKernel(app inter.App, response net.ResponseWriter, request *net.R
 
 	defer func() {
 		if rec := recover(); rec != nil {
+			if err, ok := rec.(error); ok {
+				rec = errors.WithStack(err)
+			}
 			appResponse := kernel.RecoverFromMiddlewarePanic(rec)
 			exposeResponse(response, appResponse)
 		}
