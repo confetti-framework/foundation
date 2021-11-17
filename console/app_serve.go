@@ -83,7 +83,7 @@ func (s AppServe) getListenAddr(app inter.App) string {
 
 func (s AppServe) getHumanAddr(app inter.App) interface{} {
 	if s.getHostAddr(app) != "" {
-		return s.getHostAddr(app) + ":" + s.getPortAddr(app)
+		return "http://" + s.getHostAddr(app) + ":" + s.getPortAddr(app)
 	}
 	return "http://localhost:" + s.getPortAddr(app)
 }
