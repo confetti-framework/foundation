@@ -78,6 +78,10 @@ func (s AppServe) getHostAddr(app inter.App) string {
 }
 
 func (s AppServe) getListenAddr(app inter.App) string {
+	host := s.getHostAddr(app)
+	if host != "" {
+		host = "http://" + host
+	}
 	return s.getHostAddr(app) + ":" + s.getPortAddr(app)
 }
 
