@@ -4,7 +4,7 @@
 
 This repository contains the foundation for confetti.
 
-https://confetti-framework.com/docs/architecture-concepts/lifecycle.html
+https://confetti-framework.github.io/docs/architecture-concepts/lifecycle.html
 
 ## License
 
