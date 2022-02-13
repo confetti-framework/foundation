@@ -1,12 +1,13 @@
 package console
 
 import (
+	"testing"
+
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console"
 	"github.com/confetti-framework/foundation/console/service"
 	"github.com/confetti-framework/support"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 type mockCommandWithoutOptions struct{}
@@ -22,7 +23,30 @@ func Test_show_index_if_no_command(t *testing.T) {
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)
-	require.Contains(t, TrimDoubleSpaces(output.String()), "\n Confetti\x1b[39m\n\n")
+	result := TrimDoubleSpaces(output.String())
+	require.Contains(t, result, "\n Confetti\x1b[39m\n\n")
+
+	require.Contains(t, result, "\n \x1b[32mGlobal options:\x1b[0m")
+	require.Contains(t, result, "-h --help Show the command's available arguments.")
+	require.Contains(t, result, "--env-file Run the command with a defined environment file.")
+}
+
+func Test_show_index_with_groups(t *testing.T) {
+	output, app := setUp()
+	app.Bind("config.App.OsArgs", []interface{}{"/exe/main"})
+
+	code := console.Kernel{
+		App:      app,
+		Writer:   &output,
+		Commands: []inter.Command{structWithDescription{CommandName: "make:test"}},
+	}.Handle()
+
+	require.Equal(t, inter.Success, code)
+	result := TrimDoubleSpaces(output.String())
+
+	require.Contains(t, result, "\x1b[32mAvailable commands:\x1b[0m")
+	require.Contains(t, result, "\x1b[33mbaker\x1b[0m Interact with your application.")
+	require.Contains(t, result, "\n \x1b[32mmake\x1b[0m\n \x1b[33mmake:test\x1b[0m test\n")
 }
 
 func Test_get_option_from_command_without_options(t *testing.T) {
