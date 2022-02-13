@@ -20,14 +20,14 @@ func Test_route_list_without_routes_errors(t *testing.T) {
 		App:       app,
 		Writer:    &writer,
 		WriterErr: &writerErr,
-		Commands:  []inter.Command{console.RouteListCommand{}},
+		Commands:  []inter.Command{console.RouteList{}},
 	}.Handle()
 
 	require.Equal(t, inter.Failure, code)
 	require.Contains(t, writerErr.String(), "Could not list routes: get instance 'routes' from container: key 'routes': can not found value")
 }
 
-func storeUsers(request inter.Request) inter.Response { return nil }
+func storeUsers(_ inter.Request) inter.Response { return nil }
 
 func Test_route_list_shows_routes(t *testing.T) {
 	writer, app := setUp()
@@ -43,7 +43,7 @@ func Test_route_list_shows_routes(t *testing.T) {
 		App:       app,
 		Writer:    &writer,
 		WriterErr: &writerErr,
-		Commands:  []inter.Command{console.RouteListCommand{}},
+		Commands:  []inter.Command{console.RouteList{}},
 	}.Handle()
 
 	require.Equal(t, inter.Success, code)

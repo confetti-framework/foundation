@@ -10,20 +10,20 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
-// RouteListCommand to give you an example of what a command might look like.
-type RouteListCommand struct {
+// RouteList to give you an example of what a command might look like.
+type RouteList struct {
 }
 
-func (e RouteListCommand) Name() string {
+func (e RouteList) Name() string {
 	return "route:list"
 }
 
-func (e RouteListCommand) Description() string {
+func (e RouteList) Description() string {
 	return "Displays a list of all registered routes"
 }
 
 // Handle contains the logic of the command
-func (e RouteListCommand) Handle(c inter.Cli) inter.ExitCode {
+func (e RouteList) Handle(c inter.Cli) inter.ExitCode {
 	t := c.Table()
 
 	var routes inter.RouteCollection
