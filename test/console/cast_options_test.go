@@ -3,15 +3,16 @@ package console
 import (
 	"bytes"
 	"fmt"
+	"strconv"
+	"testing"
+	"time"
+
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation"
 	"github.com/confetti-framework/foundation/console"
 	"github.com/confetti-framework/foundation/console/facade"
 	"github.com/spf13/cast"
 	"github.com/stretchr/testify/require"
-	"strconv"
-	"testing"
-	"time"
 )
 
 type structWithOptionBool struct {
@@ -67,7 +68,7 @@ func Test_cast_option_bool_true(t *testing.T) {
 		Commands: []inter.Command{structWithOptionBool{}},
 	}.Handle()
 
- 	require.Contains(t, output.String(), `true`)
+	require.Contains(t, output.String(), `true`)
 }
 
 type structWithOptionString struct {
@@ -249,10 +250,16 @@ func Test_cast_flag_with_dash(t *testing.T) {
 }
 
 type structWithDescription struct {
-	DryRun bool `short:"dr" flag:"dry-run" description:"The flag description"`
+	DryRun      bool `short:"dr" flag:"dry-run" description:"The flag description"`
+	CommandName string
 }
 
-func (s structWithDescription) Name() string        { return "test" }
+func (s structWithDescription) Name() string {
+	if s.CommandName == "" {
+		return "test"
+	}
+	return s.CommandName
+}
 func (s structWithDescription) Description() string { return "test" }
 func (s structWithDescription) Handle(_ inter.Cli) inter.ExitCode {
 	return inter.Success
