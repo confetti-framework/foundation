@@ -1,6 +1,7 @@
 package console
 
 import (
+	"net/http"
 	"path"
 	"reflect"
 	"runtime"
@@ -41,6 +42,10 @@ func (e RouteList) Handle(c inter.Cli) inter.ExitCode {
 	for _, route := range routes.All() {
 		controller := route.Controller()
 		controllerName := runtime.FuncForPC(reflect.ValueOf(controller).Pointer()).Name()
+
+		if route.Method() == http.MethodHead {
+			continue
+		}
 
 		t.AppendRow(table.Row{
 			route.Method(),
