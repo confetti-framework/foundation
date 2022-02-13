@@ -50,6 +50,6 @@ func Test_route_list_shows_routes(t *testing.T) {
 	result := TrimDoubleSpaces(writer.String())
 	require.Contains(t, result, "\x1b[33mMETHOD\x1b[0m \x1b[33mURI\x1b[0m \x1b[33mCONTROLLER\x1b[0m \x1b[33mNAME\x1b[0m")
 	require.Contains(t, result, "GET /api github.com/confetti-framework/foundation/test/console.Test_route_list_shows_routes.func1")
-	require.Contains(t, result, "HEAD /api github.com/confetti-framework/foundation/test/console.Test_route_list_shows_routes.func1")
+	require.NotContains(t, result, "HEAD")
 	require.Contains(t, result, "POST /api/users github.com/confetti-framework/foundation/test/console.storeUsers users.store")
 }
