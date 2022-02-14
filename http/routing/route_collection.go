@@ -14,6 +14,7 @@ type RouteCollection struct {
 	routesMapRoutes inter.MapMethodRoutes
 	routes          []inter.Route
 	decorators      []inter.RouteDecorator
+	middlewares     []inter.HttpMiddleware
 }
 
 func NewRouteCollection(routeCollections ...inter.RouteCollection) *RouteCollection {
@@ -91,10 +92,10 @@ func (c RouteCollection) Match(request inter.Request) inter.Route {
 	ok := c.hasAlternateMethod(request)
 
 	if ok {
-		return getErrorRoute(MethodNotAllowedError.Wrap("method %s is not supported for this url", request.Method()))
+		return c.getErrorRoute(MethodNotAllowedError.Wrap("method %s is not supported for this url", request.Method()))
 	}
 
-	return getErrorRoute(RouteNotFoundError)
+	return c.getErrorRoute(RouteNotFoundError)
 }
 
 // Set a group of global where patterns on the routes.
@@ -143,6 +144,8 @@ func (c *RouteCollection) Middleware(middleware ...inter.HttpMiddleware) inter.R
 		route.SetMiddleware(middleware)
 	}
 
+	c.middlewares = append(c.middlewares, middleware...)
+
 	return c
 }
 
@@ -183,14 +186,14 @@ func (c *RouteCollection) matchAgainstRoutes(routes []inter.Route, request inter
 	for _, route := range routes {
 		muxRoute := http_helper.MuxFromRoute(route)
 		if err := muxRoute.GetError(); err != nil {
-			return getErrorRoute(err), true
+			return c.getErrorRoute(err), true
 		}
 		ok := muxRoute.Match(&source, &match)
 
 		if ok {
 			request.SetUrlValues(match.Vars)
 			if request.App() == nil {
-				return getErrorRoute(AppNotFoundError), true
+				return c.getErrorRoute(AppNotFoundError), true
 			}
 			request.App().Singleton("route", route)
 
@@ -225,12 +228,14 @@ func flatten(collections []inter.RouteCollection) inter.RouteCollection {
 	return result
 }
 
-func getErrorRoute(err error) *Route {
+func (c RouteCollection) getErrorRoute(err error) *Route {
 	status, _ := errors.FindStatus(err)
-	return &Route{
+	r := &Route{
 		controller: func(request inter.Request) inter.Response {
 			return outcome.Html(err)
 		},
 		routeOptions: RouteOptions{status: status},
 	}
+	r.SetMiddleware(c.middlewares)
+	return r
 }
