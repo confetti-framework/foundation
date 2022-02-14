@@ -43,12 +43,13 @@ func (e RouteList) Handle(c inter.Cli) inter.ExitCode {
 		controller := route.Controller()
 		controllerName := runtime.FuncForPC(reflect.ValueOf(controller).Pointer()).Name()
 
+		// Skip the route with HEAD method. Because it is already combined with the GET route.
 		if route.Method() == http.MethodHead {
 			continue
 		}
 
 		t.AppendRow(table.Row{
-			route.Method(),
+			getRouteMethods(route),
 			getCleanRouteUri(route),
 			controllerName,
 			route.Name(),
@@ -58,6 +59,16 @@ func (e RouteList) Handle(c inter.Cli) inter.ExitCode {
 	t.Render()
 
 	return inter.Success
+}
+
+func getRouteMethods(route inter.Route) string {
+	method := route.Method()
+
+	if method == http.MethodGet {
+		method = method + "|" + http.MethodHead
+	}
+
+	return method
 }
 
 func getCleanRouteUri(route inter.Route) string {
