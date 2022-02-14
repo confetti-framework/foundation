@@ -65,7 +65,7 @@ func getRouteMethods(route inter.Route) string {
 	method := route.Method()
 
 	if method == http.MethodGet {
-		method = method + "|" + http.MethodHead
+		method += "|" + http.MethodHead
 	}
 
 	return method
