@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-var NoSuchTemplateError = errors.
-	New("customize providers.ViewServiceProvider to load the correct templates").
-	Status(http.StatusInternalServerError).
-	Level(log_level.EMERGENCY)
+var NoSuchTemplateError = errors.WithStatus(errors.WithLevel(errors.New(
+	"customize providers.ViewServiceProvider to load the correct templates"),
+	log_level.EMERGENCY),
+	http.StatusInternalServerError)

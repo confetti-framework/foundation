@@ -51,7 +51,7 @@ func Test_show_user_error(t *testing.T) {
 
 	// Given
 	app.Bind("config.App.Debug", true)
-	response := newTestResponse(app, errors.New("invalid user id").Status(net.StatusNotFound))
+	response := newTestResponse(app, errors.WithStatus(errors.New("invalid user id"), net.StatusNotFound))
 	decorators := []inter.ResponseDecorator{response_decorator.FilterSensitiveError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 

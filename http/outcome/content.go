@@ -2,6 +2,7 @@ package outcome
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/support"
 	"io/ioutil"
 	"os"
@@ -31,10 +32,10 @@ func Download(filename string) inter.Response {
 func DownloadE(filename string) (inter.Response, error) {
 	info, err := os.Stat(filename)
 	if os.IsNotExist(err) {
-		return nil, FileNotFoundError.Wrap("can't download file %s", filename)
+		return nil, errors.Wrap(FileNotFoundError, "can't download file %s", filename)
 	}
 	if info.IsDir() {
-		return nil, CanNotDownloadDirectoryError.Wrap("can't download directory %s", filename)
+		return nil, errors.Wrap(FileNotFoundError, "can't download a directory %s", filename)
 	}
 	content, err := ioutil.ReadFile(filename)
 	if err != nil {

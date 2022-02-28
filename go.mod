@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/confetti-framework/baker v1.1.1
 	github.com/confetti-framework/contract v0.3.0
-	github.com/confetti-framework/errors v0.11.0
-	github.com/confetti-framework/support v0.4.0
+	github.com/confetti-framework/errors v0.12.0
+	github.com/confetti-framework/support v0.5.1
 	github.com/confetti-framework/syslog v0.1.1
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/uuid v1.2.0
@@ -15,7 +15,6 @@ require (
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/jedib0t/go-pretty/v6 v6.2.4
 	github.com/manifoldco/promptui v0.8.0
-	github.com/pkg/errors v0.9.1
 	github.com/schollz/progressbar/v3 v3.8.0
 	github.com/spf13/cast v1.4.1
 	github.com/stretchr/testify v1.7.0

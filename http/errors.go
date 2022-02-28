@@ -6,6 +6,6 @@ import (
 	net "net/http"
 )
 
-var NoRequestBodyDecoderFoundError = errors.New("unsupported content type or HTTP method").
-	Status(net.StatusUnsupportedMediaType).
-	Level(log_level.DEBUG)
+var NoRequestBodyDecoderFoundError = errors.WithStatus(errors.WithLevel(errors.New("unsupported content type or HTTP method"),
+	log_level.DEBUG),
+	net.StatusUnsupportedMediaType)

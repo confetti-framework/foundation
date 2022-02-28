@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"reflect"
 )
 
@@ -15,7 +16,7 @@ func (v RawToHtml) IsAble(object interface{}) bool {
 func (v RawToHtml) EncodeThrough(_ inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	result, ok := object.(interface{ Raw() interface{} })
 	if !ok {
-		return "", EncodeError.Wrap("can not encode to html with an unsupported type " + reflect.TypeOf(object).String())
+		return "", errors.Wrap(EncodeError, "can not encode to html with an unsupported type "+reflect.TypeOf(object).String())
 	}
 
 	res := result.Raw().(string)

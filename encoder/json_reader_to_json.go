@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"reflect"
 )
 
@@ -15,7 +16,7 @@ func (j JsonReaderToJson) IsAble(object interface{}) bool {
 func (j JsonReaderToJson) EncodeThrough(app inter.App, object interface{}, encoders []inter.Encoder) (string, error) {
 	jsonReader, ok := object.(inter.JsonReader)
 	if !ok {
-		return "", EncodeError.Wrap("can not encode to json with an unsupported type " + reflect.TypeOf(object).String())
+		return "", errors.Wrap(EncodeError, "can not encode to json with an unsupported type "+reflect.TypeOf(object).String())
 	}
 
 	result := jsonReader.Json()

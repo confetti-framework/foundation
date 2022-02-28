@@ -6,7 +6,14 @@ import (
 	net "net/http"
 )
 
-var RouteError = errors.New("").Level(log_level.DEBUG)
-var MethodNotAllowedError = RouteError.Wrap("HTTP method not allowed").Status(net.StatusMethodNotAllowed)
-var RouteNotFoundError = RouteError.Wrap("no match was found for the specified URL").Status(net.StatusNotFound)
-var AppNotFoundError = RouteError.Wrap("inter.App not found in RouteCollection").Status(net.StatusInternalServerError).Level(log_level.CRITICAL)
+var RouteError = errors.WithLevel(errors.New(""), log_level.DEBUG)
+var MethodNotAllowedError = errors.WithStatus(errors.Wrap(RouteError,
+	"HTTP method not allowed"),
+	net.StatusMethodNotAllowed)
+var RouteNotFoundError = errors.WithStatus(errors.Wrap(RouteError,
+	"no match was found for the specified URL"),
+	net.StatusNotFound)
+var AppNotFoundError = errors.WithLevel(errors.WithStatus(errors.Wrap(RouteError,
+	"inter.App not found in RouteCollection"),
+	net.StatusInternalServerError),
+	log_level.CRITICAL)

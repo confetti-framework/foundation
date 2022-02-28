@@ -9,7 +9,6 @@ import (
 	"github.com/confetti-framework/foundation/loggers"
 	"github.com/confetti-framework/foundation/test/mock"
 	"github.com/confetti-framework/syslog/log_level"
-	pkgErrors "github.com/pkg/errors"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -86,7 +85,7 @@ func Test_don_not_log_ignored_logs(t *testing.T) {
 func Test_log_debug_level_from_error(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, supportErrors.New("user not found").Level(log_level.DEBUG))
+	responseBefore := newTestResponse(app, supportErrors.WithLevel(supportErrors.New("user not found"), log_level.DEBUG))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
@@ -101,7 +100,7 @@ func Test_log_debug_level_from_error(t *testing.T) {
 func Test_wrap_error(t *testing.T) {
 	// Given
 	app := setUpAppWithDefaultLogger(true)
-	responseBefore := newTestResponse(app, supportErrors.Wrap(pkgErrors.New("user id not found"), "validation error"))
+	responseBefore := newTestResponse(app, supportErrors.Wrap(standardErrors.New("user id not found"), "validation error"))
 	decorators := []inter.ResponseDecorator{response_decorator.LogError{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 

@@ -82,7 +82,7 @@ func Test_existing_file_without_returning_error(t *testing.T) {
 func Test_outcome_download_content_by_directory(t *testing.T) {
 	dir := caller.CurrentDir()
 	result, err := outcome.DownloadE(dir)
-	require.True(t, errors.Is(err, outcome.CanNotDownloadDirectoryError))
+	require.True(t, errors.Is(err, outcome.FileNotFoundError))
 	require.Contains(t, err.Error(), "test/routing: file not found")
 	require.Nil(t, result)
 }

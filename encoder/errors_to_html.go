@@ -3,6 +3,7 @@ package encoder
 import (
 	"fmt"
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/foundation/http/view_helper"
 	"github.com/confetti-framework/support/str"
 )
@@ -19,7 +20,7 @@ func (e ErrorsToHtml) IsAble(object interface{}) bool {
 func (e ErrorsToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	errs, ok := e.getErrors(object)
 	if !ok {
-		return "", EncodeError.Wrap("can't convert object to html in error format")
+		return "", errors.Wrap(EncodeError, "can't convert object to html in error format")
 	}
 
 	err := errs[0]

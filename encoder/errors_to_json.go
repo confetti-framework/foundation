@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/support/str"
 )
 
@@ -23,7 +24,7 @@ func (e ErrorsToJson) EncodeThrough(app inter.App, object interface{}, encoders 
 	e.Errors = []Error{}
 	errs, ok := e.getErrors(object)
 	if !ok {
-		return "", EncodeError.Wrap("can't convert object to json in error format")
+		return "", errors.Wrap(EncodeError, "can't convert object to json in error format")
 	}
 
 	e.Jsonapi = map[string]string{"version": "1.0"}

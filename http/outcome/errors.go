@@ -5,5 +5,4 @@ import (
 	net "net/http"
 )
 
-var FileNotFoundError = errors.New("file not found").Status(net.StatusNotFound)
-var CanNotDownloadDirectoryError = FileNotFoundError
+var FileNotFoundError = errors.WithStatus(errors.New("file not found"), net.StatusNotFound)

@@ -6,4 +6,7 @@ import (
 	"net/http"
 )
 
-var EncodeError = errors.New("").Status(http.StatusInternalServerError).Level(log_level.EMERGENCY)
+var EncodeError = errors.WithLevel(errors.WithStatus(
+	errors.New(""),
+	http.StatusInternalServerError),
+	log_level.EMERGENCY)

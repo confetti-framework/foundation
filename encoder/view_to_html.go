@@ -2,6 +2,7 @@ package encoder
 
 import (
 	"github.com/confetti-framework/contract/inter"
+	"github.com/confetti-framework/errors"
 	"github.com/confetti-framework/foundation/http/view_helper"
 )
 
@@ -15,7 +16,7 @@ func (v ViewToHtml) IsAble(object interface{}) bool {
 func (v ViewToHtml) EncodeThrough(app inter.App, object interface{}, _ []inter.Encoder) (string, error) {
 	view, ok := object.(inter.View)
 	if !ok {
-		return "", EncodeError.Wrap("can't convert object to html in view format")
+		return "", errors.Wrap(EncodeError, "can't convert object to html in view format")
 	}
 
 	builder := app.Make("template_builder").(inter.TemplateBuilder)

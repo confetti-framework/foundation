@@ -92,7 +92,7 @@ func (c RouteCollection) Match(request inter.Request) inter.Route {
 	ok := c.hasAlternateMethod(request)
 
 	if ok {
-		return c.getErrorRoute(MethodNotAllowedError.Wrap("method %s is not supported for this url", request.Method()))
+		return c.getErrorRoute(errors.Wrap(MethodNotAllowedError, "method %s is not supported for this url", request.Method()))
 	}
 
 	return c.getErrorRoute(RouteNotFoundError)

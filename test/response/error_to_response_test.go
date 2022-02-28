@@ -126,7 +126,7 @@ func Test_http_status_to_response(t *testing.T) {
 func Test_http_status_bad_request_to_response(t *testing.T) {
 	// Given
 	app := setUp()
-	responseBefore := newTestResponse(app, errors.New("incorrect database credentials").Status(net.StatusBadRequest))
+	responseBefore := newTestResponse(app, errors.WithStatus(errors.New("incorrect database credentials"), net.StatusBadRequest))
 	decorators := []inter.ResponseDecorator{response_decorator.HttpStatus{}}
 	bootstrapDecorator := response_decorator.Handler{Decorators: decorators}
 
