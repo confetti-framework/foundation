@@ -1,4 +1,4 @@
-// +build !race
+//go:build !race
 
 package console
 
@@ -51,7 +51,7 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		rc := ioutil.NopCloser(strings.NewReader(""))
 		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
 
-		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+		code := service.DispatchCommands(cli, commands, []flag.Getter{})
 
 		require.Equal(t, inter.Failure, code)
 		require.Contains(
@@ -70,7 +70,7 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		rc := ioutil.NopCloser(strings.NewReader("y\n"))
 		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
 
-		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+		code := service.DispatchCommands(cli, commands, []flag.Getter{})
 
 		require.Equal(t, inter.Success, code)
 		require.Contains(t, output.String(), "command a done")
@@ -82,7 +82,7 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		rc := ioutil.NopCloser(strings.NewReader("\n"))
 		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
 
-		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+		code := service.DispatchCommands(cli, commands, []flag.Getter{})
 
 		require.Equal(t, inter.Failure, code)
 		require.NotContains(t, output.String(), "command a done")
@@ -94,7 +94,7 @@ func Test_command_suggestions_on_failed_command(t *testing.T) {
 		rc := ioutil.NopCloser(strings.NewReader("\n"))
 		cli := facade.NewCliByReadersAndWriter(app, rc, &output, nil)
 
-		code := service.DispatchCommands(cli, commands, []func() []flag.Getter{})
+		code := service.DispatchCommands(cli, commands, []flag.Getter{})
 
 		require.Equal(t, inter.Failure, code)
 		require.NotContains(t, output.String(), "Do you mean one of these?")

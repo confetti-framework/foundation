@@ -14,10 +14,10 @@ const flagLong = "flag"
 func DispatchCommands(
 	c inter.Cli,
 	commands []inter.Command,
-	flagProviders []func() []flag.Getter,
+	getters []flag.Getter,
 ) inter.ExitCode {
 	for _, command := range commands {
-		code := handleCommand(c, command, flagProviders)
+		code := handleCommand(c, command, getters)
 		if code != inter.Continue {
 			return code
 		}
@@ -34,6 +34,7 @@ func DispatchCommands(
 }
 
 func suggestCommands(c inter.Cli, actualCommand string, commands []inter.Command) inter.ExitCode {
+	//goland:noinspection GoPreferNilSlice
 	suggestions := []inter.Command{}
 	for _, command := range commands {
 		if strings.Contains(command.Name(), actualCommand) {
@@ -62,7 +63,7 @@ func suggestCommands(c inter.Cli, actualCommand string, commands []inter.Command
 func handleCommand(
 	c inter.Cli,
 	command inter.Command,
-	flagProviders []func() []flag.Getter,
+	getters []flag.Getter,
 ) inter.ExitCode {
 	set := flag.NewFlagSet(command.Name(), flag.ContinueOnError)
 	set.SetOutput(c.Writer())
@@ -73,7 +74,7 @@ func handleCommand(
 		fields := GetCommandFields(command)
 		set.Usage = helpFormat(c, command, fields)
 
-		registerFlags(set, fields, flagProviders)
+		registerFlags(set, fields, getters)
 		code := parse(set, actualArgs)
 		if code != inter.Continue {
 			return code
@@ -95,7 +96,6 @@ func validateRequiredFields(c inter.Cli, set *flag.FlagSet, fields []Field) inte
 		if field.Tag.Get("required") != "true" {
 			continue
 		}
-
 		short := getActualValue(set, field, flagShort)
 		long := getActualValue(set, field, flagLong)
 		if isEqualOrNil(field.Value, short) && isEqualOrNil(field.Value, long) {
@@ -132,16 +132,21 @@ func getActualValue(set *flag.FlagSet, f Field, key string) interface{} {
 	if lookup == nil {
 		return nil
 	}
-	return lookup.Value.(flag.Getter).Get()
+	value := lookup.Value.(flag.Getter).Get()
+	return value
 }
 
 func setValuesInCommand(command *inter.Command, set *flag.FlagSet, fields []Field) {
 	for _, f := range fields {
 		short := getActualValue(set, f, flagShort)
+		//support.Dump("short")
+		//support.Dump(short)
 		if short != nil {
 			setValueByFlag(command, f.Number, short)
 		}
 		long := getActualValue(set, f, flagLong)
+		//support.Dump("long")
+		//support.Dump(long)
 		if long != nil {
 			setValueByFlag(command, f.Number, long)
 		}
@@ -157,14 +162,6 @@ func parse(flagSet *flag.FlagSet, appArgs []string) inter.ExitCode {
 		return inter.Failure
 	}
 	return inter.Continue
-}
-
-func flagGettersByProviders(providers []func() []flag.Getter) []flag.Getter {
-	var result []flag.Getter
-	for _, provider := range providers {
-		result = append(result, provider()...)
-	}
-	return result
 }
 
 func setValueByFlag(command *inter.Command, i int, rawValue interface{}) {

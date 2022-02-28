@@ -12,20 +12,14 @@ import (
 // These values must be in a callback so that they are new
 // for each field. If there are multiple fields with the same
 // type, they would use the same pointer.
-var flagGetters = func() []flag.Getter {
-	return []flag.Getter{
-		new(flag_type.Bool),
-		new(flag_type.String),
-		new(flag_type.Int),
-		new(flag_type.Int64),
-		new(flag_type.Uint),
-		new(flag_type.Uint64),
-		new(flag_type.Duration),
-	}
-}
-
-var commands = []inter.Command{
-	Baker{},
+var flagGetters = []flag.Getter{
+	new(flag_type.Bool),
+	new(flag_type.String),
+	new(flag_type.Int),
+	new(flag_type.Int64),
+	new(flag_type.Uint),
+	new(flag_type.Uint64),
+	new(flag_type.Duration),
 }
 
 type Kernel struct {
@@ -33,15 +27,20 @@ type Kernel struct {
 	Writer        io.Writer
 	WriterErr     io.Writer
 	Commands      []inter.Command
-	FlagProviders []func() []flag.Getter
+	FlagProviders []func() []flag.Getter // Deprecated: FlagProviders is deprecated and will be removed in version 1.0. Use Getters instead.
+	Getters       []flag.Getter          // This list include custom flag.Getters, you can create custom types to cast flags from the command to a value.
 }
 
 func (k Kernel) Handle() inter.ExitCode {
-	k.Commands = append(k.Commands, commands...)
-	k.FlagProviders = append(k.FlagProviders, flagGetters)
+	getters := append(k.Getters, flagGetters...)
+
+	// FlagProviders is deprecated and will be removed in version 1.0. Use Getters instead.
+	for _, provider := range k.FlagProviders {
+		getters = append(getters, provider()...)
+	}
 
 	cli := facade.NewCli(k.App, k.Writer, k.WriterErr)
-	code := service.DispatchCommands(cli, k.Commands, k.FlagProviders)
+	code := service.DispatchCommands(cli, k.Commands, getters)
 	if code != inter.Index {
 		return code
 	}
@@ -51,8 +50,4 @@ func (k Kernel) Handle() inter.ExitCode {
 
 func (k Kernel) GetCommands() []inter.Command {
 	return k.Commands
-}
-
-func (k Kernel) GetFlagProviders() []func() []flag.Getter {
-	return k.FlagProviders
 }

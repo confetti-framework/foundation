@@ -5,6 +5,7 @@ import (
 	"github.com/confetti-framework/contract/inter"
 	"github.com/confetti-framework/foundation/console/flag_type"
 	"github.com/confetti-framework/support"
+	"reflect"
 )
 
 func ActualCommandName(appArgs []string) string {
@@ -25,11 +26,13 @@ func actualArgs(app inter.App) []string {
 	return result
 }
 
-func registerFlags(set *flag.FlagSet, options []Field, flagProviders []func() []flag.Getter) {
+func registerFlags(set *flag.FlagSet, options []Field, getters []flag.Getter) {
 	for _, option := range options {
-		fg := flagGettersByProviders(flagProviders)
-		registerFlag(set, option, option.Tag.Get("short"), "", fg)
-		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"), fg)
+		// Clone the getters so that the value of one flag cannot be set to another.
+		result := cloneGetters(getters)
+
+		registerFlag(set, option, option.Tag.Get("short"), "", result)
+		registerFlag(set, option, option.Tag.Get("flag"), option.Tag.Get("description"), result)
 	}
 	set.Var(new(flag_type.String), "env-file", "Can be used with any command to run the command with a defined environment file.")
 }
@@ -51,4 +54,18 @@ func registerFlag(set *flag.FlagSet, option Field, flag string, description stri
 			set.Var(getter, flag, description)
 		}
 	}
+}
+
+//goland:noinspection GoPreferNilSlice
+func cloneGetters(getters []flag.Getter) []flag.Getter {
+	result := []flag.Getter{}
+	for _, oldObj := range getters {
+		indirect := reflect.Indirect(reflect.ValueOf(oldObj))
+		newIndirect := reflect.New(indirect.Type())
+		newIndirect.Elem().Set(reflect.ValueOf(indirect.Interface()))
+		newNamed := newIndirect.Interface()
+		result = append(result, newNamed.(flag.Getter))
+	}
+
+	return result
 }
