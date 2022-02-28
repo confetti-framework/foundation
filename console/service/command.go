@@ -139,14 +139,10 @@ func getActualValue(set *flag.FlagSet, f Field, key string) interface{} {
 func setValuesInCommand(command *inter.Command, set *flag.FlagSet, fields []Field) {
 	for _, f := range fields {
 		short := getActualValue(set, f, flagShort)
-		//support.Dump("short")
-		//support.Dump(short)
 		if short != nil {
 			setValueByFlag(command, f.Number, short)
 		}
 		long := getActualValue(set, f, flagLong)
-		//support.Dump("long")
-		//support.Dump(long)
 		if long != nil {
 			setValueByFlag(command, f.Number, long)
 		}

@@ -45,7 +45,6 @@ func Test_show_index_with_groups(t *testing.T) {
 	result := TrimDoubleSpaces(output.String())
 
 	require.Contains(t, result, "\x1b[32mAvailable commands:\x1b[0m")
-	require.Contains(t, result, "\x1b[33mbaker\x1b[0m Interact with your application.")
 	require.Contains(t, result, "\n \x1b[32mmake\x1b[0m\n \x1b[33mmake:test\x1b[0m test\n")
 }
 
